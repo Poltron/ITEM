@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - Ball
+  - Highlight
+  - Cell
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: LastBackground
+    uniqueID: 2897903251
+    locked: 0
+  - name: Background
+    uniqueID: 210405809
+    locked: 0
+  - name: Cell
+    uniqueID: 2402403223
+    locked: 0
+  - name: Highlight
+    uniqueID: 3095811139
+    locked: 0
+  - name: Ball
+    uniqueID: 1299415873
+    locked: 0
+  - name: UI
+    uniqueID: 607191891
+    locked: 0

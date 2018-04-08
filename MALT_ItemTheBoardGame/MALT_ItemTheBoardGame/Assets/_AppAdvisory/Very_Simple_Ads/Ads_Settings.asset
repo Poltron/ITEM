@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd7a4fd6f811943e69ee3b2681d229f4, type: 3}
+  m_Name: Ads_Settings
+  m_EditorClassIdentifier: 
+  ANDROID_AMAZON: 0
+  DEBUG: 0
+  LoadNextSceneWhenAdLoaded: 0
+  RandomizeNetworks: 1
+  FIRST_TIME: 1
+  EnableAdmob: 1
+  EnableChartboost: 0
+  EnableAdcolony: 0
+  EnableFacebook: 0
+  showOnlyFirstNetworkAtRun: 1
+  interstitialNetworkToShowAtRun: 0
+  showInterstitialFirstRun: 1
+  showBannerAtRun: 1
+  isAdsFoldoutOpened: 1
+  isMediationNetworkFoldoutOpened: 1
+  IsAdmobSettingsOpened: 1
+  IsAdmobIOSSettingsOpened: 1
+  IsAdmobANDROIDSettingsOpened: 1
+  IsAdmobAMAZONSettingsOpened: 1
+  IsUnityAdsSettingsOpened: 1
+  IsChartboostSettingsOpened: 1
+  IsChartboostIOSSettingsOpened: 1
+  IsChartboostAndroidSettingsOpened: 1
+  IsChartboostAmazonSettingsOpened: 1
+  IsADColonySettingsOpened: 1
+  IsADColonyIOSSettingsOpened: 1
+  IsADColonyAndroidSettingsOpened: 1
+  rewardedVideoAlwaysReadyInSimulator: 0
+  rewardedVideoAlwaysSuccessInSimulator: 0
+  ShowIntertitialAtStart: 0
+  IsFacebookSettingsOpened: 1
+  IsFacebookIOSSettingsOpened: 0
+  IsFacebookANDROIDSettingsOpened: 1
+  IsFacebookAMAZONSettingsOpened: 0
+  IsBannerNetworksOpened: 0
+  IsInterstitialNetworksOpened: 0
+  IsVideoNetworksOpened: 0
+  IsRewardedVideoNetworksOpened: 0
+  EnableUnityAds: 0
+  interstitialNetworks: 00000000
+  useAdmobAsInterstitialNetwork: 0
+  bannerNetworks: 00000000
+  useAdmobAsBannerNetwork: 0
+  videoNetworks: 0000000000000000
+  rewardedVideoNetworks: 
+  useAdmobAsRewardedVideoNetwork: 0
+  childrenPrivacy: 2
+  testDeviveId: 8fa42327347fc830609a54a833e611ed1cc716a7
+  lookForGameAds: 1
+  AdmobBannerPosition: 1
+  ChartboostAppIdIOS: 5238852117ba479f20000006
+  ChartboostAppSignatureIOS: acf88792a96bb162ae50e93bf3ef93739b3b740e
+  ChartboostAppIdAndroid: 58c58f8d04b016274d96c126
+  ChartboostAppSignatureAndroid: 9688ddff2be5b4fd8ad4657586df4086d234bece
+  ChartboostAppIdAmazon: 58c58fb5f6cd4539a7e1ba79
+  ChartboostAppSignatureAmazon: 6e5d86c5e49d2235c5ea82717f4cc05c71b2b668
+  isAmazon: 0
+  AdmobBannerIdIOS: ca-app-pub-4501064062171971/7502635647
+  AdmobInterstitialIdIOS: ca-app-pub-4501064062171971/7513520842
+  AdmobRewardedVideoIdIOS: ca-app-pub-4501064062171971/8990254046
+  AdmobBannerIdANDROID: ca-app-pub-4501064062171971/1034207243
+  AdmobInterstitialIdANDROID: ca-app-pub-4501064062171971/2510940444
+  AdmobRewardedVideoIdANDROID: 
+  AdmobBannerIdAMAZON: 
+  AdmobInterstitialIdAMAZON: 
+  AdmobRewardedVideoIdAMAZON: 
+  FacebookBannerIdIOS: 338722809862911_338723276529531
+  FacebookInterstitialIdIOS: 338722809862911_338723339862858
+  FacebookBannerIdANDROID: 209851909494457_245183332627981
+  FacebookInterstitialIdANDROID: 209851909494457_245183555961292
+  FacebookBannerIdAMAZON: 338722809862911_338723893196136
+  FacebookInterstitialIdAMAZON: 338722809862911_338723969862795

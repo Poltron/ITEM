@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | %UNITY_WEB_NAME%</title>
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <style type="text/css">
+    * {
+      margin: 0;
+      padding: 0;
+	  overflow:hidden;
+    }
+	div.fullHeight {
+	position: absolute;
+    width: calc(100% - 80px);
+    height: 100%;
+	}
+	div.fullHeight canvas {
+		width: 100%;
+		height: 100%;
+	}
+	body {
+		background-color: black;
+        width:100%;
+        height:100%;
+    }
+
+	div.sidebar{
+	float: right;
+	background-color: #777;
+	width: 80px;
+	height:100%;
+	}
+	
+	div.logo1 { width: 204px; height: 38px;  
+	top: 120px;
+	right: -62px;
+	-webkit-transform: rotate(270deg);
+	-moz-transform: rotate(270deg);
+	-ms-transform: rotate(270deg);
+	-o-transform: rotate(270deg);
+	transform: rotate(270deg);
+	position: absolute; 
+	z-index: 10; 
+	}
+	
+	
+	div.title { height: 200px; width: 70px; line-height: 24px; 
+	padding: 10px 10px 10px 10px;
+	font-size: 18px; top: calc(50% + 50px); z-index: 10; word-wrap: break-word;
+	}
+	
+	.fullscreen {
+	position: absolute;
+	right:0px;
+	bottom:0px;
+	}
+    </style>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico" />
+    <script src="TemplateData/UnityProgress.js"></script>
+  </head>
+  <body class="template">
+
+  <div class="fullHeight">
+  	<canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" height="%UNITY_HEIGHT%px" width="%UNITY_WIDTH%px"></canvas>
+  </div>
+  <div class="sidebar">
+      <div class="logo1"><img src="TemplateData/logo.png" width="204" height="38" alt="logo1"></div>
+    <div class="fullscreen"><img src="TemplateData/fullscreen.png" width="38" height="38" alt="Fullscreen" title="Fullscreen" onclick="SetFullscreen(1);" /></div>
+      <div class="title">%UNITY_WEB_NAME%</div>
+  </div>
+  </div>
+    %UNITY_WEBGL_LOADER_GLUE%
+
+</body>
+</html>

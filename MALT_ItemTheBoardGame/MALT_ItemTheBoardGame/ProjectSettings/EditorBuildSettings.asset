@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 0
+    path: Assets/_AppAdvisory/Very_Simple_Ads/Exemple/WithStartupScene/0_LoadingScene.unity
+    guid: 3c20f14c0eac04a4b91dd5f7df6f0fc4
+  - enabled: 1
+    path: Assets/_Item/Scenes/login.unity
+    guid: 8f026390fc3074bac9f9da58de571031
+  - enabled: 1
+    path: Assets/_Item/Scenes/main.unity
+    guid: 41f46a01eba1042039d02e6544ebcfc0
+  - enabled: 0
+    path: Assets/FBPro/Demo/Main.unity
+    guid: df1c35ef9327d034bb4555b52841621e
