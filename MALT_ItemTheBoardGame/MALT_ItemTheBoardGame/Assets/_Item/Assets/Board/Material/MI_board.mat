@@ -23,7 +23,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _Lines:
         m_Texture: {fileID: 2800000, guid: f4a93c4ea72f8ab43a143a608235cbe4, type: 3}
-        m_Scale: {x: 0.1, y: 0.1}
+        m_Scale: {x: 0.5, y: 0.5}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: f4a93c4ea72f8ab43a143a608235cbe4, type: 3}
@@ -40,6 +40,7 @@ Material:
     m_Floats:
     - PixelSnap: 0
     - _Cutoff: 0.5
+    - _Flash: 0
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
@@ -47,5 +48,6 @@ Material:
     - _StencilOpZFail: 0
     - _StencilReadMask: 255
     - _StencilWriteMask: 255
+    - _node_8336: -1
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 0.328}
