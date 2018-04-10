@@ -576,23 +576,7 @@ namespace AppAdvisory.Item
 
                 positionCount++;
 
-                //  DO MOVE
-                // if there isn't any balls left, a ball is moved
-                bool newBall = false;
-                if (!IsBallsLeft(color))
-                {
-                    // remove ball from "FROM" cell
-                    grid.cells[move.fromX][move.fromY] = CellColor.None;
-                }
-                // if there are some balls left, a ball is added to the board
-                else
-                {
-                    newBall = true;
-                    SubBall(color);
-                }   
-
-                // add ball to "TO" cell
-                grid.cells[move.toX][move.toY] = color;
+                bool wasNewBall = DoMove(move);
 
                 int value = -EvaluateGrid(depth);
 
@@ -602,22 +586,7 @@ namespace AppAdvisory.Item
                     value = MiniMax(depth - 1, int.MinValue + 1, int.MaxValue - 1, !isMaximisingPlayer);
                 }
 
-                grid.cells[move.toX][move.toY] = CellColor.None;
-
-                // UNDO MOVE
-                // if there isn't any balls left, a ball is moved
-                if (!newBall)
-                {
-                    // remove ball from "FROM" cell
-                    grid.cells[move.fromX][move.fromY] = color;
-                }
-                // if there are some balls left, a ball is added to the board
-                else
-                {
-                    AddBall(color);
-                }
-
-                //Debug.Log("move " + i + " : " + value + " ( " + move.toX + " ; " + move.toY + " )");
+                UndoMove(move, wasNewBall);
 
                 // is this move better
                 if (value > bestMove)
@@ -655,24 +624,7 @@ namespace AppAdvisory.Item
                 {
                     Move move = newGameMoves[i];
 
-                    //  DO MOVE
-                    // if there isn't any balls left, a ball is moved
-                    bool newBall = false;
-                    if (!IsBallsLeft(CellColor.Black))
-                    {
-                        // remove ball from "FROM" cell
-                        grid.cells[move.fromX][move.fromY] = CellColor.None;
-                    }
-                    // if there are some balls left, a ball is added to the board
-                    else
-                    {
-                        newBall = true;
-                        SubBall(CellColor.Black);
-                    }
-
-                    // add ball to "TO" cell
-                    grid.cells[move.toX][move.toY] = CellColor.Black;
-
+                    bool wasNewBall = DoMove(move);
 
                     bestMove = -EvaluateGrid(depth);
 
@@ -682,20 +634,7 @@ namespace AppAdvisory.Item
                         bestMove = Mathf.Max(bestMove, MiniMax(depth - 1, bestMove, beta, !isMaximisingPlayer));
                     }
 
-                    grid.cells[move.toX][move.toY] = CellColor.None;
-
-                    // UNDO MOVE
-                    // if there isn't any balls left, a ball is moved
-                    if (!newBall)
-                    {
-                        // remove ball from "FROM" cell
-                        grid.cells[move.fromX][move.fromY] = CellColor.Black;
-                    }
-                    // if there are some balls left, a ball is added to the board
-                    else
-                    {
-                        AddBall(CellColor.Black);
-                    }
+                    UndoMove(move, wasNewBall);
 
                     if (beta <= bestMove)
                     {
@@ -712,23 +651,7 @@ namespace AppAdvisory.Item
                 {
                     Move move = newGameMoves[i];
 
-                    //  DO MOVE
-                    // if there isn't any balls left, a ball is moved
-                    bool newBall = false;
-                    if (!IsBallsLeft(CellColor.Black))
-                    {
-                        // remove ball from "FROM" cell
-                        grid.cells[move.fromX][move.fromY] = CellColor.None;
-                    }
-                    // if there are some balls left, a ball is added to the board
-                    else
-                    {
-                        newBall = true;
-                        SubBall(CellColor.Black);
-                    }
-
-                    // add ball to "TO" cell
-                    grid.cells[move.toX][move.toY] = CellColor.Black;
+                    bool wasNewBall = DoMove(move);
 
                     bestMove = -EvaluateGrid(depth);
 
@@ -738,20 +661,7 @@ namespace AppAdvisory.Item
                         bestMove = Mathf.Min(bestMove, MiniMax(depth - 1, alpha, bestMove, !isMaximisingPlayer));
                     }
 
-                    grid.cells[move.toX][move.toY] = CellColor.None;
-
-                    // UNDO MOVE
-                    // if there isn't any balls left, a ball is moved
-                    if (!newBall)
-                    {
-                        // remove ball from "FROM" cell
-                        grid.cells[move.fromX][move.fromY] = CellColor.Black;
-                    }
-                    // if there are some balls left, a ball is added to the board
-                    else
-                    {
-                        AddBall(CellColor.Black);
-                    }
+                    UndoMove(move, wasNewBall);
                     
                     if (bestMove <= alpha)
                     {
@@ -762,135 +672,45 @@ namespace AppAdvisory.Item
             }
         }
 
-
-        /*
-        public int MiniMax(int depth, int alpha, int beta, bool isMaximisingPlayer)
+        // returns if this move was adding a new ball to the board
+        public bool DoMove(Move move)
         {
-            positionCount++;
-
-            if (depth == 0) {
-                return -EvaluateGrid(depth);
-            }
-            
-            var newGameMoves = GetAvailableMoves(CellColor.Black);
-
-            // IA
-            if (isMaximisingPlayer)
+            // if there isn't any balls left, a ball is moved
+            bool newBall = false;
+            if (!IsBallsLeft(CellColor.Black))
             {
-                var bestMove = int.MinValue + 1;
-                for (var i = 0; i < newGameMoves.Count; i++)
-                {
-                    Move move = newGameMoves[i];
-
-                    //  DO MOVE
-                    // if there isn't any balls left, a ball is moved
-                    bool newBall = false;
-                    if (!IsBallsLeft(CellColor.Black))
-                    {
-                        // remove ball from "FROM" cell
-                        grid.cells[move.fromX][move.fromY] = CellColor.None;
-                    }
-                    // if there are some balls left, a ball is added to the board
-                    else
-                    {
-                        newBall = true;
-                        SubBall(CellColor.Black);
-                    }
-
-                    // add ball to "TO" cell
-                    grid.cells[move.toX][move.toY] = CellColor.Black;
-
-
-                    bestMove = -EvaluateGrid(depth);
-
-                    if (!IsGameEnded(bestMove))
-                    {
-                        // get loop on all moves available on board with this move
-                        bestMove = Mathf.Max(bestMove, MiniMax(depth - 1, alpha, beta, !isMaximisingPlayer));
-                    }
-
-                    grid.cells[move.toX][move.toY] = CellColor.None;
-
-                    // UNDO MOVE
-                    // if there isn't any balls left, a ball is moved
-                    if (!newBall)
-                    {
-                        // remove ball from "FROM" cell
-                        grid.cells[move.fromX][move.fromY] = CellColor.Black;
-                    }
-                    // if there are some balls left, a ball is added to the board
-                    else
-                    {
-                        AddBall(CellColor.Black);
-                    }
-
-                    alpha = Mathf.Max(alpha, bestMove);
-
-                    if (beta <= alpha) {
-                        return bestMove;
-                    }
-                }
-                return bestMove;
+                // remove ball from "FROM" cell
+                grid.cells[move.fromX][move.fromY] = CellColor.None;
             }
-            // Joueur
+            // if there are some balls left, a ball is added to the board
             else
             {
-                var bestMove = int.MaxValue - 1;
-                for (var i = 0; i < newGameMoves.Count; i++)
-                {
-                    Move move = newGameMoves[i];
+                newBall = true;
+                SubBall(CellColor.Black);
+            }
 
-                    //  DO MOVE
-                    // if there isn't any balls left, a ball is moved
-                    bool newBall = false;
-                    if (!IsBallsLeft(CellColor.Black))
-                    {
-                        // remove ball from "FROM" cell
-                        grid.cells[move.fromX][move.fromY] = CellColor.None;
-                    }
-                    // if there are some balls left, a ball is added to the board
-                    else
-                    {
-                        newBall = true;
-                        SubBall(CellColor.Black);
-                    }
+            // add ball to "TO" cell
+            grid.cells[move.toX][move.toY] = CellColor.Black;
 
-                    // add ball to "TO" cell
-                    grid.cells[move.toX][move.toY] = CellColor.Black;
+            return newBall;
+        }
 
-                    bestMove = -EvaluateGrid(depth);
+        public void UndoMove(Move move, bool wasNewBall)
+        {
+            grid.cells[move.toX][move.toY] = CellColor.None;
 
-                    if (!IsGameEnded(bestMove))
-                    {
-                        // get loop on all moves available on board with this move
-                        bestMove = Mathf.Min(bestMove, MiniMax(depth - 1, alpha, beta, !isMaximisingPlayer));
-                    }
-
-                    grid.cells[move.toX][move.toY] = CellColor.None;
-
-                    // UNDO MOVE
-                    // if there isn't any balls left, a ball is moved
-                    if (!newBall)
-                    {
-                        // remove ball from "FROM" cell
-                        grid.cells[move.fromX][move.fromY] = CellColor.Black;
-                    }
-                    // if there are some balls left, a ball is added to the board
-                    else
-                    {
-                        AddBall(CellColor.Black);
-                    }
-
-                    beta = Mathf.Min(beta, bestMove);
-
-                    if (beta <= alpha) {
-                        return bestMove;
-                    }
-                }
-                return bestMove;
+            // if there isn't any balls left, a ball is moved
+            if (!wasNewBall)
+            {
+                // remove ball from "FROM" cell
+                grid.cells[move.fromX][move.fromY] = CellColor.Black;
+            }
+            // if there are some balls left, a ball is added to the board
+            else
+            {
+                AddBall(CellColor.Black);
             }
         }
-        */
 
         public int BallsLeft(CellColor color)
         {
@@ -931,6 +751,32 @@ namespace AppAdvisory.Item
 
             return false;
         }
+
+        public bool IsIAWin(int score)
+        {
+            if (score < -9000000)
+                return true;
+
+            return false;
+        }
+
+        public bool IsPlayerWin(int score)
+        {
+            if (score > 9000000)
+                return true;
+
+            return false;
+        }
+
+        /*
+        public bool CanIAWin(out Move move)
+        {
+            move = MiniMaxRoot(1, true);
+
+
+            return false;
+        }
+        */
     }
 
 }
