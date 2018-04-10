@@ -98,11 +98,11 @@ namespace GS
 			InitFB ();
 
 			return;
-			if (FB.IsLoggedIn) {
+			/*if (FB.IsLoggedIn) {
 				LoadPlayerName ();
 				LoadPlayerPic ();
 				SceneManager.LoadScene (1);
-			}
+			}*/
 
 		}
 
@@ -878,18 +878,19 @@ namespace GS
 		{
 			return;
 
-			playerDp.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+			//playerDp.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
 
 
 
-			#if !UNITY_WEBGL
+			/*#if !UNITY_WEBGL
 			if (needToSave)
 			{
 				byte[] bytes = tex.EncodeToJPG();
 				File.WriteAllBytes(GetPath(FILE_NAME), bytes);
 			}
 			#endif
-		}
+            */
+        }
 
 		private IEnumerator GetProfilePicRoutine(string url, bool needToSave = false)
 		{
@@ -1016,7 +1017,7 @@ namespace GS
 
 		public void BuyCoins()
 		{
-			FBManager fbM = FindObjectOfType<FBManager>();
+			//FBManager fbM = FindObjectOfType<FBManager>();
 			// Format payment URL
 			string paymentURL = FBSetup.Instance.paymentObjectURL;
 

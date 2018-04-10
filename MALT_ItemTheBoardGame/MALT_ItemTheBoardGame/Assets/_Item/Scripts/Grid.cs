@@ -5,7 +5,6 @@ using System.Collections.Generic;
 namespace AppAdvisory.Item {
 
 	public class Grid {
-
 	    public Cell[][] grid;
 
 	    private float distanceBetweenHorizontalCells;
@@ -16,15 +15,13 @@ namespace AppAdvisory.Item {
 
 		private Transform parent;
 
-		public Grid(int width, int height, Transform parent, float distanceBetweenHorizontalCells = 1, float distanceBetweenVerticalCells = 0.5f)
+		public Grid(int width, int height, Transform parent, List<Cell> cells)
 	    {
 	        this.width = width;
 	        this.height = height;
-	        this.distanceBetweenHorizontalCells = distanceBetweenHorizontalCells;
-	        this.distanceBetweenVerticalCells = distanceBetweenVerticalCells;
 			this.parent = parent;
-	        InitGrid();
-	        DisplayCells();
+
+	        InitGridWithCells(cells);
 	    }
 
 
@@ -237,6 +234,7 @@ namespace AppAdvisory.Item {
 	        int actualWidth;
 	        int count = 0;
 	        grid = new Cell[height][];
+
 	        for (int y = 0; y < height; y++)
 	        {
 	            actualWidth = GetActualWidth(y);
@@ -255,21 +253,26 @@ namespace AppAdvisory.Item {
 	        }
 	    }
 
+        private void InitGridWithCells(List<Cell> cells)
+        {
+            grid = new Cell[height][];
+            bool t = true;
+            for (int i = 0; i < height; i++)
+            {
+                if (t)
+                    grid[i] = new Cell[5];
+                else
+                    grid[i] = new Cell[4];
 
+                t = !t;
+            }
 
+            for (int i = 0; i  < cells.Count; ++i)
+            {
 
-	    private void DisplayCells()
-	    {
-	        
-	        for (int y = 0; y < height; y++)
-	        {
-	            for (int x = 0; x < grid[y].Length; x++)
-	            {
-	                if(grid[y][x])
-	                    grid[y][x].transform.localPosition = new Vector3(x * distanceBetweenHorizontalCells + (y % 2) * distanceBetweenHorizontalCells / 2, y * distanceBetweenVerticalCells, 0);
-	            }
-	        }  
-	    }
+                grid[cells[i].y][cells[i].x] = cells[i];
+            }
+        }
 	}
 
 }

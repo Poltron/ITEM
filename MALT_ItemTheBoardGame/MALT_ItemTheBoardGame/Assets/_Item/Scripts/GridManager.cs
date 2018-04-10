@@ -1,7 +1,7 @@
 ﻿
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
 using Photon;
 using UnityEngine.SceneManagement;
 using HedgehogTeam.EasyTouch;
@@ -39,13 +39,8 @@ namespace AppAdvisory.Item {
 		public List<Ball> whiteBalls;
 
 		public float timeToLaunchGameVSIA = 4;
-		public float minIAReflexionTime = 1;
-		public float maxIAReflexionTime = 1;
 
-
-		private float countToStopPreventingWin = 1;
-
-		private bool isPlayer1 = false;
+		//private bool isPlayer1 = false;
 		private bool isGameFinished = false;
 		private bool isGameStarted = false;
 		private bool isPlayingVSIA = false;
@@ -154,8 +149,7 @@ namespace AppAdvisory.Item {
 
 		void Start () {
             aiBehaviour = new AIBehaviour(aiEvaluationData);
-
-			InitBallLists ();
+            
 			DisplayMarbleContainer (false);
 
             DOVirtual.DelayedCall(timeToLaunchGameVSIA, StartGameVSIA);
@@ -169,15 +163,17 @@ namespace AppAdvisory.Item {
 			connection.ApplyUserIdAndConnect ();
 
 			fbManager = FindObjectOfType<FBManager> ();
+            if (fbManager)
+            {
                 playerName = fbManager.pName;
                 playerPicURL = fbManager.pUrlPic;
 
 
                 fbManager.NameLoaded += OnNameLoaded;
                 fbManager.PicURLLoaded += OnPicURLLoaded;
-
                 //			fbManager.FacebookConnect += OnFacebookConnect;
-            
+            }
+
         }
 
 		public void StartGameVSIA() {
@@ -200,7 +196,7 @@ namespace AppAdvisory.Item {
 			uiManager.DisplayYourTurn (true);
 			uiManager.DisplayPhase1Text (true);
 			uiManager.SetPlayer1Turn();
-			isPlayer1 = true;
+			//isPlayer1 = true;
 
 			player = CreatePlayer (BallColor.White);
 			uiManager.InitPlayer2(BallColor.Black);
@@ -212,7 +208,8 @@ namespace AppAdvisory.Item {
 		}
 
 		private string GetRandomIAName() {
-			return randomNames [Random.Range (0, randomNames.Length - 1)];
+            //return randomNames [Random.Range (0, randomNames.Length - 1)];
+            return "IA";
 		}
 
 		private void DisplayMarbleContainer(bool isShown) {
@@ -233,17 +230,8 @@ namespace AppAdvisory.Item {
 			print ("onpicurlloaded" + url);
 		}
 
-		private void InitBallLists() {
-			List<Ball> balls = new List<Ball>(FindObjectsOfType<Ball> ());
-
-			whiteBalls = balls.FindAll (item => item.color == BallColor.White).ToList ();
-			blackBalls = balls.FindAll (item => item.color == BallColor.Black).ToList ();
-		}
-
 		private void CreateGrid() {
-			//grid = new Grid(5, 9, 3, 1.5f);
-			grid = new Grid(5, 9, transform, 3.5f, 1.75f);
-			//transform.position += Vector3.up * 3f;
+			grid = new Grid(5, 9, transform, FindObjectsOfType<Cell>().ToList());
 		}
 
 		private Player CreatePlayer(BallColor color) {
@@ -268,7 +256,9 @@ namespace AppAdvisory.Item {
 
 		public void PlayIAPhase1(Cell lastMove)
         {
-            Move move = aiBehaviour.GetBestMove(this);
+            float time;
+            Move move = aiBehaviour.GetBestMove(this, out time);
+
             Cell cell = grid.GetCellFromModel(move.toY, move.toX);
             PlaceBallIA(cell);
 
@@ -334,15 +324,10 @@ namespace AppAdvisory.Item {
 
 			List<Cell> cellsToWin = new List<Cell>();
 
-			Cell cell;
 			Cell colorCell;
 
 			int count = 0;
 			int maxCount = -1;
-
-			List<Cell> cellToPlace;
-			cellToPlace = new List<Cell> ();
-
 
 			for (int i = 0; i < colorCells.Count; i++) {
 				colorCell = colorCells [i];
@@ -536,7 +521,8 @@ namespace AppAdvisory.Item {
 
 		public void PlayIAPhase2()
         {
-            Move move = aiBehaviour.GetBestMove(this);
+            float time;
+            Move move = aiBehaviour.GetBestMove(this, out time);
 
             Cell cellFrom = grid.GetCellFromModel(move.fromY, move.fromX);
             Cell cellTo = grid.GetCellFromModel(move.toY, move.toX);
@@ -565,7 +551,7 @@ namespace AppAdvisory.Item {
 		}
 
 		public bool PreventWin(Cell lastMove) {
-			List<Cell> lastMoveNeighbours = grid.GetCellNeighbours (lastMove);
+			//List<Cell> lastMoveNeighbours = grid.GetCellNeighbours (lastMove);
 			List<Cell> winingCells;
 
 			int cellCountToPrevent = 4;
@@ -860,7 +846,7 @@ namespace AppAdvisory.Item {
 
 				uiManager.DisplayYourTurn (false);
 				uiManager.SetPlayer2Turn ();
-				DOVirtual.DelayedCall (Random.Range (minIAReflexionTime, maxIAReflexionTime), () => PlayIAPhase2 ());
+				PlayIAPhase2();
 			} else {
 				
 
@@ -1031,10 +1017,10 @@ namespace AppAdvisory.Item {
 			uiManager.SetPlayer2Name (name);
 			return;
 
-			if (isPlayer1)
+			/*if (isPlayer1)
 				uiManager.SetPlayer2Name (name);
 			else
-				uiManager.SetPlayer1Name (name);
+				uiManager.SetPlayer1Name (name);*/
 		}
 
 		[PunRPC] 
@@ -1075,11 +1061,13 @@ namespace AppAdvisory.Item {
 			uiManager.SetPlayer1Turn ();
 
 			return;
-			if(isPlayer1) {
+			/*
+            if(isPlayer1) {
 				uiManager.SetPlayer1Turn();
 			} else {
 				uiManager.SetPlayer2Turn();
 			}
+            */
 		}
 
 		void SetPlayerTurnOnEnd() {
@@ -1087,11 +1075,11 @@ namespace AppAdvisory.Item {
 			uiManager.SetPlayer2Turn ();
 
 			return;
-			if(isPlayer1) {
+			/*if(isPlayer1) {
 				uiManager.SetPlayer2Turn();
 			} else {
 				uiManager.SetPlayer1Turn();
-			}
+			}*/
 		}
 
 
@@ -1127,7 +1115,7 @@ namespace AppAdvisory.Item {
 				SendName (playerName);
 				SendPicURL (playerPicURL);
 
-				isPlayer1 = false;
+				//isPlayer1 = false;
 
 			}
 			else
@@ -1156,7 +1144,7 @@ namespace AppAdvisory.Item {
 				uiManager.DisplayYourTurn (true);
 				uiManager.DisplayPhase1Text (true);
 				uiManager.SetPlayer1Turn();
-				isPlayer1 = true;
+				//isPlayer1 = true;
 
 				player = CreatePlayer (BallColor.White);
 				uiManager.InitPlayer2(BallColor.Black);

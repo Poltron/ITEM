@@ -8,7 +8,7 @@ using DG.Tweening;
 namespace AppAdvisory.Item {
 
 	public class Player : MonoBehaviour, IPlayer {
-		public string name;
+		public string playerName;
 		public string picURL;
 
 
@@ -190,6 +190,8 @@ namespace AppAdvisory.Item {
 
 			if (!gesture.pickedObject)
 				return;
+
+            Debug.Log(gesture.pickedObject.name);
 
 			Cell pickedCell = gesture.pickedObject.GetComponent<Cell> (); 
 

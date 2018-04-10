@@ -129,11 +129,13 @@ namespace AppAdvisory.Item {
 		}
 
 		public void SetPlayer1Name(string name) {
-			player1.SetName (name);
+            if (player1)
+			    player1.SetName (name);
 		}
 
 		public void SetPlayer2Name(string name) {
-			player2.SetName (name);
+            if (player2)
+			    player2.SetName (name);
 		}
 
 		public void SetPlayer1Pic(Sprite sprite) {

@@ -7,7 +7,7 @@ namespace AppAdvisory.Item {
 
 	public class PlayerPanel : MonoBehaviour {
 
-		public Text name;
+		public Text playerName;
 		public Image image;
 
 		public Image whiteMarble;
@@ -30,7 +30,7 @@ namespace AppAdvisory.Item {
 		}
 			
 		public void SetName(string name) {
-			this.name.text = name;
+			this.playerName.text = name;
 		}
 
 		public void SetPic(Sprite sprite) {

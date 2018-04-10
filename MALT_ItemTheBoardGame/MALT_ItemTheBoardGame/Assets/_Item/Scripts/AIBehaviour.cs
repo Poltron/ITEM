@@ -277,7 +277,7 @@ namespace AppAdvisory.Item
             }
         }
 
-        public Move GetBestMove(GridManager gridManager)
+        public Move GetBestMove(GridManager gridManager, out float timeSpent)
         {
             positionCount = 0;
             timeSpent = 0;
