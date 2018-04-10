@@ -258,7 +258,11 @@ namespace AppAdvisory.Item {
         {
             float time;
             Move move = aiBehaviour.GetBestMove(this, out time);
+            StartCoroutine(waitFor(1.0f - time, move, PlayAIMovePhase1));
+        }
 
+        public void PlayAIMovePhase1(Move move)
+        {
             Cell cell = grid.GetCellFromModel(move.toY, move.toX);
             PlaceBallIA(cell);
 
@@ -275,36 +279,6 @@ namespace AppAdvisory.Item {
             }
 
             EndAIPhase();
-
-            /*
-            float random = Random.value;
-
-			if (random <= countToStopPreventingWin) {
-				if (PreventWin (lastMove)) {
-					countToStopPreventingWin -= 0.2f;
-					return;
-				}
-
-				if (TryToWin ())
-					return;
-			} else {
-				if (TryToWin ())
-					return;
-				
-				if (PreventWin (lastMove)) {
-					return;
-				}
-			}
-
-			if (random >= 0.75f) {
-				PlaceRandom ();
-				return;
-			}
-
-			if (PlaceNeighbour (lastMove)) {
-				return;
-			}
-            */
         }
 
         public void EndAIPhase()
@@ -517,13 +491,23 @@ namespace AppAdvisory.Item {
 
 		}
 			
+        IEnumerator waitFor(float t, Move move, System.Action<Move> func)
+        {
+            while ((t -= Time.deltaTime) > 0)
+                yield return new WaitForEndOfFrame();
 
+            func(move);
+        }
 
 		public void PlayIAPhase2()
         {
             float time;
             Move move = aiBehaviour.GetBestMove(this, out time);
+            StartCoroutine(waitFor(1.0f - time, move, PlayAIMovePhase2));
+        }
 
+        public void PlayAIMovePhase2(Move move)
+        {
             Cell cellFrom = grid.GetCellFromModel(move.fromY, move.fromX);
             Cell cellTo = grid.GetCellFromModel(move.toY, move.toX);
 
