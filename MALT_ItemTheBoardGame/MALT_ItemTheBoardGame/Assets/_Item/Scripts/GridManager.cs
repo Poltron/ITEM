@@ -258,7 +258,7 @@ namespace AppAdvisory.Item {
         {
             float time;
             Move move = aiBehaviour.GetBestMove(this, out time);
-            StartCoroutine(waitFor(1.0f - time, move, PlayAIMovePhase1));
+            StartCoroutine(waitFor(2.5f - time, move, PlayAIMovePhase1));
         }
 
         public void PlayAIMovePhase1(Move move)
@@ -503,7 +503,7 @@ namespace AppAdvisory.Item {
         {
             float time;
             Move move = aiBehaviour.GetBestMove(this, out time);
-            StartCoroutine(waitFor(1.0f - time, move, PlayAIMovePhase2));
+            StartCoroutine(waitFor(2.5f - time, move, PlayAIMovePhase2));
         }
 
         public void PlayAIMovePhase2(Move move)

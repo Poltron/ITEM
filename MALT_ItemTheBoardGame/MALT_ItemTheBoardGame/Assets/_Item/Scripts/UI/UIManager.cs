@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.UI;
+using TMPro;
 
 namespace AppAdvisory.Item {
 
@@ -13,11 +14,30 @@ namespace AppAdvisory.Item {
 		public event Action FinishTurn;
 		public event Action InviteFriend;
 
-		public GameObject phase1Text;
-		public GameObject phase2Text;
+        [SerializeField]
+        private AnimationCurve turnOpacity;
+        [SerializeField]
+        private AnimationCurve turnPosition;
+        [SerializeField]
+        private AnimationCurve phasePosition;
+        [SerializeField]
+        private float turnAnimationDuration;
+        [SerializeField]
+        private float timeBeforeNextTurn;
+        private float timer;
 
-		public GameObject phase1TextBis;
-		public GameObject phase2TextBis;
+        [SerializeField]
+        private SpriteRenderer board;
+
+        [SerializeField]
+        private GameObject overlay;
+        [SerializeField]
+        private GameObject yourTurn;
+        [SerializeField]
+        private GameObject opponentsTurn;
+
+        public GameObject phase1Text;
+		public GameObject phase2Text;
 
 		public PlayerPanel player1;
 		public PlayerPanel player2;
@@ -25,7 +45,6 @@ namespace AppAdvisory.Item {
 		public GameObject waitingForPlayerPanel;
 
 		public GameObject endGamePanel;
-		public GameObject yourTurn;
 		public GameObject youWon;
 		public GameObject youLost;
 		public GameObject byForfeit;
@@ -33,16 +52,16 @@ namespace AppAdvisory.Item {
 
 		public GameObject inviteFriendButton;
 
-
+        IEnumerator waitFor(float t, Action toDo)
+        {
+            float timer = t;
+            yield return new WaitForSeconds(t);
+            toDo();
+        }
 
 		void Start ()
         {
 			
-		}
-		
-		void Update ()
-        {
-            Debug.Log("player1 is shown : " + player1.gameObject.activeInHierarchy + " / player2 is shown : " + player2.gameObject.activeInHierarchy);
 		}
 
 		public void Init() {
@@ -74,14 +93,17 @@ namespace AppAdvisory.Item {
 			DisplayYourTurn (false);
 		}
 
-		public void DisplayPhase1Text(bool isShown) {
+        public void DisplayYourTurn(bool isShown)
+        {
+
+        }
+
+        public void DisplayPhase1Text(bool isShown) {
 			phase1Text.SetActive (isShown);
-			phase1TextBis.SetActive (isShown);
 		}
 
 		public void DisplayPhase2Text(bool isShown) {
 			phase2Text.SetActive (isShown);
-			phase2TextBis.SetActive (isShown);
 		}
 
 		public void DisplayRestartButton(bool isShown) {
@@ -96,11 +118,7 @@ namespace AppAdvisory.Item {
 			player2.gameObject.SetActive (isShown);
 		}
 
-		public void DisplayYourTurn(bool isShown) {
-			//yourTurn.SetActive (isShown);
-		}
-
-		public void DisplayYouWon(bool isShown) {
+        public void DisplayYouWon(bool isShown) {
 			youWon.SetActive (isShown);
 		}
 
@@ -146,23 +164,71 @@ namespace AppAdvisory.Item {
 			player2.SetPic (sprite);
 		}
 
-		public void SetPlayer1Turn() {
-			player1.DisplayArrow (true);
-			player2.DisplayArrow (false);
+		public void SetPlayer1Turn()
+        {
+            StartCoroutine(waitFor(timeBeforeNextTurn, SetPlayer1TurnReal));
 		}
 
-		public void SetPlayer2Turn() {
-			player1.DisplayArrow (false);
-			player2.DisplayArrow (true);
-		}
+        private void SetPlayer1TurnReal()
+        {
+            DisplayPlayer1Arrow(true);
+            timer = 0;
+        }
 
-		public void DisplayPlayer1Arrow(bool isShown) {
-			player1.DisplayArrow (isShown);
+        public void SetPlayer2Turn()
+        {
+            StartCoroutine(waitFor(timeBeforeNextTurn, SetPlayer2TurnReal));
+        }
+
+        private void SetPlayer2TurnReal()
+        {
+            DisplayPlayer2Arrow(true);
+            timer = 0;
+        }
+
+        void Update()
+        {
+            if (timer < turnAnimationDuration)
+            {
+                timer += Time.deltaTime;
+                float opacity = turnOpacity.Evaluate(timer);
+
+                Image spriteR = overlay.GetComponent<Image>();
+                spriteR.color = new Color(spriteR.color.r, spriteR.color.g, spriteR.color.b, opacity);
+
+                TextMeshProUGUI yourTurnText = yourTurn.GetComponent<TextMeshProUGUI>();
+                yourTurnText.color = new Color(yourTurnText.color.r, yourTurnText.color.g, yourTurnText.color.b, opacity * 2);
+
+                TextMeshProUGUI opponentsTurnText = opponentsTurn.GetComponent<TextMeshProUGUI>();
+                opponentsTurnText.color = new Color(opponentsTurnText.color.r, opponentsTurnText.color.g, opponentsTurnText.color.b, opacity * 2);
+
+                TextMeshProUGUI phase1Tex = phase1Text.GetComponent<TextMeshProUGUI>();
+                phase1Tex.color = new Color(phase1Tex.color.r, phase1Tex.color.g, phase1Tex.color.b, opacity * 2);
+
+                TextMeshProUGUI phase2Tex = phase2Text.GetComponent<TextMeshProUGUI>();
+                phase2Tex.color = new Color(phase2Tex.color.r, phase2Tex.color.g, phase2Tex.color.b, opacity * 2);
+            }
+            else
+            {
+                overlay.SetActive(false);
+                yourTurn.SetActive(false);
+                opponentsTurn.SetActive(false);
+            }
+            //Debug.Log(timer);
+            //Debug.Log("player1 is shown : " + player1.gameObject.activeInHierarchy + " / player2 is shown : " + player2.gameObject.activeInHierarchy);
+        }
+
+        public void DisplayPlayer1Arrow(bool isShown) {
+            overlay.SetActive(isShown);
+            yourTurn.SetActive(isShown);
+            opponentsTurn.SetActive(!isShown);
 		}
 
 		public void DisplayPlayer2Arrow(bool isShown) {
-			player2.DisplayArrow (isShown);
-		}
+            overlay.SetActive(isShown);
+            opponentsTurn.SetActive(isShown);
+            yourTurn.SetActive(!isShown);
+        }
 
 		public void ResetPlayerTurn() {
 			player1.SetColor (Color.white);

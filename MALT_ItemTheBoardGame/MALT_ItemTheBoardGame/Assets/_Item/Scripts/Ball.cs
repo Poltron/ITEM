@@ -27,23 +27,41 @@ namespace AppAdvisory.Item
 
 		private Vector3 startPosition;
 
-		public SpriteRenderer highlight;
+        [SerializeField]
+		private SpriteRenderer highlight;
 
-		void Awake() {
-			
-			SetStartPosition ();
-			Color c = highlight.color;
-			c.a = 0;
-			highlight.color = c;
+        [SerializeField]
+        private AnimationCurve curve;
+
+        float timer;
+
+		void Awake()
+        {
+			SetStartPosition();
 		}
 
-		public void ShowHighlight () {
-			highlight.DOFade (1, 0.3f);
+        private void Start()
+        {
+            HideHighlight();
+        }
 
+        private void Update()
+        {
+            if (highlight.gameObject.activeInHierarchy)
+            {
+                timer += Time.deltaTime;
+                float scale = curve.Evaluate(timer);
+                highlight.transform.localScale = new Vector3(scale, scale, 1);
+            }
+        }
+
+        public void ShowHighlight () {
+            timer = 0;
+            highlight.gameObject.SetActive(true);
 		}
 
 		public void HideHighlight() {
-			highlight.DOFade (0, 0.3f);
+            highlight.gameObject.SetActive(false);
 		}
 
 		public void ResetPosition() {

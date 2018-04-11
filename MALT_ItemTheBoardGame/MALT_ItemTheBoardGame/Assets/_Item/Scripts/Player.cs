@@ -191,7 +191,7 @@ namespace AppAdvisory.Item {
 			if (!gesture.pickedObject)
 				return;
 
-            Debug.Log(gesture.pickedObject.name);
+            //Debug.Log(gesture.pickedObject.name);
 
 			Cell pickedCell = gesture.pickedObject.GetComponent<Cell> (); 
 
