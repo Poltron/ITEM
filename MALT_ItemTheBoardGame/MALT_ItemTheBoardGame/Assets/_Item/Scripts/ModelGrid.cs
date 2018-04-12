@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace AppAdvisory.Item {
 
-	public class Grid {
+	public class ModelGrid {
 	    public Cell[][] grid;
 
 	    private float distanceBetweenHorizontalCells;
@@ -15,34 +15,14 @@ namespace AppAdvisory.Item {
 
 		private Transform parent;
 
-		public Grid(int width, int height, Transform parent, List<Cell> cells)
+		public ModelGrid(int width, int height, List<Cell> cells)
 	    {
 	        this.width = width;
 	        this.height = height;
-			this.parent = parent;
 
 	        InitGridWithCells(cells);
 	    }
-
-
-		public Cell GetRandomEmptyCell() {
-			List<Cell> emptyCells = new List<Cell> ();
-
-			for (int y = 0; y < height; y++)
-			{
-				for (int x = 0; x < grid[y].Length; x++)
-				{
-					if (grid [y] [x]) {
-						if (!grid [y] [x].HasBall ()) {
-							emptyCells.Add (grid [y] [x]);
-						}
-					}
-				}
-			}  
-				
-			return emptyCells [Random.Range (0, emptyCells.Count - 1)];
-		}
-
+        
 		public List<Cell> GetAllCellsWithColor(BallColor color = BallColor.Black) {
 
 			List<Cell> colorCells = new List<Cell> ();
@@ -61,7 +41,8 @@ namespace AppAdvisory.Item {
 			return colorCells;
 		}
 
-		public Cell GetCellFromDirection(Cell firstCell, Cell secondCell) {
+		public Cell GetCellFromDirection(Cell firstCell, Cell secondCell)
+        {
 			Cell destinationCell;
 
 			//middle up
@@ -204,8 +185,7 @@ namespace AppAdvisory.Item {
 			neighbour = GetCellFromModel(cell.x + offset, cell.y-1);
 			if (neighbour)
 				neighbours.Add (neighbour);
-
-
+            
 			return neighbours;
 		}
 
@@ -226,45 +206,20 @@ namespace AppAdvisory.Item {
 	        return width - y % 2;
 	    }
 
-	    private void InitGrid()
-	    {
-	        int centerX = Mathf.FloorToInt(width / 2);
-	        int centerY = Mathf.FloorToInt(height / 2);
-
-	        int actualWidth;
-	        int count = 0;
-	        grid = new Cell[height][];
-
-	        for (int y = 0; y < height; y++)
-	        {
-	            actualWidth = GetActualWidth(y);
-	            grid[y] = new Cell[actualWidth];
-	            for(int x = 0; x < actualWidth; x++)
-	            {
-	                if (x == centerX && y == centerY)
-	                    continue;
-
-	                grid[y][x] = Object.Instantiate(Resources.Load<Cell>("Cell"));
-	                grid[y][x].SetModelPosition(x, y);
-					grid[y][x].name = "Cell" + x + "_" + y;
-					grid[y][x].transform.SetParent (parent);
-	                count++;
-	            }
-	        }
-	    }
-
         private void InitGridWithCells(List<Cell> cells)
         {
             grid = new Cell[height][];
-            bool t = true;
+
+            // switch between 4 and 5 balls row
+            bool isLargeRow = true;
             for (int i = 0; i < height; i++)
             {
-                if (t)
+                if (isLargeRow)
                     grid[i] = new Cell[5];
                 else
                     grid[i] = new Cell[4];
 
-                t = !t;
+                isLargeRow = !isLargeRow;
             }
 
             for (int i = 0; i  < cells.Count; ++i)

@@ -20,7 +20,6 @@ namespace AppAdvisory.Item {
 
 		private Image panel;
 
-
 		void Awake () {
 			panel = GetComponent<Image> ();
 		}

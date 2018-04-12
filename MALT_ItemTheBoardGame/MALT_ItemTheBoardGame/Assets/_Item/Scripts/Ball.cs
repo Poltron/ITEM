@@ -21,8 +21,18 @@ namespace AppAdvisory.Item
 {
 	public class Ball : MonoBehaviour 
 	{
-		public BallColor color;
+        [SerializeField]
+		private BallColor color;
 
+        public BallColor Color { get { return color; } }
+
+        [SerializeField]
+        int score;
+
+        public int Score { get { return score; } }
+
+
+        [HideInInspector]
 		public Cell owner;
 
 		private Vector3 startPosition;
@@ -33,7 +43,7 @@ namespace AppAdvisory.Item
         [SerializeField]
         private AnimationCurve curve;
 
-        float timer;
+        float highlightCurveTimer;
 
 		void Awake()
         {
@@ -49,21 +59,20 @@ namespace AppAdvisory.Item
         {
             if (highlight.gameObject.activeInHierarchy)
             {
-                timer += Time.deltaTime;
-                float scale = curve.Evaluate(timer);
+                highlightCurveTimer += Time.deltaTime;
+                float scale = curve.Evaluate(highlightCurveTimer);
                 highlight.transform.localScale = new Vector3(scale, scale, 1);
             }
         }
 
         public void ShowHighlight () {
-            timer = 0;
+            highlightCurveTimer = 0;
             highlight.gameObject.SetActive(true);
 		}
 
 		public void HideHighlight() {
             highlight.gameObject.SetActive(false);
 		}
-
 		public void ResetPosition() {
 			//transform.position = startPosition;
 		}

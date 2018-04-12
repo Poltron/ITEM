@@ -27,7 +27,7 @@ namespace AppAdvisory.Item {
         private float timer;
 
         [SerializeField]
-        private SpriteRenderer board;
+        private SpriteRenderer boardOverlay;
 
         [SerializeField]
         private GameObject overlay;
@@ -49,12 +49,14 @@ namespace AppAdvisory.Item {
 		public GameObject youLost;
 		public GameObject byForfeit;
 		public GameObject restartButton;
+        public GameObject withPoints;
 
 		public GameObject inviteFriendButton;
 
+        private bool isPlayer1Turn;
+
         IEnumerator waitFor(float t, Action toDo)
         {
-            float timer = t;
             yield return new WaitForSeconds(t);
             toDo();
         }
@@ -72,9 +74,9 @@ namespace AppAdvisory.Item {
 			DisPlayWaitingForPlayerPanel (false);
 
 			DisplayEndGamePanel (false);
-			DisplayYouWon (false);
+			DisplayYouWon (false, 0);
 			DisplayByForfeit(false);
-			DisplayYouLost (false);
+			DisplayYouLost (false, 0);
 
 			DisplayPhase1Text (false);
 			DisplayPhase2Text (false);
@@ -118,15 +120,20 @@ namespace AppAdvisory.Item {
 			player2.gameObject.SetActive (isShown);
 		}
 
-        public void DisplayYouWon(bool isShown) {
+        public void DisplayYouWon(bool isShown, int points) {
 			youWon.SetActive (isShown);
-		}
+            withPoints.SetActive(true);
+            withPoints.GetComponent<Text>().text = "With " + points + " pts";
+        }
 
-		public void DisplayYouLost(bool isSown) {
-			youLost.SetActive (isSown);
-		}
+		public void DisplayYouLost(bool isShown, int points) {
+			youLost.SetActive (isShown);
+            withPoints.SetActive(true);
+            withPoints.GetComponent<Text>().text = "With " + points + " pts";
+        }
 
 		public void DisplayByForfeit(bool isShown) {
+            withPoints.SetActive(false);
 			byForfeit.SetActive(isShown);
 		}
 
@@ -173,6 +180,7 @@ namespace AppAdvisory.Item {
         {
             DisplayPlayer1Arrow(true);
             timer = 0;
+            isPlayer1Turn = true;
         }
 
         public void SetPlayer2Turn()
@@ -183,6 +191,7 @@ namespace AppAdvisory.Item {
         private void SetPlayer2TurnReal()
         {
             DisplayPlayer2Arrow(true);
+            isPlayer1Turn = false;
             timer = 0;
         }
 
@@ -196,17 +205,15 @@ namespace AppAdvisory.Item {
                 Image spriteR = overlay.GetComponent<Image>();
                 spriteR.color = new Color(spriteR.color.r, spriteR.color.g, spriteR.color.b, opacity);
 
-                TextMeshProUGUI yourTurnText = yourTurn.GetComponent<TextMeshProUGUI>();
-                yourTurnText.color = new Color(yourTurnText.color.r, yourTurnText.color.g, yourTurnText.color.b, opacity * 2);
+                if (timer >= turnAnimationDuration)
+                {
+                    boardOverlay.GetComponent<Animation>().Play();
 
-                TextMeshProUGUI opponentsTurnText = opponentsTurn.GetComponent<TextMeshProUGUI>();
-                opponentsTurnText.color = new Color(opponentsTurnText.color.r, opponentsTurnText.color.g, opponentsTurnText.color.b, opacity * 2);
-
-                TextMeshProUGUI phase1Tex = phase1Text.GetComponent<TextMeshProUGUI>();
-                phase1Tex.color = new Color(phase1Tex.color.r, phase1Tex.color.g, phase1Tex.color.b, opacity * 2);
-
-                TextMeshProUGUI phase2Tex = phase2Text.GetComponent<TextMeshProUGUI>();
-                phase2Tex.color = new Color(phase2Tex.color.r, phase2Tex.color.g, phase2Tex.color.b, opacity * 2);
+                    if (isPlayer1Turn)
+                        player1.GetComponent<Animation>().Play();
+                    else
+                        player2.GetComponent<Animation>().Play();
+                }
             }
             else
             {
@@ -246,8 +253,6 @@ namespace AppAdvisory.Item {
 			if (InviteFriend != null)
 				InviteFriend ();
 		}
-			
-
 	}
 
 }

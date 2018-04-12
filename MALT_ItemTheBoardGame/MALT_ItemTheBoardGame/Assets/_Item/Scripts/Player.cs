@@ -12,11 +12,11 @@ namespace AppAdvisory.Item {
 		public string picURL;
 
 
-		private Grid grid;
+		private ModelGrid grid;
 
 		public BallColor color {
 			get {
-				return ballPrefab.color;
+				return ballPrefab.Color;
 			}
 		}
 		public Ball ballPrefab;
@@ -89,7 +89,7 @@ namespace AppAdvisory.Item {
 			if (!ball)
 				return;
 
-			if (ball.color != color)
+			if (ball.Color != color)
 				return;
 
 			if (ballCount > 0) {
@@ -233,7 +233,7 @@ namespace AppAdvisory.Item {
 					if (!pickedBall)
 						return;
 
-					if (pickedBall.color != color)
+					if (pickedBall.Color != color)
 						return;
 
 					On_DragStartPhase1 (gesture, pickedBall);
@@ -422,10 +422,9 @@ namespace AppAdvisory.Item {
 			deltaPosition = position - gesture.pickedObject.transform.position;
 		}
 
-		public void SetGrid(Grid grid) {
+		public void SetGrid(ModelGrid grid) {
 			this.grid = grid;
 		}
-
 
 		void OnDestroy(){
 			EndTurn ();

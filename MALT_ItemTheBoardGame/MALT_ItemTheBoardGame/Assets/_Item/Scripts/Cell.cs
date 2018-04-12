@@ -21,21 +21,6 @@ namespace AppAdvisory.Item
 {
 	public class Cell : MonoBehaviour 
 	{
-		public bool HasBall() {
-			return ball != null;
-		}
-
-		public bool HasBall(BallColor color) {
-			if (!HasBall())
-				return false;
-
-			return ball.color == color;
-		}
-
-		public void SetModelPosition(int x, int y) {
-			this.x = x;
-			this.y = y;
-		}
 
 		public int x;
 		public int y;
@@ -44,15 +29,32 @@ namespace AppAdvisory.Item
 		public Ball ball;
 
 		private CircleCollider2D circleCollider;
-
-		public Color startColor;
-
+        
 		void Awake() {
 			circleCollider = GetComponent<CircleCollider2D> ();
 		}
 
 		public void SetCollider(bool isActive) {
 			circleCollider.enabled = isActive;
-		}
-	}
+        }
+
+        public bool HasBall()
+        {
+            return ball != null;
+        }
+
+        public bool HasBall(BallColor color)
+        {
+            if (!HasBall())
+                return false;
+
+            return ball.Color == color;
+        }
+
+        public void SetModelPosition(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+    }
 }

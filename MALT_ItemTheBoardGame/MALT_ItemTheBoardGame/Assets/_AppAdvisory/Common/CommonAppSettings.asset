@@ -17,7 +17,7 @@ MonoBehaviour:
   android_Bundle_ID: 
   shareTextBeforeUrl: 
   shareTextAfterUrl: 
-  openedTab: 1
+  openedTab: 0
   isWelcomeFoldoutOpened: 1
   isCommonFoldoutOpened: 1
   showAtStartup: 1

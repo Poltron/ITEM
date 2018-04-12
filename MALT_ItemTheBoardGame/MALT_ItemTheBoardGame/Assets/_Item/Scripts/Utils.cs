@@ -15,7 +15,7 @@ namespace AppAdvisory.Item {
 
 
 
-		public static bool CheckWin(Grid grid, Cell cell, bool mustHighlight = true)
+		public static bool CheckWin(ModelGrid grid, Cell cell, bool mustHighlight = true)
 		{
 			return (CheckWinDiagonalBottomLeftToTopRight(grid, cell, mustHighlight) ||
 				CheckWinDiagonalBottomRightToTopLeft(grid, cell, mustHighlight) ||
@@ -25,7 +25,7 @@ namespace AppAdvisory.Item {
 				CheckWinCrossDiagonal (grid, cell, mustHighlight));
 		}
 
-		public static bool CheckWinIA(Grid grid, Cell cell) 
+		public static bool CheckWinIA(ModelGrid grid, Cell cell) 
 		{
 			return (CheckWinDiagonalBottomLeftToTopRightIA(grid, cell) ||
 				CheckWinDiagonalBottomRightToTopLeftIA(grid, cell) ||
@@ -35,7 +35,7 @@ namespace AppAdvisory.Item {
 				CheckWinCrossDiagonalIA (grid, cell));
 		}
 			
-		public static List<Cell> GetHorizontalCells(Grid grid, Cell cell) 
+		public static List<Cell> GetHorizontalCells(ModelGrid grid, Cell cell) 
 		{
 			Cell neighbour;
 			List<Cell> horizontalCells = new List<Cell> ();
@@ -52,7 +52,7 @@ namespace AppAdvisory.Item {
 			return horizontalCells;
 		}
 
-		public static List<Cell> GetVerticalCells(Grid grid, Cell cell) 
+		public static List<Cell> GetVerticalCells(ModelGrid grid, Cell cell) 
 		{
 			Cell neighbour;
 			List<Cell> verticalCells = new List<Cell> ();
@@ -72,7 +72,7 @@ namespace AppAdvisory.Item {
 			return verticalCells;
 		}
 
-		public static List<Cell> GetCrossNormalCells(Grid grid, Cell cell) 
+		public static List<Cell> GetCrossNormalCells(ModelGrid grid, Cell cell) 
 		{
 			Cell neighbour;
 			List<Cell> crossNormalCells = new List<Cell> ();
@@ -108,7 +108,7 @@ namespace AppAdvisory.Item {
 			return crossNormalCells;
 		}
 
-		public static List<Cell> GetCrossDiagonalCells(Grid grid, Cell cell) 
+		public static List<Cell> GetCrossDiagonalCells(ModelGrid grid, Cell cell) 
 		{
 			Cell neighbour;
 			List<Cell> crossDiagonal = new List<Cell> ();
@@ -144,7 +144,7 @@ namespace AppAdvisory.Item {
 			return crossDiagonal;
 		}
 
-		public static List<Cell> GetDiagonalBottomRightToTopLeftCells(Grid grid, Cell cell) {
+		public static List<Cell> GetDiagonalBottomRightToTopLeftCells(ModelGrid grid, Cell cell) {
 			Cell neighbour;
 			List<Cell> diagonalCells = new List<Cell> ();
 
@@ -200,7 +200,7 @@ namespace AppAdvisory.Item {
 		}
 
 
-		public static List<Cell> GetDiagonalBottomLeftToTopRightCells(Grid grid, Cell cell) {
+		public static List<Cell> GetDiagonalBottomLeftToTopRightCells(ModelGrid grid, Cell cell) {
 			Cell neighbour;
 			List<Cell> diagonalCells = new List<Cell> ();
 			int offset = cell.y % 2;
@@ -254,7 +254,7 @@ namespace AppAdvisory.Item {
 			return diagonalCells;
 		}
 
-		public static int GetCellToWinCountDiagonal(Grid grid, List<Cell> cells, BallColor color = BallColor.Black) {
+		public static int GetCellToWinCountDiagonal(ModelGrid grid, List<Cell> cells, BallColor color = BallColor.Black) {
 			int count = 0;
 
 			if (cells.Count < 5)
@@ -277,7 +277,7 @@ namespace AppAdvisory.Item {
 			return count;
 		}
 
-		public static int GetCellToWinCount(Grid grid, List<Cell> cells, BallColor color = BallColor.Black) {
+		public static int GetCellToWinCount(ModelGrid grid, List<Cell> cells, BallColor color = BallColor.Black) {
 			int count = 0;
 
 			if (cells.Count < 5)
@@ -304,7 +304,7 @@ namespace AppAdvisory.Item {
 		}
 
 
-		private static bool CheckWinHorizontal(Grid grid, Cell cell, bool mustHighlight = true)
+		private static bool CheckWinHorizontal(ModelGrid grid, Cell cell, bool mustHighlight = true)
 		{
 			Cell neighbour;
 
@@ -312,7 +312,7 @@ namespace AppAdvisory.Item {
 			if (!cell.ball)
 				color = BallColor.White;
 			else 
-				color = cell.ball.color;
+				color = cell.ball.Color;
 			
 			int count = 1;
 
@@ -352,20 +352,20 @@ namespace AppAdvisory.Item {
 					break;
 			}
 
-			if(count >= nBallToAlignHorizontally && mustHighlight)
-				HighlighCells (patternCells, Color.red);
+			/*if(count >= nBallToAlignHorizontally && mustHighlight)
+				HighlighCells (patternCells, Color.red);*/
 
 			return count >= nBallToAlignHorizontally;
 		}
 			
 
-		private static bool CheckWinDiagonalBottomLeftToTopRight(Grid grid, Cell cell, bool mustHighlight = true) {
+		private static bool CheckWinDiagonalBottomLeftToTopRight(ModelGrid grid, Cell cell, bool mustHighlight = true) {
 			Cell neighbour;
 			BallColor color;
 			if (!cell.ball)
 				color = BallColor.White;
 			else 
-				color = cell.ball.color;
+				color = cell.ball.Color;
 			int count = 1;
 
 			List<Cell> patternCells = new List<Cell> ();
@@ -435,20 +435,20 @@ namespace AppAdvisory.Item {
 
 			}
 				
-			if(count >= nBallToAlignVertically && mustHighlight)
-				HighlighCells (patternCells, Color.red);
+			/*if(count >= nBallToAlignVertically && mustHighlight)
+				HighlighCells (patternCells, Color.red);*/
 
 
 			return count >= nBallToAlignVertically;
 		}
 			
-		private static bool CheckWinDiagonalBottomLeftToTopRightIA(Grid grid, Cell cell) {
+		private static bool CheckWinDiagonalBottomLeftToTopRightIA(ModelGrid grid, Cell cell) {
 			Cell neighbour;
 			BallColor color;
 			if (!cell.ball)
 				color = BallColor.Black;
 			else 
-				color = cell.ball.color;
+				color = cell.ball.Color;
 			int count = 1;
 
 			List<Cell> patternCells = new List<Cell> ();
@@ -518,21 +518,21 @@ namespace AppAdvisory.Item {
 
 			}
 
-			if(count >= nBallToAlignVertically)
-				HighlighCells (patternCells, Color.red);
+			/*if(count >= nBallToAlignVertically)
+				HighlighCells (patternCells, Color.red);*/
 
 
 			return count >= nBallToAlignVertically;
 		}
 
 
-		private static bool CheckWinDiagonalBottomRightToTopLeft(Grid grid, Cell cell, bool mustHighlight = true) {
+		private static bool CheckWinDiagonalBottomRightToTopLeft(ModelGrid grid, Cell cell, bool mustHighlight = true) {
 			Cell neighbour;
 			BallColor color;
 			if (!cell.ball)
 				color = BallColor.White;
 			else 
-				color = cell.ball.color;
+				color = cell.ball.Color;
 			int count = 1;
 
 			List<Cell> patternCells = new List<Cell> ();
@@ -605,20 +605,20 @@ namespace AppAdvisory.Item {
 
 			}
 
-			if(count >= nBallToAlignHorizontally && mustHighlight)
-				HighlighCells (patternCells, Color.red);
+			/*if(count >= nBallToAlignHorizontally && mustHighlight)
+				HighlighCells (patternCells, Color.red);*/
 
 			return count >= nBallToAlignHorizontally;
 
 		}
 
-		private static bool CheckWinDiagonalBottomRightToTopLeftIA(Grid grid, Cell cell) {
+		private static bool CheckWinDiagonalBottomRightToTopLeftIA(ModelGrid grid, Cell cell) {
 			Cell neighbour;
 			BallColor color;
 			if (!cell.ball)
 				color = BallColor.Black;
 			else 
-				color = cell.ball.color;
+				color = cell.ball.Color;
 			int count = 1;
 
 			List<Cell> patternCells = new List<Cell> ();
@@ -691,21 +691,21 @@ namespace AppAdvisory.Item {
 
 			}
 
-			if(count >= nBallToAlignHorizontally)
-				HighlighCells (patternCells, Color.red);
+			/*if(count >= nBallToAlignHorizontally)
+				HighlighCells (patternCells, Color.red);*/
 
 			return count >= nBallToAlignHorizontally;
 
 		}
 
-		private static bool CheckWinVertical(Grid grid, Cell cell, bool mustHighlight = true)
+		private static bool CheckWinVertical(ModelGrid grid, Cell cell, bool mustHighlight = true)
 		{
 			Cell neighbour;
 			BallColor color;
 			if (!cell.ball)
 				color = BallColor.White;
 			else 
-				color = cell.ball.color;
+				color = cell.ball.Color;
 			int count = 1;
 
 			List<Cell> patternCells = new List<Cell> ();
@@ -745,14 +745,14 @@ namespace AppAdvisory.Item {
 					break;
 			}
 
-			if(count >= nBallToAlignVertically && mustHighlight)
-				HighlighCells (patternCells, Color.red);
+			/*if(count >= nBallToAlignVertically && mustHighlight)
+				HighlighCells (patternCells, Color.red);*/
 
 
 			return count >= nBallToAlignVertically;
 		}
 			
-		private static bool CheckWinHorizontalIA(Grid grid, Cell cell) {
+		private static bool CheckWinHorizontalIA(ModelGrid grid, Cell cell) {
 			Cell neighbour;
 
 			BallColor color = BallColor.Black;
@@ -793,13 +793,13 @@ namespace AppAdvisory.Item {
 					break;
 			}
 
-			if(count >= nBallToAlignHorizontally)
-				HighlighCells (patternCells, Color.red);
+			/*if(count >= nBallToAlignHorizontally)
+				HighlighCells (patternCells, Color.red);*/
 
 			return count >= nBallToAlignHorizontally;
 		}
 			
-		private static bool CheckWinVerticalIA(Grid grid, Cell cell)
+		private static bool CheckWinVerticalIA(ModelGrid grid, Cell cell)
 		{
 			Cell neighbour;
 			BallColor color = BallColor.Black;
@@ -842,14 +842,14 @@ namespace AppAdvisory.Item {
 					break;
 			}
 
-			if(count >= nBallToAlignVertically)
-				HighlighCells (patternCells, Color.red);
+			/*if(count >= nBallToAlignVertically)
+				HighlighCells (patternCells, Color.red);*/
 
 
 			return count >= nBallToAlignVertically;
 		}
 
-		private static bool CheckWinCrossNormalIA(Grid grid, Cell cell) {
+		private static bool CheckWinCrossNormalIA(ModelGrid grid, Cell cell) {
 			return (CheckCrossNormalIA (grid, cell) || 
 				CheckCrossNormalIA (grid, grid.GetCellFromModel (cell.x - 1, cell.y)) || 
 				CheckCrossNormalIA (grid, grid.GetCellFromModel (cell.x + 1, cell.y)) || 
@@ -857,7 +857,7 @@ namespace AppAdvisory.Item {
 				CheckCrossNormalIA (grid, grid.GetCellFromModel (cell.x, cell.y - 2)));
 		}
 
-		private static bool CheckWinCrossNormal(Grid grid, Cell cell,  bool mustHighlight = true) {
+		private static bool CheckWinCrossNormal(ModelGrid grid, Cell cell,  bool mustHighlight = true) {
 			return (CheckCrossNormal (grid, cell, mustHighlight) || 
 				CheckCrossNormal (grid, grid.GetCellFromModel (cell.x - 1, cell.y), mustHighlight) || 
 				CheckCrossNormal (grid, grid.GetCellFromModel (cell.x + 1, cell.y), mustHighlight) || 
@@ -865,7 +865,7 @@ namespace AppAdvisory.Item {
 				CheckCrossNormal (grid, grid.GetCellFromModel (cell.x, cell.y - 2), mustHighlight));
 		}
 
-		private static bool CheckWinCrossDiagonal(Grid grid, Cell cell,  bool mustHighlight = true) {
+		private static bool CheckWinCrossDiagonal(ModelGrid grid, Cell cell,  bool mustHighlight = true) {
 			int offset = cell.y % 2; 
 
 			return (CheckCrossDiagonal (grid, cell, mustHighlight) || 
@@ -875,7 +875,7 @@ namespace AppAdvisory.Item {
 				CheckCrossDiagonal(grid, grid.GetCellFromModel(cell.x + offset, cell.y - 1), mustHighlight));
 		}
 
-		private static bool CheckWinCrossDiagonalIA(Grid grid, Cell cell) {
+		private static bool CheckWinCrossDiagonalIA(ModelGrid grid, Cell cell) {
 			int offset = cell.y % 2; 
 
 			return (CheckCrossDiagonalIA (grid, cell) || 
@@ -886,7 +886,7 @@ namespace AppAdvisory.Item {
 		}
 
 			
-		private static bool CheckCrossNormal(Grid grid, Cell cell, bool mustHighlight = true)
+		private static bool CheckCrossNormal(ModelGrid grid, Cell cell, bool mustHighlight = true)
 		{
 			if (!cell)
 				return false;
@@ -900,7 +900,7 @@ namespace AppAdvisory.Item {
 			if (!cell.ball)
 				color = BallColor.White;
 			else 
-				color = cell.ball.color;
+				color = cell.ball.Color;
 
 			List<Cell> patternCells = new List<Cell> ();
 			patternCells.Add (cell);
@@ -953,14 +953,14 @@ namespace AppAdvisory.Item {
 
 			patternCells.Add (neighbour);
 
-			if(mustHighlight)
-				HighlighCells (patternCells, Color.red);
+			/*if(mustHighlight)
+				HighlighCells (patternCells, Color.red);*/
 
 			return true;
 		}
 			
 
-		private static bool CheckCrossNormalIA(Grid grid, Cell cell) {
+		private static bool CheckCrossNormalIA(ModelGrid grid, Cell cell) {
 			if (!cell)
 				return false;
 
@@ -973,7 +973,7 @@ namespace AppAdvisory.Item {
 			if (!cell.ball)
 				color = BallColor.White;
 			else 
-				color = cell.ball.color;
+				color = cell.ball.Color;
 
 			List<Cell> patternCells = new List<Cell> ();
 			patternCells.Add (cell);
@@ -1024,12 +1024,12 @@ namespace AppAdvisory.Item {
 
 			patternCells.Add (neighbour);
 
-			HighlighCells (patternCells, Color.red);
+			//HighlighCells (patternCells, Color.red);
 
 			return true;
 		}
 
-		private static bool CheckCrossDiagonal(Grid grid, Cell cell, bool mustHighlight = true)
+		private static bool CheckCrossDiagonal(ModelGrid grid, Cell cell, bool mustHighlight = true)
 		{
 			if (!cell)
 				return false;
@@ -1043,7 +1043,7 @@ namespace AppAdvisory.Item {
 			if (!cell.ball)
 				color = BallColor.White;
 			else 
-				color = cell.ball.color;
+				color = cell.ball.Color;
 			int offset = cell.y % 2; 
 
 			List<Cell> patternCells = new List<Cell> ();
@@ -1100,13 +1100,13 @@ namespace AppAdvisory.Item {
 			
 			patternCells.Add (neighbour);
 
-			if(mustHighlight)
-				HighlighCells (patternCells, Color.red);
+			/*if(mustHighlight)
+				HighlighCells (patternCells, Color.red);*/
 
 			return true;
 		}
 
-		private static bool CheckCrossDiagonalIA(Grid grid, Cell cell)
+		private static bool CheckCrossDiagonalIA(ModelGrid grid, Cell cell)
 		{
 			if (!cell)
 				return false;
@@ -1120,7 +1120,7 @@ namespace AppAdvisory.Item {
 			if (!cell.ball)
 				color = BallColor.White;
 			else 
-				color = cell.ball.color;
+				color = cell.ball.Color;
 			int offset = cell.y % 2; 
 
 			List<Cell> patternCells = new List<Cell> ();
@@ -1176,7 +1176,7 @@ namespace AppAdvisory.Item {
 
 			patternCells.Add (neighbour);
 
-			HighlighCells (patternCells, Color.red);
+			//HighlighCells (patternCells, Color.red);
 
 			return true;
 		}
@@ -1184,30 +1184,12 @@ namespace AppAdvisory.Item {
 		#endregion
 
 		#region CELL COLOR
+        
 
-		public static void ResetCellsColor(Grid grid) {
-			SpriteRenderer sr;
-			float delay = 0;
-
+		public static void ResetCells(ModelGrid grid) {
 			foreach (Cell[] cells in grid.grid) {
 				foreach(Cell cell in cells) {
 					if (cell) {
-						sr = cell.GetComponent<SpriteRenderer> ();
-						if (sr.color != cell.startColor) {
-							HighlighCell (cell, cell.startColor, delay);	
-							delay += 0.025f;
-						}
-					}
-				}
-			}
-		}
-
-
-		public static void ResetCells(Grid grid) {
-			foreach (Cell[] cells in grid.grid) {
-				foreach(Cell cell in cells) {
-					if (cell) {
-						cell.GetComponent<SpriteRenderer> ().color = cell.startColor;
 						if (cell.ball) {
 							UnityEngine.Object.Destroy (cell.ball.gameObject);
 							cell.ball = null;
@@ -1217,7 +1199,7 @@ namespace AppAdvisory.Item {
 			}
 		}
 
-		public static void HighlighCells(List<Cell> cells, Color color) 
+		/*public static void HighlighCells(List<Cell> cells, Color color) 
 		{
 			float delay = 0;
 			foreach (Cell cell in cells)
@@ -1235,7 +1217,7 @@ namespace AppAdvisory.Item {
 				if(cell.ball != null)
 					cell.ball.transform.localScale *= 2.5f;
 			}
-		}
+		}*/
 		#endregion
 
 		public static void Place(this Ball ball, Cell pickedCell) {
@@ -1247,6 +1229,15 @@ namespace AppAdvisory.Item {
 
 		public static void DOPlace(this Ball ball, Cell pickedCell) {
 			pickedCell.ball = ball;
+
+            Move move = new Move();
+            move.fromX = -1;
+            move.fromY = -1;
+            move.toX = pickedCell.y;
+            move.toY = pickedCell.x;
+            move.color = (CellColor)ball.Color;
+
+            GameObject.FindObjectOfType<GridManager>().OptiGrid.DoMove(move);
 
 			ball.transform.DOMove (pickedCell.transform.position, 0.5f).OnComplete (() =>  {
 				ball.transform.position = pickedCell.transform.position;
