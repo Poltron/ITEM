@@ -24,8 +24,7 @@ namespace AppAdvisory.Item
 
 		public int x;
 		public int y;
-
-		[HideInInspector]
+        
 		public Ball ball;
 
 		private CircleCollider2D circleCollider;

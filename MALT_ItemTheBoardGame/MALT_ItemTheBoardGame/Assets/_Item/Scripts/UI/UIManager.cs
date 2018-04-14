@@ -123,13 +123,13 @@ namespace AppAdvisory.Item {
         public void DisplayYouWon(bool isShown, int points) {
 			youWon.SetActive (isShown);
             withPoints.SetActive(true);
-            withPoints.GetComponent<Text>().text = "With " + points + " pts";
+            withPoints.GetComponentInChildren<TextMeshProUGUI>().text = "With " + points + " pts";
         }
 
 		public void DisplayYouLost(bool isShown, int points) {
 			youLost.SetActive (isShown);
             withPoints.SetActive(true);
-            withPoints.GetComponent<Text>().text = "With " + points + " pts";
+            withPoints.GetComponentInChildren<TextMeshProUGUI>().text = "With " + points + " pts";
         }
 
 		public void DisplayByForfeit(bool isShown) {

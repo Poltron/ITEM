@@ -30,9 +30,7 @@ namespace AppAdvisory.Item
         int score;
 
         public int Score { get { return score; } }
-
-
-        [HideInInspector]
+        
 		public Cell owner;
 
 		private Vector3 startPosition;

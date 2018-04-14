@@ -155,7 +155,7 @@ namespace AppAdvisory.Item {
         {
 			Player player = Instantiate (playerPrefab);
 			player.ballPrefab = color == BallColor.White ? whiteBallPrefab : blackBallPrefab;
-			player.SetGrid (modelGrid);
+			player.SetGrid (modelGrid, optiGrid);
 			player.OnPhase1TurnFinished += Phase1TurnFinishedPlayer;
 			player.OnPhase2TurnFinished += Phase2TurnFinishedPlayer;
 			return player;
@@ -222,9 +222,16 @@ namespace AppAdvisory.Item {
 
         public void PlayAIMovePhase2(Move move)
         {
+            //Debug.Log("move from : " + move.fromX + " ; " + move.fromY);
+            //Debug.Log("move to : " + move.toX + " ; " + move.toY);
+
             Cell cellFrom = modelGrid.GetCellFromModel(move.fromY, move.fromX);
             Cell cellTo = modelGrid.GetCellFromModel(move.toY, move.toX);
 
+            //Debug.Log("cellFrom" + cellFrom.x + " / " + cellFrom.y);
+            //Debug.Log("cellTo" + cellTo.x + " / " + cellTo.y);
+
+            OptiGrid.DoMove(move);
             player.ChangeBallPosition(cellFrom, cellTo);
             if (Utils.CheckWinIA(modelGrid, cellTo))
             {

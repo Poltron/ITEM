@@ -12,9 +12,10 @@ namespace AppAdvisory.Item {
 		public string picURL;
 
 
-		private ModelGrid grid;
+		private ModelGrid modelGrid;
+        private OptimizedGrid optiGrid;
 
-		public BallColor color {
+        public BallColor color {
 			get {
 				return ballPrefab.Color;
 			}
@@ -191,8 +192,6 @@ namespace AppAdvisory.Item {
 			if (!gesture.pickedObject)
 				return;
 
-            //Debug.Log(gesture.pickedObject.name);
-
 			Cell pickedCell = gesture.pickedObject.GetComponent<Cell> (); 
 
 			Ball pickedBall = gesture.pickedObject.GetComponent<Ball> ();
@@ -270,7 +269,7 @@ namespace AppAdvisory.Item {
 
 			Cell destinationCell;
 
-			List<Cell> neighbours = grid.GetCellNeighbours (pickedCell);
+			List<Cell> neighbours = modelGrid.GetCellNeighbours (pickedCell);
 			currentCellsToMove = new List<Cell> ();
 			currentCellsToJump = new List<Cell> ();
 			currentCell = pickedCell;
@@ -280,7 +279,7 @@ namespace AppAdvisory.Item {
 					if(!hasAlreadyJumpedOnce)
 						currentCellsToMove.Add (cell);
 				} else {
-					destinationCell = grid.GetCellFromDirection (pickedCell, cell);
+					destinationCell = modelGrid.GetCellFromDirection (pickedCell, cell);
 					if (destinationCell) {
 						if (!destinationCell.HasBall ())
 							currentCellsToJump.Add (destinationCell);
@@ -318,12 +317,22 @@ namespace AppAdvisory.Item {
 //		}
 
 		public void ChangeBallPosition(Cell firstCell, Cell secondCell) {
-			Ball ball = firstCell.ball;
+
+            Ball ball = firstCell.ball;
 
 			secondCell.ball = ball;
 			firstCell.ball = null;
 
 			ball.owner = secondCell;
+            
+            Move move = new Move();
+            move.fromX = firstCell.y;
+            move.fromY = firstCell.x;
+            move.toX = secondCell.y;
+            move.toY = secondCell.x;
+            move.color = (CellColor)ball.Color;
+
+            optiGrid.DoMove(move);
 
 			isTweening = true;
 			ball.transform.DOMove (secondCell.transform.position, 1f).OnComplete (() => {
@@ -408,7 +417,7 @@ namespace AppAdvisory.Item {
 			}
 				
 
-			Utils.CheckWin (grid, pickedCell);
+			Utils.CheckWin (modelGrid, pickedCell);
 		}
 
 		void RegisterBall(Gesture gesture, Ball ball)  {
@@ -422,8 +431,9 @@ namespace AppAdvisory.Item {
 			deltaPosition = position - gesture.pickedObject.transform.position;
 		}
 
-		public void SetGrid(ModelGrid grid) {
-			this.grid = grid;
+		public void SetGrid(ModelGrid modelGrid, OptimizedGrid optiGrid) {
+			this.modelGrid = modelGrid;
+            this.optiGrid = optiGrid;
 		}
 
 		void OnDestroy(){

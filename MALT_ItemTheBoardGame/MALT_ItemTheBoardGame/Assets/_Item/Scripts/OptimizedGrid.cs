@@ -62,7 +62,7 @@ namespace AppAdvisory.Item
         {
             cells = new CellColor[height][];
             bool isSmallRow = false;
-
+            
             for (int i = 0; i < height; ++i)
             {
                 int actualWidth = width;
@@ -73,7 +73,7 @@ namespace AppAdvisory.Item
 
                 for (int j = 0; j < actualWidth; ++j)
                 {
-                    if (height == 4 && width == 2)
+                    if (i == 4 && j == 2)
                     {
                         cells[i][j] = CellColor.NOT_A_CELL;
                         continue;
@@ -227,7 +227,6 @@ namespace AppAdvisory.Item
             bool isWinning = FindWinningPattern(patternData.horizontalLinePatterns, out winningCells);
             if (isWinning)
             {
-                Debug.Log("win by horizontallinepattern");
                 return true;
             }
 
@@ -235,7 +234,6 @@ namespace AppAdvisory.Item
             isWinning = FindWinningPattern(patternData.verticalLinePatterns, out winningCells);
             if (isWinning)
             {
-                Debug.Log("win by verticalLinePatterns");
                 return true;
             }
 
@@ -243,7 +241,6 @@ namespace AppAdvisory.Item
             isWinning = FindWinningPattern(patternData.diagonalLinePatterns, out winningCells);
             if (isWinning)
             {
-                Debug.Log("win by diagonalLinePatterns");
                 return true;
             }
 
@@ -251,7 +248,6 @@ namespace AppAdvisory.Item
             isWinning = FindWinningPattern(patternData.otherDiagonalLinePatterns, out winningCells);
             if (isWinning)
             {
-                Debug.Log("win by otherDiagonalLinePatterns");
                 return true;
             }
 
@@ -259,7 +255,6 @@ namespace AppAdvisory.Item
             isWinning = FindWinningPattern(patternData.horizontalCrossPatterns, out winningCells);
             if (isWinning)
             {
-                Debug.Log("win by horizontalCrossPatterns");
                 return true;
             }
 
@@ -267,11 +262,8 @@ namespace AppAdvisory.Item
             isWinning = FindWinningPattern(patternData.diagonalCrossPatterns, out winningCells);
             if (isWinning)
             {
-                Debug.Log("win by diagonalCrossPatterns");
                 return true;
             }
-
-            Debug.Log("no win pattern");
 
             return false;
         }
@@ -300,8 +292,6 @@ namespace AppAdvisory.Item
                     }
                 }
 
-                Debug.Log(">> " + blackCount + " // " + whiteCount + " <<");
-
                 if (blackCount == 5 || whiteCount == 5)
                 {
                     winningCells.Add(new Vector2(patterns[i].positions[0].X, patterns[i].positions[0].Y));
@@ -317,10 +307,12 @@ namespace AppAdvisory.Item
             return false;
         }
 
-        public bool WillPlayerWinNextTurn()
+        public bool CanColorWin(BallColor color)
         {
+
             return false;
         }
+
 
         /*public BallColor IsSomeoneWinning()
         {
