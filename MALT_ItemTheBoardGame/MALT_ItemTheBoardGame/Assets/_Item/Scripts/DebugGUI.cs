@@ -9,7 +9,9 @@ namespace AppAdvisory.Item
     {
         BLACKBALLSLEFT,
         WHITEBALLSLEFT,
-        OPTIGRID
+        AIPOSITIONTESTNB,
+        AIPOSITIONTESTTIME,
+        OPTIGRID,
     };
 
     public class DebugGUI : MonoBehaviour {
@@ -39,6 +41,16 @@ namespace AppAdvisory.Item
                     if (gridManager.OptiGrid != null)
                         _text.text = gridManager.OptiGrid.WhiteBallsLeft.ToString();
                     break;
+                case DEBUG_VALUE.AIPOSITIONTESTNB:
+                    if (gridManager.AIBehaviour != null)
+                        _text.text = gridManager.AIBehaviour.positionCount.ToString();
+                    break;
+                case DEBUG_VALUE.AIPOSITIONTESTTIME:
+                    if (gridManager.AIBehaviour != null)
+                    {
+                        _text.text = gridManager.AIBehaviour.timeSpent.ToString("0.0000") + "s";
+                    }
+                    break;
                 case DEBUG_VALUE.OPTIGRID:
                     string str = GetLetterFromOptiGrid(8, 0) + "__" + GetLetterFromOptiGrid(8, 1) + "__" + GetLetterFromOptiGrid(8, 2) + "__" + GetLetterFromOptiGrid(8, 3) + "__" + GetLetterFromOptiGrid(8, 4)
                                 + "\n__" + GetLetterFromOptiGrid(7, 0) + "__" + GetLetterFromOptiGrid(7, 1) + "__" + GetLetterFromOptiGrid(7, 2) + "__" + GetLetterFromOptiGrid(7, 3) + "__\n"
@@ -50,7 +62,6 @@ namespace AppAdvisory.Item
                                 + "\n__" + GetLetterFromOptiGrid(1, 0) + "__" + GetLetterFromOptiGrid(1, 1) + "__" + GetLetterFromOptiGrid(1, 2) + "__" + GetLetterFromOptiGrid(1, 3) + "__\n"
                                 + GetLetterFromOptiGrid(0, 0) + "__" + GetLetterFromOptiGrid(0, 1) + "__" + GetLetterFromOptiGrid(0, 2) + "__" + GetLetterFromOptiGrid(0, 3) + "__" + GetLetterFromOptiGrid(0, 4);
 
-                    Debug.Log(str);
                     _text.text = str;
                     break;
             }

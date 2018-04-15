@@ -33,19 +33,19 @@ namespace AppAdvisory.Item
         
 		public Cell owner;
 
-		private Vector3 startPosition;
+		//private Vector3 startPosition;
 
         [SerializeField]
 		private SpriteRenderer highlight;
 
         [SerializeField]
-        private AnimationCurve curve;
+        private AnimationCurve highlightCurve;
 
         float highlightCurveTimer;
 
 		void Awake()
         {
-			SetStartPosition();
+			//SetStartPosition();
 		}
 
         private void Start()
@@ -58,7 +58,7 @@ namespace AppAdvisory.Item
             if (highlight.gameObject.activeInHierarchy)
             {
                 highlightCurveTimer += Time.deltaTime;
-                float scale = curve.Evaluate(highlightCurveTimer);
+                float scale = highlightCurve.Evaluate(highlightCurveTimer);
                 highlight.transform.localScale = new Vector3(scale, scale, 1);
             }
         }
@@ -76,7 +76,7 @@ namespace AppAdvisory.Item
 		}
 
 		public void SetStartPosition() {
-			startPosition = transform.position;
+			//startPosition = transform.position;
 		}
 	}
 }

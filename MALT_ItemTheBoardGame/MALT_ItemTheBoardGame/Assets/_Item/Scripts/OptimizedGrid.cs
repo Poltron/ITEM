@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -28,6 +28,14 @@ namespace AppAdvisory.Item
             y = _y;
             color = _color;
         }
+    }
+
+    public enum PatternType : byte
+    {
+        AALine,
+        DiagonalLine,
+        AACross,
+        DiagonalCross
     }
 
     public class OptimizedGrid
@@ -223,45 +231,89 @@ namespace AppAdvisory.Item
         {
             winningCells = new List<Vector2>();
 
-            Debug.Log(patternData.horizontalLinePatterns.Length);
             bool isWinning = FindWinningPattern(patternData.horizontalLinePatterns, out winningCells);
             if (isWinning)
             {
                 return true;
             }
 
-            Debug.Log(patternData.verticalLinePatterns.Length);
             isWinning = FindWinningPattern(patternData.verticalLinePatterns, out winningCells);
             if (isWinning)
             {
                 return true;
             }
 
-            Debug.Log(patternData.diagonalLinePatterns.Length);
             isWinning = FindWinningPattern(patternData.diagonalLinePatterns, out winningCells);
             if (isWinning)
             {
                 return true;
             }
 
-            Debug.Log(patternData.otherDiagonalLinePatterns.Length);
             isWinning = FindWinningPattern(patternData.otherDiagonalLinePatterns, out winningCells);
             if (isWinning)
             {
                 return true;
             }
 
-            Debug.Log(patternData.horizontalCrossPatterns.Length);
             isWinning = FindWinningPattern(patternData.horizontalCrossPatterns, out winningCells);
             if (isWinning)
             {
                 return true;
             }
 
-            Debug.Log(patternData.diagonalCrossPatterns.Length);
             isWinning = FindWinningPattern(patternData.diagonalCrossPatterns, out winningCells);
             if (isWinning)
             {
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool GetWinningPatternAndType(out List<Vector2> winningCells, out PatternType patternType)
+        {
+            winningCells = new List<Vector2>();
+            patternType = PatternType.AALine;
+
+            bool isWinning = FindWinningPattern(patternData.horizontalLinePatterns, out winningCells);
+            if (isWinning)
+            {
+                patternType = PatternType.AALine;
+                return true;
+            }
+
+            isWinning = FindWinningPattern(patternData.verticalLinePatterns, out winningCells);
+            if (isWinning)
+            {
+                patternType = PatternType.AALine;
+                return true;
+            }
+
+            isWinning = FindWinningPattern(patternData.diagonalLinePatterns, out winningCells);
+            if (isWinning)
+            {
+                patternType = PatternType.DiagonalLine;
+                return true;
+            }
+
+            isWinning = FindWinningPattern(patternData.otherDiagonalLinePatterns, out winningCells);
+            if (isWinning)
+            {
+                patternType = PatternType.DiagonalLine;
+                return true;
+            }
+
+            isWinning = FindWinningPattern(patternData.horizontalCrossPatterns, out winningCells);
+            if (isWinning)
+            {
+                patternType = PatternType.AACross;
+                return true;
+            }
+
+            isWinning = FindWinningPattern(patternData.diagonalCrossPatterns, out winningCells);
+            if (isWinning)
+            {
+                patternType = PatternType.DiagonalCross;
                 return true;
             }
 
@@ -307,12 +359,131 @@ namespace AppAdvisory.Item
             return false;
         }
 
-        public bool CanColorWin(BallColor color)
+        private bool FindCellPattern(EvaluationPattern[] patterns, out List<Vector2> cellsPattern, int blackNeeded, int whiteNeeded, Func<int, int, int, int, bool> condition)
         {
+            int blackCount = 0;
+            int whiteCount = 0;
+            cellsPattern = new List<Vector2>();
+
+            for (int i = 0; i < patterns.Length; ++i)
+            {
+                blackCount = 0;
+                whiteCount = 0;
+
+                for (int j = 0; j < patterns[i].positions.Length; ++j)
+                {
+                    IntVec2 pos = patterns[i].positions[j];
+                    if (cells[pos.X][pos.Y] == CellColor.Black)
+                    {
+                        blackCount++;
+                    }
+                    else if (cells[pos.X][pos.Y] == CellColor.White)
+                    {
+                        whiteCount++;
+                    }
+                }
+
+                if (condition(blackCount, blackNeeded, whiteCount, whiteNeeded))
+                {
+                    cellsPattern.Add(new Vector2(patterns[i].positions[0].X, patterns[i].positions[0].Y));
+                    cellsPattern.Add(new Vector2(patterns[i].positions[1].X, patterns[i].positions[1].Y));
+                    cellsPattern.Add(new Vector2(patterns[i].positions[2].X, patterns[i].positions[2].Y));
+                    cellsPattern.Add(new Vector2(patterns[i].positions[3].X, patterns[i].positions[3].Y));
+                    cellsPattern.Add(new Vector2(patterns[i].positions[4].X, patterns[i].positions[4].Y));
+                    
+                    return true;
+                }
+            }
 
             return false;
         }
 
+        public bool CanColorWin(BallColor color, out List<Vector2> cells)
+        {
+            if (FindCellPattern(patternData.horizontalLinePatterns, out cells, 4, 0, CompareBalls))
+            {
+                return true;
+            }
+
+            if (FindCellPattern(patternData.verticalLinePatterns, out cells, 4, 0, CompareBalls))
+            {
+                return true;
+            }
+
+            if (FindCellPattern(patternData.diagonalLinePatterns, out cells, 4, 0, CompareBalls))
+            {
+                return true;
+            }
+
+            if (FindCellPattern(patternData.otherDiagonalLinePatterns, out cells, 4, 0, CompareBalls))
+            {
+                return true;
+            }
+
+            if (FindCellPattern(patternData.horizontalCrossPatterns, out cells, 4, 0, CompareBalls))
+            {
+                return true;
+            }
+
+            if (FindCellPattern(patternData.diagonalCrossPatterns, out cells, 4, 0, CompareBalls))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool CanColorMoveToWin(BallColor color, List<Vector2> patternCells, out Move bestMove)
+        {
+            bestMove = new Move();
+
+            List<Move> potentialMove = new List<Move>();
+            List<Move> moves = GetAvailableMoves((CellColor)color);
+
+            Vector2 emptyCell = new Vector2();
+
+            foreach(Vector2 cell in patternCells)
+            {
+                if (cells[(int)cell.x][(int)cell.y] == CellColor.None)
+                    emptyCell = cell;
+            }
+
+            foreach (Move move in moves)
+            {
+                bool skipMove = false;
+                foreach(Vector2 cell in patternCells)
+                {
+                    if ( !(move.toX == emptyCell.x && move.toY == emptyCell.y) || (move.fromX == cell.x && move.fromY == cell.y) )
+                    {
+                        skipMove = true;
+                        break;
+                    }
+                }
+
+                if (skipMove)
+                    continue;
+
+                potentialMove.Add(move);
+            }
+
+            if (potentialMove.Count > 0)
+            {
+                bestMove = potentialMove[UnityEngine.Random.Range(0, potentialMove.Count - 1)];
+                return true;
+            }
+            
+            return false;
+        }
+
+        private bool CompareBalls(int blackCount, int blackNeeded, int whiteCount, int whiteNeeded)
+        {
+            if (blackCount == blackNeeded && whiteCount == whiteNeeded)
+            {
+                return true;
+            }
+
+            return false;
+        }
 
         /*public BallColor IsSomeoneWinning()
         {

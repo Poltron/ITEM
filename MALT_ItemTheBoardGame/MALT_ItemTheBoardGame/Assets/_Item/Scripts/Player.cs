@@ -335,9 +335,10 @@ namespace AppAdvisory.Item {
             optiGrid.DoMove(move);
 
 			isTweening = true;
+            ball.GetComponent<Animation>().Play();
 			ball.transform.DOMove (secondCell.transform.position, 1f).OnComplete (() => {
 				ball.transform.position = secondCell.transform.position;
-				ball.SetStartPosition ();
+				//ball.SetStartPosition ();
 				isTweening = false;
 			});
 		}

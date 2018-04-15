@@ -16,10 +16,7 @@ namespace AppAdvisory.Item {
 
         [SerializeField]
         private AnimationCurve turnOpacity;
-        [SerializeField]
-        private AnimationCurve turnPosition;
-        [SerializeField]
-        private AnimationCurve phasePosition;
+
         [SerializeField]
         private float turnAnimationDuration;
         [SerializeField]

@@ -37,8 +37,8 @@ namespace AppAdvisory.Item
 
     public class AIBehaviour
     {
-        int positionCount = 0;
-        float timeSpent;
+        public int positionCount = 0;
+        public float timeSpent;
 
         AIEvaluationData evaluationData;
         OptimizedGrid grid;
@@ -53,7 +53,7 @@ namespace AppAdvisory.Item
             evaluationData = _data;
         }
 
-        public Move GetBestMove(OptimizedGrid optiGrid, out float timeSpent)
+        public Move GetBestMove(OptimizedGrid optiGrid)
         {
             grid = optiGrid;
 
@@ -63,14 +63,42 @@ namespace AppAdvisory.Item
 
             Move bestMove = new Move();
 
-            if (grid.WillPlayerWinNextTurn())
+            List<Vector2> canWinCells = new List<Vector2>();
+            // if AI has a 4-0 pattern
+            if (grid.CanColorWin(BallColor.Black, out canWinCells))
             {
+                Debug.Log("BlackColor can win");
 
+                // if AI can move to win
+                if (grid.CanColorMoveToWin(BallColor.Black, canWinCells, out bestMove))
+                {
+                    Debug.Log("BlackColor can move to win");
+                    return bestMove;
+                }
+
+                Debug.Log("BlackColor can't move to win");
             }
-            else
+
+            // if Player can win next turn
+            if (grid.CanColorWin(BallColor.White, out canWinCells))
             {
-                bestMove = MiniMaxRoot(5, true);
+                Debug.Log("Player can win next turn");
+
+                // if player can move to win next turn
+                if (grid.CanColorMoveToWin(BallColor.White, canWinCells, out bestMove))
+                {
+                    Debug.Log("Player can move to win next turn");
+
+                    // can AI def it ???
+                    if (grid.CanColorMoveToWin(BallColor.Black, canWinCells, out bestMove))
+                    {
+                        Debug.Log("AI can def next turn win");
+                        return bestMove;
+                    }
+                }
             }
+
+            bestMove = MiniMaxRoot(5, true);
 
             float newTime = Time.realtimeSinceStartup;
             timeSpent = newTime - actualTime;
@@ -231,7 +259,7 @@ namespace AppAdvisory.Item
                     if (blackCount == 1 && whiteCount == 0)
                         value -= 100;
                     else if (blackCount == 2 && whiteCount == 0)
-                        value -= 400;
+                        value -= 750;
                     else if (blackCount == 3 && whiteCount == 0)
                         value -= 1500;
                     else if (blackCount == 4 && whiteCount == 0)
@@ -241,7 +269,7 @@ namespace AppAdvisory.Item
                         value += 75000;
 
                     else if (blackCount == 2 && whiteCount == 1)
-                        value -= 1000;
+                        value -= 500;
                     else if (blackCount == 1 && whiteCount == 2)
                         value += 1000;
 
