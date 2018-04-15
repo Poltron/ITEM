@@ -333,7 +333,7 @@ namespace AppAdvisory.Item {
             //ShowAds();
 
             isGameFinished = true;
-            isWon = true;
+            isWon = isWin;
             player.EndTurn();
 
             PlayVictoryAnimation(cell);

@@ -2485,7 +2485,7 @@ Prefab:
     - target: {fileID: 114095093538478580, guid: 91905c63d45a87c44ba70aac8b0e839e,
         type: 2}
       propertyPath: disableAI
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 91905c63d45a87c44ba70aac8b0e839e, type: 2}
@@ -4985,7 +4985,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 0
   turnAnimationDuration: 0.8
-  timeBeforeNextTurn: 0.5
+  timeBeforeNextTurn: 1.2
   boardOverlay: {fileID: 2023402313}
   overlay: {fileID: 1836222926}
   yourTurn: {fileID: 865492917}
