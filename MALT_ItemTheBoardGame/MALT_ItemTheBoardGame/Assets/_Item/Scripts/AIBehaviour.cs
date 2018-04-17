@@ -63,6 +63,7 @@ namespace AppAdvisory.Item
 
             Move bestMove = new Move();
 
+            Debug.Log("BlackColor can win next turn ?");
             List<Vector2> canWinCells = new List<Vector2>();
             // if AI has a 4-0 pattern
             if (grid.CanColorWin(BallColor.Black, out canWinCells))
@@ -79,6 +80,7 @@ namespace AppAdvisory.Item
                 Debug.Log("BlackColor can't move to win");
             }
 
+            Debug.Log("WhiteColor can win next turn ?");
             // if Player can win next turn
             if (grid.CanColorWin(BallColor.White, out canWinCells))
             {

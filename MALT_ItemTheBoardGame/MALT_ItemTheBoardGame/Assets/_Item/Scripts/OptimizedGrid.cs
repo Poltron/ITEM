@@ -400,35 +400,50 @@ namespace AppAdvisory.Item
 
         public bool CanColorWin(BallColor color, out List<Vector2> cells)
         {
-            if (FindCellPattern(patternData.horizontalLinePatterns, out cells, 4, 0, CompareBalls))
+            int whiteNeeded = 0;
+            int blackNeeded = 0;
+            if (color == BallColor.Black)
+                blackNeeded = 4;
+            else
+                whiteNeeded = 4;
+
+            if (FindCellPattern(patternData.horizontalLinePatterns, out cells, blackNeeded, whiteNeeded, CompareBalls))
             {
+                Debug.Log("horizontalline 4-0 pattern");
                 return true;
             }
 
-            if (FindCellPattern(patternData.verticalLinePatterns, out cells, 4, 0, CompareBalls))
+            if (FindCellPattern(patternData.verticalLinePatterns, out cells, blackNeeded, whiteNeeded, CompareBalls))
             {
+                Debug.Log("verticalLinePatterns 4-0 pattern");
                 return true;
             }
 
-            if (FindCellPattern(patternData.diagonalLinePatterns, out cells, 4, 0, CompareBalls))
+            if (FindCellPattern(patternData.diagonalLinePatterns, out cells, blackNeeded, whiteNeeded, CompareBalls))
             {
+                Debug.Log("diagonalLinePatterns 4-0 pattern");
                 return true;
             }
 
-            if (FindCellPattern(patternData.otherDiagonalLinePatterns, out cells, 4, 0, CompareBalls))
+            if (FindCellPattern(patternData.otherDiagonalLinePatterns, out cells, blackNeeded, whiteNeeded, CompareBalls))
             {
+                Debug.Log("otherDiagonalLinePatterns 4-0 pattern");
                 return true;
             }
 
-            if (FindCellPattern(patternData.horizontalCrossPatterns, out cells, 4, 0, CompareBalls))
+            if (FindCellPattern(patternData.horizontalCrossPatterns, out cells, blackNeeded, whiteNeeded, CompareBalls))
             {
+                Debug.Log("horizontalCrossPatterns 4-0 pattern");
                 return true;
             }
 
-            if (FindCellPattern(patternData.diagonalCrossPatterns, out cells, 4, 0, CompareBalls))
+            if (FindCellPattern(patternData.diagonalCrossPatterns, out cells, blackNeeded, whiteNeeded, CompareBalls))
             {
+                Debug.Log("diagonalCrossPatterns 4-0 pattern");
                 return true;
             }
+
+            Debug.Log("No 4-0 pattern");
 
             return false;
         }
