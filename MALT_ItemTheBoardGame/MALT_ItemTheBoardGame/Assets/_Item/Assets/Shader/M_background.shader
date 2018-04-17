@@ -50,7 +50,7 @@ Shader "Shader Forge/M_background" {
             #pragma multi_compile _ PIXELSNAP_ON
             #include "UnityCG.cginc"
             #pragma multi_compile_fwdbase_fullshadows
-            #pragma only_renderers d3d9 d3d11 glcore gles 
+            #pragma only_renderers d3d9 d3d11 glcore gles gles3 
             #pragma target 3.0
             uniform float4 _ColorLines;
             uniform sampler2D _Panner; uniform float4 _Panner_ST;
@@ -81,8 +81,8 @@ Shader "Shader Forge/M_background" {
 ////// Lighting:
 ////// Emissive:
                 float node_9024 = 1.0;
-                float4 node_1088 = _Time;
-                float2 node_7704 = (i.uv0+node_1088.g*float2(0,-0.1));
+                float4 node_5998 = _Time;
+                float2 node_7704 = (i.uv0+node_5998.g*float2(0,-0.1));
                 float4 _Panner_var = tex2D(_Panner,TRANSFORM_TEX(node_7704, _Panner));
                 float4 _Lines_var = tex2D(_Lines,TRANSFORM_TEX(i.uv0, _Lines));
                 float3 emissive = (lerp(_BGcolor.rgb,float3(node_9024,node_9024,node_9024),((lerp(0.0,_Panner_var.r,_Lines_var.g)*_LineIntensity)*_ColorLines.rgb))+(_Lines_var.b*_Colorglow.rgb));
@@ -108,7 +108,7 @@ Shader "Shader Forge/M_background" {
             #include "Lighting.cginc"
             #pragma fragmentoption ARB_precision_hint_fastest
             #pragma multi_compile_shadowcaster
-            #pragma only_renderers d3d9 d3d11 glcore gles 
+            #pragma only_renderers d3d9 d3d11 glcore gles gles3 
             #pragma target 3.0
             struct VertexInput {
                 float4 vertex : POSITION;
