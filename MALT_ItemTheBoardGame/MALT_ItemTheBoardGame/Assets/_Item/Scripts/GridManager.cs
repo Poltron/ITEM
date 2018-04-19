@@ -178,7 +178,11 @@ namespace AppAdvisory.Item {
 
 		public void PlayIAPhase1(Cell lastMove)
         {
-            Move move = aiBehaviour.GetBestMove(optiGrid);
+            StartCoroutine(aiBehaviour.GetBestMove(optiGrid, PlayIAPhase1CalculusEnded));
+        }
+
+        public void PlayIAPhase1CalculusEnded(Move move)
+        {
             StartCoroutine(waitFor(3f - aiBehaviour.timeSpent, move, PlayAIMovePhase1));
         }
 
@@ -221,7 +225,11 @@ namespace AppAdvisory.Item {
 
 		public void PlayIAPhase2()
         {
-            Move move = aiBehaviour.GetBestMove(optiGrid);
+            StartCoroutine(aiBehaviour.GetBestMove(optiGrid, PlayIAPhase2CalculusEnded));
+        }
+
+        public void PlayIAPhase2CalculusEnded(Move move)
+        {
             StartCoroutine(waitFor(3f - aiBehaviour.timeSpent, move, PlayAIMovePhase2));
         }
 

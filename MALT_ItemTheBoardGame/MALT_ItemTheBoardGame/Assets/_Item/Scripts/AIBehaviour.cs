@@ -53,7 +53,7 @@ namespace AppAdvisory.Item
             evaluationData = _data;
         }
 
-        public Move GetBestMove(OptimizedGrid optiGrid)
+        public IEnumerator GetBestMove(OptimizedGrid optiGrid, System.Action<Move> toDo)
         {
             grid = optiGrid;
 
@@ -62,6 +62,9 @@ namespace AppAdvisory.Item
             float actualTime = Time.realtimeSinceStartup;
 
             Move bestMove = new Move();
+            bool done = false;
+
+            yield return new WaitForEndOfFrame();
 
             Debug.Log("BlackColor can win next turn ?");
             List<Vector2> canWinCells = new List<Vector2>();
@@ -74,7 +77,7 @@ namespace AppAdvisory.Item
                 if (grid.CanColorMoveToWin(BallColor.Black, canWinCells, out bestMove))
                 {
                     Debug.Log("BlackColor can move to win");
-                    return bestMove;
+                    done = true;
                 }
 
                 Debug.Log("BlackColor can't move to win");
@@ -82,7 +85,7 @@ namespace AppAdvisory.Item
 
             Debug.Log("WhiteColor can win next turn ?");
             // if Player can win next turn
-            if (grid.CanColorWin(BallColor.White, out canWinCells))
+            if (grid.CanColorWin(BallColor.White, out canWinCells) && !done)
             {
                 Debug.Log("Player can win next turn");
 
@@ -95,19 +98,26 @@ namespace AppAdvisory.Item
                     if (grid.CanColorMoveToWin(BallColor.Black, canWinCells, out bestMove))
                     {
                         Debug.Log("AI can def next turn win");
-                        return bestMove;
+                        done = true;
                     }
                 }
             }
 
-            bestMove = MiniMaxRoot(5, true);
+            if (!done)
+            {
+                int depth = 5;
+                if (optiGrid.BlackBallsLeft > 0 || optiGrid.WhiteBallsLeft > 0)
+                    depth = 3;
+
+                bestMove = MiniMaxRoot(depth, true);
+            }
 
             float newTime = Time.realtimeSinceStartup;
             timeSpent = newTime - actualTime;
 
             Debug.Log(positionCount + " in " + timeSpent);
 
-            return bestMove;
+            toDo(bestMove);
         }
 
         public Move MiniMaxRoot(int depth, bool isMaximisingPlayer)
