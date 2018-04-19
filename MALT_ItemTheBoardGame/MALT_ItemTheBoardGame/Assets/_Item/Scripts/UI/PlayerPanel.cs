@@ -25,7 +25,7 @@ namespace AppAdvisory.Item {
 		}
 
 		public void DisplayArrow(bool isShown) {
-			maskArrow.SetActive(isShown);
+			//maskArrow.SetActive(isShown);
 		}
 			
 		public void SetName(string name) {
@@ -39,14 +39,14 @@ namespace AppAdvisory.Item {
 		public void SetColor(BallColor color) {
 			if (color == BallColor.Black) {
 				whiteMarble.enabled = false;
-				whiteArrow.enabled = false;
+				//whiteArrow.enabled = false;
 				blackMarble.enabled = true;
-				blackArrow.enabled = true;
+				//blackArrow.enabled = true;
 			} else {
 				whiteMarble.enabled = true;
-				whiteArrow.enabled = true;
+				//whiteArrow.enabled = true;
 				blackMarble.enabled = false;
-				blackArrow.enabled = false;
+				//blackArrow.enabled = false;
 			}
 		}
 
