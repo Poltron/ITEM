@@ -12,6 +12,8 @@ namespace AppAdvisory.Item
         AIPOSITIONTESTNB,
         AIPOSITIONTESTTIME,
         OPTIGRID,
+        PLAYER1NBTURN,
+        PLAYER2NBTURN
     };
 
     public class DebugGUI : MonoBehaviour {
@@ -47,9 +49,7 @@ namespace AppAdvisory.Item
                     break;
                 case DEBUG_VALUE.AIPOSITIONTESTTIME:
                     if (gridManager.AIBehaviour != null)
-                    {
                         _text.text = gridManager.AIBehaviour.timeSpent.ToString("0.0000") + "s";
-                    }
                     break;
                 case DEBUG_VALUE.OPTIGRID:
                     string str = GetLetterFromOptiGrid(8, 0) + "__" + GetLetterFromOptiGrid(8, 1) + "__" + GetLetterFromOptiGrid(8, 2) + "__" + GetLetterFromOptiGrid(8, 3) + "__" + GetLetterFromOptiGrid(8, 4)
@@ -63,6 +63,12 @@ namespace AppAdvisory.Item
                                 + GetLetterFromOptiGrid(0, 0) + "__" + GetLetterFromOptiGrid(0, 1) + "__" + GetLetterFromOptiGrid(0, 2) + "__" + GetLetterFromOptiGrid(0, 3) + "__" + GetLetterFromOptiGrid(0, 4);
 
                     _text.text = str;
+                    break;
+                case DEBUG_VALUE.PLAYER1NBTURN:
+                    _text.text = gridManager.Player1NbOfTurn.ToString();
+                    break;
+                case DEBUG_VALUE.PLAYER2NBTURN:
+                    _text.text = gridManager.Player2NbOfTurn.ToString();
                     break;
             }
         }

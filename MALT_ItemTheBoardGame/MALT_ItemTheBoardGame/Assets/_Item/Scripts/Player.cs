@@ -7,7 +7,7 @@ using DG.Tweening;
 
 namespace AppAdvisory.Item {
 
-	public class Player : MonoBehaviour, IPlayer {
+	public class Player : MonoBehaviour {
 		public string playerName;
 		public string picURL;
 
@@ -42,7 +42,6 @@ namespace AppAdvisory.Item {
 
 		public void StartTurn() {
 			EasyTouch.On_TouchUp += OnTouchUp;
-
 //			if (ballCount > 0) {
 //				EasyTouch.On_Drag += On_Drag;
 //				EasyTouch.On_DragStart += On_DragStart;
@@ -184,7 +183,7 @@ namespace AppAdvisory.Item {
 				On_DragEndPhase2 (pickedCell);
 			}
 		}
-
+        
 		void OnTouchUp(Gesture gesture) {
 			if (isTweening)
 				return;

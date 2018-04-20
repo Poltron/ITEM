@@ -13,13 +13,13 @@ using Facebook.Unity;
 using AppAdvisory.Ads;
 
 namespace AppAdvisory.Item {
-	public class GridManager : PunBehaviour {
+    public class GridManager : PunBehaviour {
 
-		public int numberOfPlayToShowInterstitial = 1;
-		private Connection connection;
-		public FBManager fbManager;
+        public int numberOfPlayToShowInterstitial = 1;
+        private Connection connection;
+        public FBManager fbManager;
 
-		private ModelGrid modelGrid;
+        private ModelGrid modelGrid;
         public ModelGrid ModelGrid { get { return modelGrid; } }
 
         private OptimizedGrid optiGrid;
@@ -30,9 +30,9 @@ namespace AppAdvisory.Item {
         private AIBehaviour aiBehaviour;
 
         public AIBehaviour AIBehaviour { get { return aiBehaviour; } }
-        
+
         [SerializeField]
-		public Player playerPrefab;
+        public Player playerPrefab;
         [SerializeField]
         public Ball whiteBallPrefab;
         [SerializeField]
@@ -44,7 +44,7 @@ namespace AppAdvisory.Item {
         private GameObject diagonalLine;
 
         [SerializeField]
-		private Transform marbleContainer;
+        private Transform marbleContainer;
         [SerializeField]
         public List<Ball> blackBalls;
         [SerializeField]
@@ -53,30 +53,35 @@ namespace AppAdvisory.Item {
         private UIManager uiManager;
 
         private Player player;
-		private string playerName;
-		private string playerPicURL;
-        
-		public float timeToLaunchGameVSIA = 4;
+        private string playerName;
+        private string playerPicURL;
 
-		//private bool isPlayer1 = false;
-		private bool isGameFinished = false;
+        public float timeToLaunchGameVSIA = 4;
+
+        private bool isGameFinished = false;
         private bool isWon = false;
+        private bool isEqualityTurn = false;
         private bool isGameStarted = false;
-		private bool isPlayingVSIA = false;
+        private bool isPlayingVSIA = false;
 
         [SerializeField]
         private bool disableAI = false;
 
+        private int numberOfTurnsPlayer1 = 0;
+        public int Player1NbOfTurn { get { return numberOfTurnsPlayer1; } }
+        private int numberOfTurnsPlayer2 = 0;
+        public int Player2NbOfTurn { get { return numberOfTurnsPlayer2; } }
 
-        private string[] randomNames = new string[] { "IA" };
-
-		void Start ()
+        void Start ()
         {
+            numberOfTurnsPlayer1 = 0;
+            numberOfTurnsPlayer2 = 0;
+
             aiBehaviour = new AIBehaviour(aiEvaluationData);
             
 			DisplayMarbleContainer (false);
 
-            DOVirtual.DelayedCall(timeToLaunchGameVSIA, StartGameVSIA);
+            //DOVirtual.DelayedCall(timeToLaunchGameVSIA, StartGameVSIA);
 
             connection = GetComponent<Connection> ();
 
@@ -89,9 +94,10 @@ namespace AppAdvisory.Item {
 			fbManager = FindObjectOfType<FBManager> ();
             if (fbManager)
             {
+                Debug.Log("fbManager != null");
+
                 playerName = fbManager.pName;
                 playerPicURL = fbManager.pUrlPic;
-
 
                 fbManager.NameLoaded += OnNameLoaded;
                 fbManager.PicURLLoaded += OnPicURLLoaded;
@@ -100,7 +106,15 @@ namespace AppAdvisory.Item {
             }
         }
 
-		public void StartGameVSIA() {
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                StartGameVSIA();
+            }
+        }
+
+        public void StartGameVSIA() {
 			if (isGameStarted)
 				return;
 
@@ -114,7 +128,9 @@ namespace AppAdvisory.Item {
 			CreateGrid ();
 
 			isGameStarted = true;
-			isPlayingVSIA = true;
+            numberOfTurnsPlayer1 = 0;
+            numberOfTurnsPlayer2 = 0;
+            isPlayingVSIA = true;
 
 			uiManager.DisplayYourTurn (true);
 			uiManager.DisplayPhase1Text (true);
@@ -125,13 +141,13 @@ namespace AppAdvisory.Item {
 			uiManager.InitPlayer2(BallColor.Black);
 
 			uiManager.DisplayPlayer1Arrow (true);
-			uiManager.SetPlayer2Name (GetRandomIAName());
+			uiManager.SetPlayer2Name (GetIAName());
 
 			player.StartTurn ();
 		}
 
-		private string GetRandomIAName() {
-            return randomNames [Random.Range (0, randomNames.Length - 1)];
+		private string GetIAName() {
+            return "IA";
 		}
 
 		private void DisplayMarbleContainer(bool isShown) {
@@ -144,12 +160,14 @@ namespace AppAdvisory.Item {
 
 		private void OnNameLoaded(string name) {
 			playerName = name;
+            uiManager.DisplayPlayer1(true);
 			print ("onnameloaded " + name);
 		}
 
 		private void OnPicURLLoaded(string url) {
 			playerPicURL = url;
-			print ("onpicurlloaded" + url);
+            uiManager.DisplayPlayer1(true);
+            print ("onpicurlloaded" + url);
 		}
 
 		private void CreateGrid()
@@ -209,6 +227,7 @@ namespace AppAdvisory.Item {
 
         public void EndAIPhase()
         {
+            numberOfTurnsPlayer2++;
             player.StartTurn();
 
             uiManager.DisplayYourTurn(true);
@@ -258,7 +277,7 @@ namespace AppAdvisory.Item {
         
 		public void Phase1TurnFinishedPlayer(Vector2 pos) {
 			uiManager.DisplayPhase1Text (true);
-
+            numberOfTurnsPlayer1++;
 			Cell cell = modelGrid.GetCellFromModel (pos);
 
 			if (isPlayingVSIA) {
@@ -298,7 +317,8 @@ namespace AppAdvisory.Item {
 		{
 			uiManager.DisplayPhase1Text (false);
 			uiManager.DisplayPhase2Text (true);
-			Vector2[] movementArray = movements.ToArray ();
+            numberOfTurnsPlayer1++;
+            Vector2[] movementArray = movements.ToArray ();
 			Cell cell = modelGrid.GetCellFromModel (movementArray [movementArray.Length - 1]);
 
 			if (isPlayingVSIA) {
@@ -488,7 +508,8 @@ namespace AppAdvisory.Item {
 				uiManager.DisplayPhase2Text (true);
 			}
 
-			Cell cell = modelGrid.GetCellFromModel (pos);
+            numberOfTurnsPlayer2++;
+            Cell cell = modelGrid.GetCellFromModel (pos);
 			Ball ball;
 
 			if (player.color == BallColor.White) {
@@ -513,11 +534,13 @@ namespace AppAdvisory.Item {
 			uiManager.DisplayPhase1Text (false);
 			uiManager.DisplayPhase2Text (true);
 
-			StartCoroutine (MoveCoroutine (movements));
+            numberOfTurnsPlayer2++;
+
+            StartCoroutine(MoveCoroutine (movements));
 			uiManager.DisplayYourTurn (true);
 			player.StartTurn ();
 
-			SetPlayerTurnOnReceive ();
+            SetPlayerTurnOnReceive ();
 		}
 
 		[PunRPC]
@@ -624,8 +647,10 @@ namespace AppAdvisory.Item {
 				DisplayMarbleContainer (true);
 				CreateGrid ();
 				isGameStarted = true;
+                numberOfTurnsPlayer1 = 0;
+                numberOfTurnsPlayer2 = 0;
 
-				player = CreatePlayer (BallColor.Black);
+                player = CreatePlayer (BallColor.Black);
 
 				uiManager.InitPlayer1(BallColor.Black);
 				uiManager.InitPlayer2(BallColor.White);
@@ -672,7 +697,10 @@ namespace AppAdvisory.Item {
 				Debug.Log("Other player arrived");
 				CreateGrid ();
 				isGameStarted = true;
-				uiManager.DisplayYourTurn (true);
+                numberOfTurnsPlayer1 = 0;
+                numberOfTurnsPlayer2 = 0;
+
+                uiManager.DisplayYourTurn (true);
 				uiManager.DisplayPhase1Text (true);
 				uiManager.SetPlayer1Turn();
 				//isPlayer1 = true;
@@ -708,7 +736,6 @@ namespace AppAdvisory.Item {
 			uiManager.DisplayByForfeit(true);
 
 			uiManager.DisplayRestartButton (true);
-
 		}
 
 		public void OnRestart() 
