@@ -586,7 +586,6 @@ namespace AppAdvisory.Item {
 		[PunRPC]
 		void ReceiveMovementsPhase1(Vector2 pos)
 		{
-
 			if (player.ballCount > 0) {
 				uiManager.DisplayPhase1Text (true);
 			} else {
@@ -608,10 +607,25 @@ namespace AppAdvisory.Item {
 
 			ball.DOPlace (cell);
 
+            bool end = false;
+            if (Utils.CheckWin(modelGrid, cell, false) || isEqualityTurn)
+            {
+                if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
+                {
+                    isEqualityTurn = true;
+                }
+                else
+                {
+                    Win(cell);
+                    end = true;
+                }
+            }
 
-			player.StartTurn();
-
-			SetPlayerTurnOnReceive();
+            if (!end)
+            {
+                player.StartTurn();
+                SetPlayerTurnOnReceive();
+            }
 		}
 			
 		[PunRPC]
@@ -623,13 +637,33 @@ namespace AppAdvisory.Item {
             numberOfTurnsPlayer2++;
 
             StartCoroutine(MoveCoroutine (movements));
-			uiManager.DisplayYourTurn(true);
-			player.StartTurn();
 
-            SetPlayerTurnOnReceive();
+            Cell cell = modelGrid.GetCellFromModel(movements[movements.Length - 1]);
+
+            bool end = false;
+            if (Utils.CheckWin(modelGrid, cell, false) || isEqualityTurn)
+            {
+                if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
+                {
+                    isEqualityTurn = true;
+                }
+                else
+                {
+                    Win(cell);
+                    end = true;
+                }
+            }
+
+            if (!end)
+            {
+                uiManager.DisplayYourTurn(true);
+                player.StartTurn();
+                SetPlayerTurnOnReceive();
+            }
 		}
 
-		[PunRPC]
+		/*
+        [PunRPC]
 		void ReceiveWin(Vector2 position) {
 			print ("receive win");
 			uiManager.ResetPlayerTurn ();
@@ -638,7 +672,7 @@ namespace AppAdvisory.Item {
 			//uiManager.DisplayYourTurn (false);
 
 			Cell cell = modelGrid.GetCellFromModel (position);
-		}
+		}*/
 
 		private void SendName(string name) {
 			PhotonView photonView = PhotonView.Get(this);
@@ -684,15 +718,14 @@ namespace AppAdvisory.Item {
 //
 //		}
 
-		IEnumerator MoveCoroutine(Vector2[] movements) {
-
+		IEnumerator MoveCoroutine(Vector2[] movements)
+        {
 			for (int i = 0; i < movements.Length-1; i++) {
 
 				player.ChangeBallPosition (modelGrid.GetCellFromModel (movements [i]), modelGrid.GetCellFromModel (movements [i+1]));
 				yield return new WaitForSeconds (1f);
 			}
-
-		}
+        }
 			
 		void SetPlayerTurnOnReceive() {
 			uiManager.DisplayYourTurn (true);
