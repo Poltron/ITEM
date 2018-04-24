@@ -66,6 +66,9 @@ namespace AppAdvisory.Item
         public void ShowHighlight () {
             highlightCurveTimer = 0;
             highlight.gameObject.SetActive(true);
+
+            if (owner)
+                FindObjectOfType<GridManager>().HighlightAvailableMoveCells(owner);
 		}
 
 		public void HideHighlight() {

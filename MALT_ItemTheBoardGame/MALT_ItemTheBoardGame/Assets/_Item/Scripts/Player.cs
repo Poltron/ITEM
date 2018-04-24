@@ -42,6 +42,7 @@ namespace AppAdvisory.Item {
 
 		public void StartTurn() {
 			EasyTouch.On_TouchUp += OnTouchUp;
+            FindObjectOfType<GridManager>().numberOfTurnsPlayer1++;
 //			if (ballCount > 0) {
 //				EasyTouch.On_Drag += On_Drag;
 //				EasyTouch.On_DragStart += On_DragStart;

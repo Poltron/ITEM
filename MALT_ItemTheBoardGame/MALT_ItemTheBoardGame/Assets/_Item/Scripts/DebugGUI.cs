@@ -13,7 +13,8 @@ namespace AppAdvisory.Item
         AIPOSITIONTESTTIME,
         OPTIGRID,
         PLAYER1NBTURN,
-        PLAYER2NBTURN
+        PLAYER2NBTURN,
+        EQUALITYTURN
     };
 
     public class DebugGUI : MonoBehaviour {
@@ -69,6 +70,9 @@ namespace AppAdvisory.Item
                     break;
                 case DEBUG_VALUE.PLAYER2NBTURN:
                     _text.text = gridManager.Player2NbOfTurn.ToString();
+                    break;
+                case DEBUG_VALUE.EQUALITYTURN:
+                    _text.text = (gridManager.IsEqualityTurn) ? "true" : "false";
                     break;
             }
         }

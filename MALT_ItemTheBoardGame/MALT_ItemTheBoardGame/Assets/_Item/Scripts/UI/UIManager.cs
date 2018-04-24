@@ -44,6 +44,7 @@ namespace AppAdvisory.Item {
 		public GameObject endGamePanel;
 		public GameObject youWon;
 		public GameObject youLost;
+        public GameObject draw;
 		public GameObject byForfeit;
 		public GameObject restartButton;
         public GameObject withPoints;
@@ -71,11 +72,12 @@ namespace AppAdvisory.Item {
 			DisPlayWaitingForPlayerPanel (false);
 
 			DisplayEndGamePanel (false);
-			DisplayYouWon (false, 0);
+			DisplayYouWon (false, 0, 0);
 			DisplayByForfeit(false);
-			DisplayYouLost (false, 0);
+			DisplayYouLost (false, 0, 0);
+            DisplayDraw(false, 0, 0);
 
-			DisplayPhase1Text (false);
+            DisplayPhase1Text (false);
 			DisplayPhase2Text (false);
 
 			DisplayRestartButton (false);
@@ -117,19 +119,26 @@ namespace AppAdvisory.Item {
 			player2.gameObject.SetActive (isShown);
 		}
 
-        public void DisplayYouWon(bool isShown, int points) {
+        public void DisplayYouWon(bool isShown, int yourPoints, int theirPoints) {
 			youWon.SetActive (isShown);
-            withPoints.SetActive(true);
-            withPoints.GetComponentInChildren<TextMeshProUGUI>().text = "With " + points + " pts";
+            withPoints.SetActive(isShown);
+            withPoints.GetComponentInChildren<TextMeshProUGUI>().text = yourPoints + " - " + theirPoints;
         }
 
-		public void DisplayYouLost(bool isShown, int points) {
+		public void DisplayYouLost(bool isShown, int yourPoints, int theirPoints) {
 			youLost.SetActive (isShown);
-            withPoints.SetActive(true);
-            withPoints.GetComponentInChildren<TextMeshProUGUI>().text = "With " + points + " pts";
+            withPoints.SetActive(isShown);
+            withPoints.GetComponentInChildren<TextMeshProUGUI>().text = yourPoints + " - " + theirPoints;
         }
 
-		public void DisplayByForfeit(bool isShown) {
+        public void DisplayDraw(bool isShown, int yourPoints, int theirPoints)
+        {
+            draw.SetActive(isShown);
+            withPoints.SetActive(isShown);
+            withPoints.GetComponentInChildren<TextMeshProUGUI>().text = yourPoints + " - " + theirPoints;
+        }
+
+        public void DisplayByForfeit(bool isShown) {
             withPoints.SetActive(false);
 			byForfeit.SetActive(isShown);
 		}

@@ -1,5 +1,4 @@
-﻿
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;  
 using Photon;
@@ -59,15 +58,18 @@ namespace AppAdvisory.Item {
         public float timeToLaunchGameVSIA = 4;
 
         private bool isGameFinished = false;
-        private bool isWon = false;
+        private int isWon = 0;
+        private int playerScore = 0;
+        private int otherPlayerScore = 0;
         private bool isEqualityTurn = false;
+        public bool IsEqualityTurn { get { return isEqualityTurn; } }
         private bool isGameStarted = false;
         private bool isPlayingVSIA = false;
 
         [SerializeField]
         private bool disableAI = false;
 
-        private int numberOfTurnsPlayer1 = 0;
+        public int numberOfTurnsPlayer1 = 0;
         public int Player1NbOfTurn { get { return numberOfTurnsPlayer1; } }
         private int numberOfTurnsPlayer2 = 0;
         public int Player2NbOfTurn { get { return numberOfTurnsPlayer2; } }
@@ -196,6 +198,7 @@ namespace AppAdvisory.Item {
 
 		public void PlayIAPhase1(Cell lastMove)
         {
+            numberOfTurnsPlayer2++;
             StartCoroutine(aiBehaviour.GetBestMove(optiGrid, PlayIAPhase1CalculusEnded));
         }
 
@@ -208,26 +211,34 @@ namespace AppAdvisory.Item {
         {
             Cell cell = modelGrid.GetCellFromModel(move.toY, move.toX);
             PlaceBallIA(cell);
-
-            if (Utils.CheckWinIA(modelGrid, cell))
+            bool end = false;
+            if (Utils.CheckWinIA(modelGrid, cell) || isEqualityTurn)
             {
-                RestartGame(false, cell);
-            }
-            else
-            {
-                if (player.ballCount == 0)
+                if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
                 {
-                    uiManager.DisplayPhase1Text(false);
-                    uiManager.DisplayPhase2Text(true);
+                    isEqualityTurn = true;
                 }
-
+                else
+                {
+                    Win(cell);
+                    end = true;
+                }
+            }
+            
+            if (!end)
+            {
                 EndAIPhase();
             }
         }
 
         public void EndAIPhase()
         {
-            numberOfTurnsPlayer2++;
+            if (player.ballCount == 0)
+            {
+                uiManager.DisplayPhase1Text(false);
+                uiManager.DisplayPhase2Text(true);
+            }
+
             player.StartTurn();
 
             uiManager.DisplayYourTurn(true);
@@ -244,6 +255,7 @@ namespace AppAdvisory.Item {
 
 		public void PlayIAPhase2()
         {
+            numberOfTurnsPlayer2++;
             StartCoroutine(aiBehaviour.GetBestMove(optiGrid, PlayIAPhase2CalculusEnded));
         }
 
@@ -254,22 +266,27 @@ namespace AppAdvisory.Item {
 
         public void PlayAIMovePhase2(Move move)
         {
-            //Debug.Log("move from : " + move.fromX + " ; " + move.fromY);
-            //Debug.Log("move to : " + move.toX + " ; " + move.toY);
-
             Cell cellFrom = modelGrid.GetCellFromModel(move.fromY, move.fromX);
             Cell cellTo = modelGrid.GetCellFromModel(move.toY, move.toX);
 
-            //Debug.Log("cellFrom" + cellFrom.x + " / " + cellFrom.y);
-            //Debug.Log("cellTo" + cellTo.x + " / " + cellTo.y);
-
             OptiGrid.DoMove(move);
             player.ChangeBallPosition(cellFrom, cellTo);
-            if (Utils.CheckWinIA(modelGrid, cellTo))
+
+            bool end = false;
+            if (Utils.CheckWinIA(modelGrid, cellTo) || isEqualityTurn)
             {
-                RestartGame(false, cellTo);
+                if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
+                {
+                    isEqualityTurn = true;
+                }
+                else
+                {
+                    Win(cellTo);
+                    end = true;
+                }
             }
-            else
+            
+            if (!end)
             {
                 EndAIPhase();
             }
@@ -277,35 +294,62 @@ namespace AppAdvisory.Item {
         
 		public void Phase1TurnFinishedPlayer(Vector2 pos) {
 			uiManager.DisplayPhase1Text (true);
-            numberOfTurnsPlayer1++;
 			Cell cell = modelGrid.GetCellFromModel (pos);
 
-			if (isPlayingVSIA) {
-				if (Win (cell))
-					return;
-
-				uiManager.DisplayYourTurn (false);
-				uiManager.SetPlayer2Turn ();
-
-                // debug feature to test without AI
-                if (disableAI)
+            bool end = false;
+			if (isPlayingVSIA)
+            {
+                if (Utils.CheckWin(modelGrid, cell, false) || isEqualityTurn)
                 {
-                    player.StartTurn();
-
-                    uiManager.DisplayYourTurn(true);
-                    uiManager.SetPlayer1Turn();
+                    if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
+                    {
+                        isEqualityTurn = true;
+                    }
+                    else
+                    {
+                        Win(cell);
+                        end = true;
+                    }
                 }
-                else
+                
+                if (!end)
                 {
-                    PlayIAPhase1(cell);
-                }
-            } else {
-				
+                    uiManager.DisplayYourTurn(false);
+                    uiManager.SetPlayer2Turn();
+                    
+                    if (disableAI) // debug feature to test without AI
+                    {
+                        player.StartTurn();
 
+                        uiManager.DisplayYourTurn(true);
+                        uiManager.SetPlayer1Turn();
+                    }
+                    else
+                    {
+                        PlayIAPhase1(cell);
+                    }
+                }
+            }
+            else
+            {
 				PhotonView photonView = PhotonView.Get(this);
 				photonView.RPC ("ReceiveMovementsPhase1", PhotonTargets.Others, pos);
+                
+                if (Utils.CheckWin(modelGrid, cell, false) || isEqualityTurn)
+                {
+                    if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
+                    {
+                        isEqualityTurn = true;
+                    }
+                    else
+                    {
+                        Win(cell);
+                        end = true;
+                    }
+                }
 
-				if (!Win (cell)) {
+                if (!end)
+				{
 					SetPlayerTurnOnEnd ();
 				}
 			}
@@ -317,54 +361,112 @@ namespace AppAdvisory.Item {
 		{
 			uiManager.DisplayPhase1Text (false);
 			uiManager.DisplayPhase2Text (true);
-            numberOfTurnsPlayer1++;
             Vector2[] movementArray = movements.ToArray ();
 			Cell cell = modelGrid.GetCellFromModel (movementArray [movementArray.Length - 1]);
+            bool end = false;
 
-			if (isPlayingVSIA) {
-				if (Win (cell))
-					return;
-
-				uiManager.DisplayYourTurn (false);
-				uiManager.SetPlayer2Turn ();
-				PlayIAPhase2();
-			} else {
-				
-
+			if (isPlayingVSIA)
+            {
+                if (Utils.CheckWin(modelGrid, cell, false) || isEqualityTurn)
+                {
+                    if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
+                    {
+                        isEqualityTurn = true;
+                    }
+                    else
+                    {
+                        Win(cell);
+                        end = true;
+                    }
+                }
+                if (!end)
+                {
+                    uiManager.DisplayYourTurn(false);
+                    uiManager.SetPlayer2Turn();
+                    PlayIAPhase2();
+                }
+			}
+            else
+            {
 				PhotonView photonView = PhotonView.Get(this);
 				photonView.RPC("ReceiveMovementsPhase2", PhotonTargets.Others, movementArray);
 
-				if (!Win (cell)) {
-					SetPlayerTurnOnEnd ();
+                if (Utils.CheckWin(modelGrid, cell, false) || isEqualityTurn)
+                {
+                    if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
+                    {
+                        isEqualityTurn = true;
+                    }
+                    else
+                    {
+                        Win(cell);
+                        end = true;
+                    }
+                }
+
+                if (!end)
+                {
+                    SetPlayerTurnOnEnd ();
 				}
 			}
 		}
 
-		private bool Win(Cell cell) {
-			if (Utils.CheckWin (modelGrid, cell)) {
-
-				if (!isPlayingVSIA) {
-					PhotonView photonView = PhotonView.Get (this);
-					photonView.RPC ("ReceiveWin", PhotonTargets.Others, new Vector2 (cell.x, cell.y));
-					player.EndTurn ();
-				}
-                
-			    RestartGame (true, cell);
-				return true;
-			}
-			return false;
-
-        }
-
-        void RestartGame(bool isWin, Cell cell)
+		private void Win(Cell cell)
         {
-            //ShowAds();
+            bool playerWin = false, otherPlayerWin = false;
+
+            List<WinningPattern> winningPatterns;
+            OptiGrid.GetWinningPatterns(out winningPatterns);
+
+            // if we have a winningPattern for the color, notify it
+            foreach(WinningPattern pattern in winningPatterns)
+            {
+                if (pattern.color == (CellColor)player.color)
+                {
+                    playerWin = true;
+                    playerScore = GetWinningPatternScore(pattern);
+                }
+                else
+                {
+                    otherPlayerWin = true;
+                    otherPlayerScore = GetWinningPatternScore(pattern);
+                }
+            }
+            
+            // adjust win/loose if with score
+            if (playerScore > otherPlayerScore)
+            {
+                otherPlayerWin = false;
+            }
+            else if (otherPlayerScore > playerScore)
+            {
+                playerWin = false;
+            }
+
+            if (playerWin && otherPlayerWin)
+            {
+                isWon = 0;
+            }
+            else if (playerWin)
+            {
+                isWon = 1;
+
+            }
+            else if (otherPlayerWin)
+            {
+                isWon = -1;
+            }
 
             isGameFinished = true;
-            isWon = isWin;
             player.EndTurn();
 
-            PlayVictoryAnimation(cell);
+            PlayVictoryAnimation();
+
+            /*if (!isPlayingVSIA) {
+		    	PhotonView photonView = PhotonView.Get (this);
+		    	photonView.RPC ("ReceiveWin", PhotonTargets.Others, new Vector2 (cell.x, cell.y));
+		    	player.EndTurn ();
+		    }*/
         }
 
         private void DisplayEndPanel()
@@ -372,83 +474,67 @@ namespace AppAdvisory.Item {
             uiManager.DisplayEndGamePanel(true);
             RestartConnection();
 
-            if (isWon)
+            if (isWon == 1)
             {
-                uiManager.DisplayYouWon(true, GetWinningPatternScore());
+                uiManager.DisplayYouWon(true, playerScore, otherPlayerScore);
+            }
+            else if (isWon == -1)
+            {
+                uiManager.DisplayYouLost(true, playerScore, otherPlayerScore);
             }
             else
             {
-                uiManager.DisplayYouLost(true, GetWinningPatternScore());
+                uiManager.DisplayDraw(true, playerScore, otherPlayerScore);
             }
 
             uiManager.DisplayRestartButton(true);
         }
 
-        private void PlayVictoryAnimation(Cell cell)
+        private void PlayVictoryAnimation()
         {
-            List<Vector2> winningPattern = new List<Vector2>();
+            List<WinningPattern> winningPatterns = new List<WinningPattern>();
+            optiGrid.GetWinningPatterns(out winningPatterns);
 
-            PatternType patternType;
-            optiGrid.GetWinningPatternAndType(out winningPattern, out patternType);
-
-            modelGrid.GetCellFromModel((int)winningPattern[0].y, (int)winningPattern[0].x).ball.transform.DOScale(1.1f, 1f).OnComplete(DisplayEndPanel);
-            modelGrid.GetCellFromModel((int)winningPattern[1].y, (int)winningPattern[1].x).ball.transform.DOScale(1.1f, 1f);
-            modelGrid.GetCellFromModel((int)winningPattern[2].y, (int)winningPattern[2].x).ball.transform.DOScale(1.1f, 1f);
-            modelGrid.GetCellFromModel((int)winningPattern[3].y, (int)winningPattern[3].x).ball.transform.DOScale(1.1f, 1f);
-            modelGrid.GetCellFromModel((int)winningPattern[4].y, (int)winningPattern[4].x).ball.transform.DOScale(1.1f, 1f);
-
-            /*
-            switch (patternType)
+            foreach(WinningPattern pattern in winningPatterns)
             {
-                case PatternType.AALine:
-                    {
-                        //GameObject line = Instantiate(horizontalLine, modelGrid.GetCellFromModel((int)winningPattern[0].x, (int)winningPattern[0].y).transform.position, Quaternion.identity);
-                    }
-                    break;
-                case PatternType.DiagonalLine:
-                    {
-                        //GameObject line = Instantiate(horizontalLine, modelGrid.GetCellFromModel((int)winningPattern[0].x, (int)winningPattern[0].y).transform.position, Quaternion.identity);
-                    }
-                    break;
-                case PatternType.AACross:
-                    foreach(Vector2 part in winningPattern)
-                    {
-                        //GameObject line = Instantiate(horizontalLine, modelGrid.GetCellFromModel((int)winningPattern[0].x, (int)winningPattern[0].y).transform.position, Quaternion.identity);
-                    }
-                    break;
-                case PatternType.DiagonalCross:
-                    foreach (Vector2 part in winningPattern)
-                    {
-                        //GameObject line = Instantiate(horizontalLine, modelGrid.GetCellFromModel((int)winningPattern[0].x, (int)winningPattern[0].y).transform.position, Quaternion.identity);
-                    }
-                    break;
-            }*/
+                modelGrid.GetCellFromModel((int)pattern.cells[0].y, (int)pattern.cells[0].x).ball.transform.DOScale(1.1f, 1f);
+                modelGrid.GetCellFromModel((int)pattern.cells[1].y, (int)pattern.cells[1].x).ball.transform.DOScale(1.1f, 1f);
+                modelGrid.GetCellFromModel((int)pattern.cells[2].y, (int)pattern.cells[2].x).ball.transform.DOScale(1.1f, 1f);
+                modelGrid.GetCellFromModel((int)pattern.cells[3].y, (int)pattern.cells[3].x).ball.transform.DOScale(1.1f, 1f);
+                modelGrid.GetCellFromModel((int)pattern.cells[4].y, (int)pattern.cells[4].x).ball.transform.DOScale(1.1f, 1f);
+            }
 
+            DOVirtual.DelayedCall(1.2f, DisplayEndPanel, true);
         }
 
-        private void WinIA(Cell cell) {
-			if (Utils.CheckWinIA (modelGrid, cell)) {
-				RestartGame (false, cell);
-			}
-		}
+        public void HighlightAvailableMoveCells(Cell cell)
+        {
+            modelGrid.ResetCellsColor();
 
-        private int GetWinningPatternScore()
+            List<Move> moves = optiGrid.GetAvailableMoves(cell);
+
+            foreach(Move move in moves)
+            {
+                Cell toCell = modelGrid.GetCellFromModel(move.toY, move.toX);
+                toCell.GetComponent<SpriteRenderer>().color = Color.red;
+            }
+        }
+
+        private int GetWinningPatternScore(WinningPattern winningPattern)
         {
             int score = 0;
-            List<Vector2> winningCells;
-            optiGrid.GetWinningPattern(out winningCells);
-
-            if (winningCells.Count < 0)
+            if (winningPattern.cells.Length == 0)
             {
                 Debug.Log("no winning pattern");
             }
             else
             {
-                for (int i = 0; i < winningCells.Count; ++i)
+                for (int i = 0; i < winningPattern.cells.Length; ++i)
                 {
-                    Cell cell = modelGrid.GetCellFromModel(new Vector2(winningCells[i].y, winningCells[i].x));
-                    
-                    score += cell.ball.Score;
+                    Cell cell = modelGrid.GetCellFromModel(new Vector2(winningPattern.cells[i].y, winningPattern.cells[i].x));
+
+                    if (cell && cell.ball)
+                        score += cell.ball.Score;
                 }
             }
 
@@ -523,7 +609,7 @@ namespace AppAdvisory.Item {
 			ball.DOPlace (cell);
 
 
-			player.StartTurn ();
+			player.StartTurn();
 
 			SetPlayerTurnOnReceive();
 		}
@@ -531,16 +617,16 @@ namespace AppAdvisory.Item {
 		[PunRPC]
 		void ReceiveMovementsPhase2(Vector2[] movements)
 		{
-			uiManager.DisplayPhase1Text (false);
-			uiManager.DisplayPhase2Text (true);
+			uiManager.DisplayPhase1Text(false);
+			uiManager.DisplayPhase2Text(true);
 
             numberOfTurnsPlayer2++;
 
             StartCoroutine(MoveCoroutine (movements));
-			uiManager.DisplayYourTurn (true);
-			player.StartTurn ();
+			uiManager.DisplayYourTurn(true);
+			player.StartTurn();
 
-            SetPlayerTurnOnReceive ();
+            SetPlayerTurnOnReceive();
 		}
 
 		[PunRPC]
@@ -548,12 +634,10 @@ namespace AppAdvisory.Item {
 			print ("receive win");
 			uiManager.ResetPlayerTurn ();
 
-			player.EndTurn ();
-			uiManager.DisplayYourTurn (false);
+			//player.EndTurn ();
+			//uiManager.DisplayYourTurn (false);
 
 			Cell cell = modelGrid.GetCellFromModel (position);
-
-            RestartGame (false, cell);
 		}
 
 		private void SendName(string name) {
@@ -732,7 +816,7 @@ namespace AppAdvisory.Item {
 			PhotonNetwork.Disconnect ();
 
 			uiManager.DisplayEndGamePanel (true);
-			uiManager.DisplayYouWon(true, 0);
+			uiManager.DisplayYouWon(true, 0, 0);
 			uiManager.DisplayByForfeit(true);
 
 			uiManager.DisplayRestartButton (true);
