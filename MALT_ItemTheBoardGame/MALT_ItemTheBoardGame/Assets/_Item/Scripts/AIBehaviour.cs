@@ -79,8 +79,6 @@ namespace AppAdvisory.Item
                     Debug.Log("BlackColor can move to win");
                     done = true;
                 }
-
-                Debug.Log("BlackColor can't move to win");
             }
 
             Debug.Log("WhiteColor can win next turn ?");
