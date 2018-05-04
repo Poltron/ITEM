@@ -125,6 +125,14 @@ namespace AppAdvisory.Item
             }
         }
 
+        public void Reset()
+        {
+            blackBallsLeft = 10;
+            whiteBallsLeft = 10;
+
+            CreateEmptyOptimizedGrid();
+        }
+
         public void SetPatternData(AIEvaluationData data)
         {
             patternData = data;
@@ -621,6 +629,82 @@ namespace AppAdvisory.Item
         {
             return width - x % 2 - 1;
         }
+        public OptimizedCell GetCellFromDirection(OptimizedCell firstCell, OptimizedCell secondCell)
+        {
+            OptimizedCell destinationCell;
+
+            //middle up
+            if (firstCell.y == secondCell.y && (firstCell.x + 2) == secondCell.x)
+            {
+                destinationCell = GetCell(secondCell.x + 2, secondCell.y);
+                if (destinationCell != null)
+                    return destinationCell;
+            }
+
+            //middle down
+            if (firstCell.y == secondCell.y && (firstCell.x - 2) == secondCell.x)
+            {
+                destinationCell = GetCell(secondCell.x - 2, secondCell.y);
+                if (destinationCell != null)
+                    return destinationCell;
+            }
+
+            //middle left
+            if (firstCell.y - 1 == secondCell.y && firstCell.x == secondCell.x)
+            {
+                destinationCell = GetCell(secondCell.x, secondCell.y - 1);
+                if (destinationCell != null)
+                    return destinationCell;
+            }
+
+            //middle right
+            if (firstCell.y + 1 == secondCell.y && firstCell.x == secondCell.x)
+            {
+                destinationCell = GetCell(secondCell.x, secondCell.y + 1);
+                if (destinationCell != null)
+                    return destinationCell;
+            }
+
+
+            int offsetFirstCell = firstCell.x % 2;
+            int offsetSecondCell = secondCell.x % 2;
+
+
+            //top left
+            if ((firstCell.y - 1 + offsetFirstCell) == secondCell.y && (firstCell.x + 1) == secondCell.x)
+            {
+                destinationCell = GetCell(secondCell.x + 1, secondCell.y - 1 + offsetSecondCell);
+                if (destinationCell != null)
+                    return destinationCell;
+            }
+
+            //top right
+            if ((firstCell.y + offsetFirstCell) == secondCell.y && (firstCell.x + 1) == secondCell.x)
+            {
+                destinationCell = GetCell(secondCell.x + 1, secondCell.y + offsetSecondCell);
+                if (destinationCell != null)
+                    return destinationCell;
+            }
+
+            //bottom left
+            if ((firstCell.y - 1 + offsetFirstCell) == secondCell.y && (firstCell.x - 1) == secondCell.x)
+            {
+                destinationCell = GetCell(secondCell.x - 1, secondCell.y - 1 + offsetSecondCell);
+                if (destinationCell != null)
+                    return destinationCell;
+            }
+
+            //bottom right
+            if ((firstCell.y + offsetFirstCell) == secondCell.y && (firstCell.x - 1) == secondCell.x)
+            {
+                destinationCell = GetCell(secondCell.x - 1, secondCell.y + offsetSecondCell);
+                if (destinationCell != null)
+                    return destinationCell;
+            }
+
+            return null;
+        }
+
 
         public List<Move> GetAvailableMoves(Cell cell)
         {
@@ -631,7 +715,6 @@ namespace AppAdvisory.Item
             {
                 if (move.fromX == cell.y && move.fromY == cell.x)
                 {
-                    Debug.Log(move.fromX + "/" + move.fromY);
                     moves.Add(move);
                 }
             }
@@ -639,7 +722,7 @@ namespace AppAdvisory.Item
             return moves;
         }
 
-        public List<Move> GetAvailableMoves(CellColor color)
+        public List<Move> GetAvailableMoves(CellColor color, bool enableJump = true)
         {
             List<Move> moves = new List<Move>();
 
@@ -678,10 +761,21 @@ namespace AppAdvisory.Item
 
                                     moves.Add(move);
                                 }
-                                else if (cell.color != CellColor.NOT_A_CELL)
+                                else if (cell.color != CellColor.NOT_A_CELL && enableJump)
                                 {
-                                    // si c'est une bille, alors checker la prochaine case dans la direction from > to.
-                                    // si elle est vide add move
+                                    OptimizedCell potentialCell = GetCellFromDirection(actualCell, cell);
+
+                                    if (potentialCell != null && potentialCell.color == CellColor.None)
+                                    {
+                                        Move move = new Move();
+                                        move.fromX = actualCell.x;
+                                        move.fromY = actualCell.y;
+                                        move.toX = potentialCell.x;
+                                        move.toY = potentialCell.y;
+                                        move.color = actualCell.color;
+
+                                        moves.Add(move);
+                                    }
                                 }
                             }
                         }

@@ -24,10 +24,6 @@ namespace AppAdvisory.Item {
 			panel = GetComponent<Image> ();
 		}
 
-		public void DisplayArrow(bool isShown) {
-			//maskArrow.SetActive(isShown);
-		}
-			
 		public void SetName(string name) {
 			this.playerName.text = name;
 		}

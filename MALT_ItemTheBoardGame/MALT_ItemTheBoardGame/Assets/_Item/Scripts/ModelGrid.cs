@@ -28,6 +28,20 @@ namespace AppAdvisory.Item {
 
         }
 
+        public void Reset()
+        {
+            for (int i = 0; i < grid.Length; ++i)
+            {
+                for (int j = 0; j < grid[i].Length; ++j)
+                {
+                    if (grid[i][j] && grid[i][j].ball)
+                        grid[i][j].ball = null;
+                }
+            }
+
+            ResetCellsColor();
+        }
+
         public void ResetCellsColor()
         {
             for (int i = 0; i < grid.Length;++i)

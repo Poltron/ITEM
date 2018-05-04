@@ -14,7 +14,6 @@ using AppAdvisory.Ads;
 namespace AppAdvisory.Item {
     public class GridManager : PunBehaviour {
 
-        public int numberOfPlayToShowInterstitial = 1;
         private Connection connection;
         public FBManager fbManager;
 
@@ -38,16 +37,12 @@ namespace AppAdvisory.Item {
         public Ball blackBallPrefab;
 
         [SerializeField]
-        private GameObject horizontalLine;
-        [SerializeField]
-        private GameObject diagonalLine;
-
-        [SerializeField]
         private Transform marbleContainer;
         [SerializeField]
         public List<Ball> blackBalls;
         [SerializeField]
         public List<Ball> whiteBalls;
+
         [SerializeField]
         private UIManager uiManager;
 
@@ -61,14 +56,20 @@ namespace AppAdvisory.Item {
         private int isWon = 0;
         private int playerScore = 0;
         private int otherPlayerScore = 0;
+
         private bool isEqualityTurn = false;
         public bool IsEqualityTurn { get { return isEqualityTurn; } }
         private bool isGameStarted = false;
         private bool isPlayingVSIA = false;
 
+        private bool opponentGoesNextRound = false;
+        private bool playerGoesNextRound = false;
+        private int roundNumber;
+
         [SerializeField]
         private bool disableAI = false;
 
+        [HideInInspector]
         public int numberOfTurnsPlayer1 = 0;
         public int Player1NbOfTurn { get { return numberOfTurnsPlayer1; } }
         private int numberOfTurnsPlayer2 = 0;
@@ -78,16 +79,16 @@ namespace AppAdvisory.Item {
         {
             numberOfTurnsPlayer1 = 0;
             numberOfTurnsPlayer2 = 0;
+            roundNumber = 1;
 
             aiBehaviour = new AIBehaviour(aiEvaluationData);
             
 			DisplayMarbleContainer (false);
 
-            //DOVirtual.DelayedCall(timeToLaunchGameVSIA, StartGameVSIA);
-
             connection = GetComponent<Connection> ();
 
 			uiManager.Init();
+            uiManager.NextRound += OnNextRound;
 			uiManager.Restart += OnRestart;
 			uiManager.InviteFriend += OnInviteFriend;
 
@@ -134,15 +135,13 @@ namespace AppAdvisory.Item {
             numberOfTurnsPlayer2 = 0;
             isPlayingVSIA = true;
 
-			uiManager.DisplayYourTurn (true);
 			uiManager.DisplayPhase1Text (true);
 			uiManager.SetPlayer1Turn();
-			//isPlayer1 = true;
 
 			player = CreatePlayer (BallColor.White);
 			uiManager.InitPlayer2(BallColor.Black);
 
-			uiManager.DisplayPlayer1Arrow (true);
+			uiManager.DisplayYourTurn (true);
 			uiManager.SetPlayer2Name (GetIAName());
 
 			player.StartTurn ();
@@ -179,6 +178,56 @@ namespace AppAdvisory.Item {
             optiGrid.SetPatternData(aiEvaluationData);
 		}
 
+        public void GoToNextRound()
+        {
+            roundNumber++;
+
+            optiGrid.Reset();
+            modelGrid.Reset();
+
+            blackBalls.Clear();
+            whiteBalls.Clear();
+
+            Ball[] balls = FindObjectsOfType<Ball>();
+
+            foreach(Ball b in balls)
+            {
+                b.Reset();
+
+                if (b.Color == BallColor.Black)
+                    blackBalls.Add(b);
+                else
+                    whiteBalls.Add(b);
+            }
+            
+            isGameFinished = false;
+            isWon = 0;
+            isEqualityTurn = false;
+            isGameStarted = true;
+            
+            player.Reset();
+
+            numberOfTurnsPlayer1 = 0;
+            numberOfTurnsPlayer2 = 0;
+
+            uiManager.ResetGame();
+
+            SwitchPlayersColor();
+
+            // whites begin the game
+            if (player.color == BallColor.White)
+            {
+                player.StartTurn();
+                uiManager.SetPlayer1Turn();
+                uiManager.DisplayYourTurn(true);
+            }
+            else
+            {
+                uiManager.SetPlayer2Turn();
+                uiManager.DisplayOpponentTurn(true);
+            }
+        }
+
 		private Player CreatePlayer(BallColor color)
         {
 			Player player = Instantiate (playerPrefab);
@@ -188,6 +237,20 @@ namespace AppAdvisory.Item {
 			player.OnPhase2TurnFinished += Phase2TurnFinishedPlayer;
 			return player;
 		}
+
+        private void SwitchPlayersColor()
+        {
+            if (player.color == BallColor.Black)
+            {
+                player.ballPrefab = blackBallPrefab;
+                uiManager.InitPlayer2(BallColor.White);
+            }
+            else
+            {
+                player.ballPrefab = whiteBallPrefab;
+                uiManager.InitPlayer2(BallColor.Black);
+            }
+        }
 
 		public void PlaceBallIA(Cell cell)
         {
@@ -241,7 +304,6 @@ namespace AppAdvisory.Item {
 
             player.StartTurn();
 
-            uiManager.DisplayYourTurn(true);
             uiManager.SetPlayer1Turn();
         }
 			
@@ -314,14 +376,12 @@ namespace AppAdvisory.Item {
                 
                 if (!end)
                 {
-                    uiManager.DisplayYourTurn(false);
                     uiManager.SetPlayer2Turn();
                     
                     if (disableAI) // debug feature to test without AI
                     {
                         player.StartTurn();
 
-                        uiManager.DisplayYourTurn(true);
                         uiManager.SetPlayer1Turn();
                     }
                     else
@@ -333,7 +393,7 @@ namespace AppAdvisory.Item {
             else
             {
 				PhotonView photonView = PhotonView.Get(this);
-				photonView.RPC ("ReceiveMovementsPhase1", PhotonTargets.Others, pos);
+				photonView.RPC ("ReceiveMovementsPhase1", PhotonTargets.Others, pos, cell.ball.ballId);
                 
                 if (Utils.CheckWin(modelGrid, cell, false) || isEqualityTurn)
                 {
@@ -381,7 +441,6 @@ namespace AppAdvisory.Item {
                 }
                 if (!end)
                 {
-                    uiManager.DisplayYourTurn(false);
                     uiManager.SetPlayer2Turn();
                     PlayIAPhase2();
                 }
@@ -461,18 +520,11 @@ namespace AppAdvisory.Item {
             player.EndTurn();
 
             PlayVictoryAnimation();
-
-            /*if (!isPlayingVSIA) {
-		    	PhotonView photonView = PhotonView.Get (this);
-		    	photonView.RPC ("ReceiveWin", PhotonTargets.Others, new Vector2 (cell.x, cell.y));
-		    	player.EndTurn ();
-		    }*/
         }
 
         private void DisplayEndPanel()
         {
             uiManager.DisplayEndGamePanel(true);
-            RestartConnection();
 
             if (isWon == 1)
             {
@@ -487,7 +539,18 @@ namespace AppAdvisory.Item {
                 uiManager.DisplayDraw(true, playerScore, otherPlayerScore);
             }
 
-            uiManager.DisplayRestartButton(true);
+            if (roundNumber == 2)
+            {
+                uiManager.DisplayRestartButton(true);
+                uiManager.DisplayNextRoundButton(false);
+            
+            }
+            else
+            {
+                uiManager.DisplayRestartButton(false);
+                uiManager.DisplayNextRoundButton(true);
+            
+            }
         }
 
         private void PlayVictoryAnimation()
@@ -547,7 +610,7 @@ namespace AppAdvisory.Item {
 			count++;
 
 			#if APPADVISORY_ADS
-			if(count > numberOfPlayToShowInterstitial)
+			/*if(count > numberOfPlayToShowInterstitial)
 			{
 
 				if(AdsManager.instance.IsReadyInterstitial())
@@ -560,7 +623,7 @@ namespace AppAdvisory.Item {
 			{
 				PlayerPrefs.SetInt("GAMEOVER_COUNT", count);
 			}
-			PlayerPrefs.Save();
+			PlayerPrefs.Save();*/
 			#else
 			if(count >= numberOfPlayToShowInterstitial)
 			{
@@ -584,25 +647,32 @@ namespace AppAdvisory.Item {
 		}
 
 		[PunRPC]
-		void ReceiveMovementsPhase1(Vector2 pos)
+		void ReceiveMovementsPhase1(Vector2 pos, int ballIndex)
 		{
-			if (player.ballCount > 0) {
+			if (player.ballCount > 0)
+            {
 				uiManager.DisplayPhase1Text (true);
-			} else {
+			}
+            else
+            {
 				uiManager.DisplayPhase1Text (false);
 				uiManager.DisplayPhase2Text (true);
 			}
 
             numberOfTurnsPlayer2++;
+
             Cell cell = modelGrid.GetCellFromModel (pos);
 			Ball ball;
 
-			if (player.color == BallColor.White) {
-				ball = blackBalls.First ();
-				blackBalls.RemoveAt (0);
-			} else {
-				ball = whiteBalls.First ();
-				whiteBalls.RemoveAt (0);
+			if (player.color == BallColor.White)
+            {
+                ball = blackBalls.Find(x => x.ballId == ballIndex);
+                blackBalls.Remove(ball);
+			}
+            else
+            {
+                ball = whiteBalls.Find(x => x.ballId == ballIndex);
+                whiteBalls.Remove(ball);
 			}
 
 			ball.DOPlace (cell);
@@ -656,23 +726,10 @@ namespace AppAdvisory.Item {
 
             if (!end)
             {
-                uiManager.DisplayYourTurn(true);
                 player.StartTurn();
                 SetPlayerTurnOnReceive();
             }
 		}
-
-		/*
-        [PunRPC]
-		void ReceiveWin(Vector2 position) {
-			print ("receive win");
-			uiManager.ResetPlayerTurn ();
-
-			//player.EndTurn ();
-			//uiManager.DisplayYourTurn (false);
-
-			Cell cell = modelGrid.GetCellFromModel (position);
-		}*/
 
 		private void SendName(string name) {
 			PhotonView photonView = PhotonView.Get(this);
@@ -688,11 +745,6 @@ namespace AppAdvisory.Item {
 		private void ReceiveName(string name) {
 			uiManager.SetPlayer2Name (name);
 			return;
-
-			/*if (isPlayer1)
-				uiManager.SetPlayer2Name (name);
-			else
-				uiManager.SetPlayer1Name (name);*/
 		}
 
 		[PunRPC] 
@@ -701,7 +753,6 @@ namespace AppAdvisory.Item {
 				uiManager.SetPlayer2Pic(sprite);
 			}));
 		}
-
 
 		override public void OnLeftRoom()
 		{
@@ -728,32 +779,16 @@ namespace AppAdvisory.Item {
         }
 			
 		void SetPlayerTurnOnReceive() {
-			uiManager.DisplayYourTurn (true);
 			uiManager.SetPlayer1Turn ();
 
 			return;
-			/*
-            if(isPlayer1) {
-				uiManager.SetPlayer1Turn();
-			} else {
-				uiManager.SetPlayer2Turn();
-			}
-            */
 		}
 
 		void SetPlayerTurnOnEnd() {
-			uiManager.DisplayYourTurn (false);
 			uiManager.SetPlayer2Turn ();
 
 			return;
-			/*if(isPlayer1) {
-				uiManager.SetPlayer2Turn();
-			} else {
-				uiManager.SetPlayer1Turn();
-			}*/
 		}
-
-
 
 		public override void OnJoinedRoom()
 		{
@@ -773,8 +808,6 @@ namespace AppAdvisory.Item {
 				uiManager.InitPlayer2(BallColor.White);
 				uiManager.SetPlayer2Turn();
 
-				uiManager.DisplayYourTurn (false);
-
 				uiManager.DisplayPhase1Text (true);
 
 
@@ -787,9 +820,6 @@ namespace AppAdvisory.Item {
 				print ("2 players in the room, sending player name : " + playerName);
 				SendName (playerName);
 				SendPicURL (playerPicURL);
-
-				//isPlayer1 = false;
-
 			}
 			else
 			{
@@ -801,7 +831,7 @@ namespace AppAdvisory.Item {
 					uiManager.SetPlayer1Pic(sprite);
 				}));
 
-				uiManager.DisplayPlayer1Arrow (false);
+				uiManager.DisplayYourTurn (false);
 			}
 		}
 
@@ -817,10 +847,8 @@ namespace AppAdvisory.Item {
                 numberOfTurnsPlayer1 = 0;
                 numberOfTurnsPlayer2 = 0;
 
-                uiManager.DisplayYourTurn (true);
 				uiManager.DisplayPhase1Text (true);
 				uiManager.SetPlayer1Turn();
-				//isPlayer1 = true;
 
 				player = CreatePlayer (BallColor.White);
 				uiManager.InitPlayer2(BallColor.Black);
@@ -828,7 +856,7 @@ namespace AppAdvisory.Item {
 				SendName (playerName);
 				SendPicURL (playerPicURL);
 
-				uiManager.DisplayPlayer1Arrow (true);
+				uiManager.DisplayYourTurn (true);
 
 				player.StartTurn ();
 			} else 
@@ -855,10 +883,39 @@ namespace AppAdvisory.Item {
 			uiManager.DisplayRestartButton (true);
 		}
 
-		public void OnRestart() 
-		{
-			PhotonNetwork.LoadLevel (1);
+		public void OnRestart()
+        {
+            PhotonNetwork.LoadLevel (1);
 		}
+
+        public void OnNextRound()
+        {
+            if (playerGoesNextRound)
+                return;
+
+            playerGoesNextRound = true;
+
+            PhotonView photonView = PhotonView.Get(this);
+            photonView.RPC("SendNextRound", PhotonTargets.Others);
+
+            if (opponentGoesNextRound || isPlayingVSIA)
+            {
+                playerGoesNextRound = opponentGoesNextRound = false;
+                GoToNextRound();
+            }
+        }
+
+        [PunRPC]
+        public void SendNextRound()
+        {
+            opponentGoesNextRound = true;
+
+            if (playerGoesNextRound)
+            {
+                playerGoesNextRound = opponentGoesNextRound = false;
+                GoToNextRound();
+            }
+        }
 
 		public void OnInviteFriend() {
 			FB.AppRequest ("Viens jouer à Item");

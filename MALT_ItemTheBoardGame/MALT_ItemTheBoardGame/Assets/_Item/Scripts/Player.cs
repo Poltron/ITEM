@@ -40,7 +40,20 @@ namespace AppAdvisory.Item {
 
 		public bool showHelp = false;
 
+        public void Reset()
+        {
+            ballCount = 10;
+            isTweening = false;
+            hasAlreadyJumpedOnce = false;
+            currentCell = null;
+            currentBall = null;
+            currentCellsToMove = new List<Cell>();
+            currentCellsToJump = new List<Cell>();
+            movements = new List<Vector2>();
+        }
+
 		public void StartTurn() {
+            Debug.Log("playerstartturn");
 			EasyTouch.On_TouchUp += OnTouchUp;
             FindObjectOfType<GridManager>().numberOfTurnsPlayer1++;
 //			if (ballCount > 0) {
@@ -53,7 +66,9 @@ namespace AppAdvisory.Item {
 		}
 
 
-		public void EndTurn() {
+        public void EndTurn()
+        {
+            Debug.Log("playerendturn");
 			EasyTouch.On_TouchUp -= OnTouchUp;
 
 //			if (ballCount > 0) {
@@ -192,6 +207,8 @@ namespace AppAdvisory.Item {
 			if (!gesture.pickedObject)
 				return;
 
+            Debug.Log("ontouchup");
+
 			Cell pickedCell = gesture.pickedObject.GetComponent<Cell> (); 
 
 			Ball pickedBall = gesture.pickedObject.GetComponent<Ball> ();
@@ -205,7 +222,7 @@ namespace AppAdvisory.Item {
 				if (currentBall) {
 					if (!pickedCell) {
 
-						if (pickedBall) {
+						if (pickedBall && pickedBall.Color == color) {
 							currentBall.HideHighlight ();
 							currentBall = pickedBall;
 							currentBall.ShowHighlight ();

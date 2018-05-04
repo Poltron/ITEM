@@ -9,8 +9,8 @@ namespace AppAdvisory.Item {
 
 	public class UIManager : MonoBehaviour {
 
-
 		public event Action Restart;
+        public event Action NextRound;
 		public event Action FinishTurn;
 		public event Action InviteFriend;
 
@@ -47,6 +47,7 @@ namespace AppAdvisory.Item {
         public GameObject draw;
 		public GameObject byForfeit;
 		public GameObject restartButton;
+        public GameObject nextRound;
         public GameObject withPoints;
 
 		public GameObject inviteFriendButton;
@@ -64,10 +65,19 @@ namespace AppAdvisory.Item {
 			
 		}
 
+        public void ResetGame()
+        {
+            DisplayEndGamePanel(false);
+            DisplayYouWon(false, 0, 0);
+            DisplayByForfeit(false);
+            DisplayYouLost(false, 0, 0);
+            DisplayDraw(false, 0, 0);
+            DisplayPhase1Text(true);
+        }
+
 		public void Init() {
 			DisplayPlayer1(false);
 			DisplayPlayer2(false);
-			DisplayYourTurn (false);
 
 			DisPlayWaitingForPlayerPanel (false);
 
@@ -80,7 +90,8 @@ namespace AppAdvisory.Item {
             DisplayPhase1Text (false);
 			DisplayPhase2Text (false);
 
-			DisplayRestartButton (false);
+            DisplayRestartButton(false);
+            DisplayNextRoundButton(false);
 		}
 
 		public void DisPlayWaitingForPlayerPanel(bool isShown) {
@@ -91,13 +102,7 @@ namespace AppAdvisory.Item {
 			endGamePanel.SetActive (isShown);
 			DisplayPhase1Text (false);
 			DisplayPhase2Text (false);
-			DisplayYourTurn (false);
 		}
-
-        public void DisplayYourTurn(bool isShown)
-        {
-
-        }
 
         public void DisplayPhase1Text(bool isShown) {
 			phase1Text.SetActive (isShown);
@@ -107,8 +112,13 @@ namespace AppAdvisory.Item {
 			phase2Text.SetActive (isShown);
 		}
 
-		public void DisplayRestartButton(bool isShown) {
-			restartButton.SetActive (isShown);
+        public void DisplayRestartButton(bool isShown)
+        {
+            restartButton.SetActive(isShown);
+        }
+
+		public void DisplayNextRoundButton(bool isShown) {
+			nextRound.SetActive (isShown);
 		}
 			
 		public void DisplayPlayer1(bool isShown) {
@@ -149,13 +159,11 @@ namespace AppAdvisory.Item {
 
 		public void InitPlayer1(BallColor color) {
 			DisplayPlayer1(true);
-			player1.DisplayArrow (false);
 			player1.SetColor (color);
 		}
 
 		public void InitPlayer2(BallColor color) {
 			DisplayPlayer2(true);
-			player2.DisplayArrow (false);
 			player2.SetColor (color);
 		}
 
@@ -184,7 +192,7 @@ namespace AppAdvisory.Item {
 
         private void SetPlayer1TurnReal()
         {
-            DisplayPlayer1Arrow(true);
+            DisplayYourTurn(true);
             timer = 0;
             isPlayer1Turn = true;
         }
@@ -196,7 +204,7 @@ namespace AppAdvisory.Item {
 
         private void SetPlayer2TurnReal()
         {
-            DisplayPlayer2Arrow(true);
+            DisplayOpponentTurn(true);
             isPlayer1Turn = false;
             timer = 0;
         }
@@ -231,13 +239,13 @@ namespace AppAdvisory.Item {
             //Debug.Log("player1 is shown : " + player1.gameObject.activeInHierarchy + " / player2 is shown : " + player2.gameObject.activeInHierarchy);
         }
 
-        public void DisplayPlayer1Arrow(bool isShown) {
+        public void DisplayYourTurn(bool isShown) {
             overlay.SetActive(isShown);
             yourTurn.SetActive(isShown);
             opponentsTurn.SetActive(!isShown);
 		}
 
-		public void DisplayPlayer2Arrow(bool isShown) {
+		public void DisplayOpponentTurn(bool isShown) {
             overlay.SetActive(isShown);
             opponentsTurn.SetActive(isShown);
             yourTurn.SetActive(!isShown);
@@ -248,10 +256,16 @@ namespace AppAdvisory.Item {
 			player2.SetColor (Color.white);
 		}
 
-		public void OnRestartButton() {
-			if(Restart != null)
-				Restart ();
+		public void OnNextRoundButton() {
+            if (NextRound != null)
+                NextRound();
 		}
+
+        public void OnRestartButton()
+        {
+            if (Restart != null)
+                Restart();
+        }
 
 		public void OnInviteFriendbutton() {
 			Debug.Log("invite friend");
