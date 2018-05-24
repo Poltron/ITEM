@@ -53,7 +53,7 @@ namespace AppAdvisory.Item
             evaluationData = _data;
         }
 
-        public IEnumerator GetBestMove(OptimizedGrid optiGrid, System.Action<Move> toDo)
+        public Move GetBestMove(OptimizedGrid optiGrid)
         {
             grid = optiGrid;
 
@@ -62,9 +62,6 @@ namespace AppAdvisory.Item
             float actualTime = Time.realtimeSinceStartup;
 
             Move bestMove = new Move();
-            bool done = false;
-
-            yield return new WaitForEndOfFrame();
 
             Debug.Log("BlackColor can win next turn ?");
             List<Vector2> canWinCells = new List<Vector2>();
@@ -77,13 +74,15 @@ namespace AppAdvisory.Item
                 if (grid.CanColorMoveToWin(BallColor.Black, canWinCells, out bestMove))
                 {
                     Debug.Log("BlackColor can move to win");
-                    done = true;
+                    return bestMove;
                 }
+
+                Debug.Log("BlackColor can't move to win");
             }
 
             Debug.Log("WhiteColor can win next turn ?");
             // if Player can win next turn
-            if (grid.CanColorWin(BallColor.White, out canWinCells) && !done)
+            if (grid.CanColorWin(BallColor.White, out canWinCells))
             {
                 Debug.Log("Player can win next turn");
 
@@ -96,26 +95,19 @@ namespace AppAdvisory.Item
                     if (grid.CanColorMoveToWin(BallColor.Black, canWinCells, out bestMove))
                     {
                         Debug.Log("AI can def next turn win");
-                        done = true;
+                        return bestMove;
                     }
                 }
             }
 
-            if (!done)
-            {
-                int depth = 5;
-                if (optiGrid.BlackBallsLeft > 0 || optiGrid.WhiteBallsLeft > 0)
-                    depth = 3;
-
-                bestMove = MiniMaxRoot(depth, true);
-            }
+            bestMove = MiniMaxRoot(5, true);
 
             float newTime = Time.realtimeSinceStartup;
             timeSpent = newTime - actualTime;
 
             Debug.Log(positionCount + " in " + timeSpent);
 
-            toDo(bestMove);
+            return bestMove;
         }
 
         public Move MiniMaxRoot(int depth, bool isMaximisingPlayer)
@@ -304,6 +296,70 @@ namespace AppAdvisory.Item
                         value += 15000;
                     else if (blackCount == 0 && whiteCount == 4)
                         value += 50000;
+
+                    /*if (blackCount == 1 && whiteCount == 0)
+                        value -= 100;
+                    else if (blackCount == 2 && whiteCount == 0)
+                        value -= 400;
+                    else if (blackCount == 3 && whiteCount == 0)
+                        value -= 1500;
+                    else if (blackCount == 4 && whiteCount == 0)
+                        value -= 20000;
+
+                    else if (blackCount == 1 && whiteCount == 1)
+                        value -= 100;
+                    else if (blackCount == 2 && whiteCount == 1)
+                        value -= 300;
+                    else if (blackCount == 3 && whiteCount == 1)
+                        value -= 1000;
+                    else if (blackCount == 4 && whiteCount == 1)
+                        value -= 3000;
+
+                    else if (blackCount == 1 && whiteCount == 2)
+                        value -= 100;
+                    else if (blackCount == 2 && whiteCount == 2)
+                        value -= 300;
+                    else if (blackCount == 3 && whiteCount == 2)
+                        value -= 1000;
+
+                    else if (blackCount == 1 && whiteCount == 3)
+                        value -= 2000;
+                    else if (blackCount == 2 && whiteCount == 3)
+                        value -= 1000;
+
+                    else if (blackCount == 1 && whiteCount == 4)
+                        value -= 250000;
+                    
+                    else if (blackCount == 0 && whiteCount == 1)
+                        value += 100;
+                    else if (blackCount == 0 && whiteCount == 2)
+                        value += 3000;
+                    else if (blackCount == 0 && whiteCount == 3)
+                        value += 75000;
+                    else if (blackCount == 0 && whiteCount == 4)
+                        value += 1000000;*/
+
+                    /*if (blackCount == 1 && whiteCount == 0)
+                        value -= 100;
+                    else if (blackCount == 2 && whiteCount == 0)
+                        value -= 400;
+                    else if (blackCount == 3 && whiteCount == 0)
+                        value -= 1500;
+                    else if (blackCount == 4 && whiteCount == 0)
+                        value -= 20000;
+                    else if (blackCount == 4 && whiteCount == 1)
+                        value += 30000;
+
+                    else if (blackCount == 0 && whiteCount == 1)
+                        value += 100;
+                    else if (blackCount == 0 && whiteCount == 2)
+                        value += 400;
+                    else if (blackCount == 0 && whiteCount == 3)
+                        value += 1500;
+                    else if (blackCount == 0 && whiteCount == 4)
+                        value += 20000;
+                    else if (blackCount == 1 && whiteCount == 4)
+                        value -= 30000;*/
                 }
             }
             return value;

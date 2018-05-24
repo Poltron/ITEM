@@ -15,46 +15,15 @@ namespace AppAdvisory.Item {
 
 		private Transform parent;
 
-        private Color cellBaseColor;
-
 		public ModelGrid(int width, int height, List<Cell> cells)
 	    {
 	        this.width = width;
 	        this.height = height;
 
 	        InitGridWithCells(cells);
-
-            cellBaseColor = grid[0][0].GetComponent<SpriteRenderer>().color;
-
-        }
-
-        public void Reset()
-        {
-            for (int i = 0; i < grid.Length; ++i)
-            {
-                for (int j = 0; j < grid[i].Length; ++j)
-                {
-                    if (grid[i][j] && grid[i][j].ball)
-                        grid[i][j].ball = null;
-                }
-            }
-
-            ResetCellsColor();
-        }
-
-        public void ResetCellsColor()
-        {
-            for (int i = 0; i < grid.Length;++i)
-            {
-                for (int j = 0; j < grid[i].Length; j++)
-                {
-                    if (grid[i][j])
-                    grid[i][j].GetComponent<SpriteRenderer>().color = cellBaseColor;
-                }
-            }
-        }
-
-        public List<Cell> GetAllCellsWithColor(BallColor color = BallColor.Black) {
+	    }
+        
+		public List<Cell> GetAllCellsWithColor(BallColor color = BallColor.Black) {
 
 			List<Cell> colorCells = new List<Cell> ();
 

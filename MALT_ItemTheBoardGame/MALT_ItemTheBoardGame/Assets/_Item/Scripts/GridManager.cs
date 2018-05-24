@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;  
 using Photon;
@@ -12,12 +13,13 @@ using Facebook.Unity;
 using AppAdvisory.Ads;
 
 namespace AppAdvisory.Item {
-    public class GridManager : PunBehaviour
-    {
-        private Connection connection;
-        public FBManager fbManager;
+	public class GridManager : PunBehaviour {
 
-        private ModelGrid modelGrid;
+		public int numberOfPlayToShowInterstitial = 1;
+		private Connection connection;
+		public FBManager fbManager;
+
+		private ModelGrid modelGrid;
         public ModelGrid ModelGrid { get { return modelGrid; } }
 
         private OptimizedGrid optiGrid;
@@ -28,67 +30,57 @@ namespace AppAdvisory.Item {
         private AIBehaviour aiBehaviour;
 
         public AIBehaviour AIBehaviour { get { return aiBehaviour; } }
-
+        
         [SerializeField]
-        public Player playerPrefab;
+		public Player playerPrefab;
         [SerializeField]
         public Ball whiteBallPrefab;
         [SerializeField]
         public Ball blackBallPrefab;
 
         [SerializeField]
-        private Transform marbleContainer;
+        private GameObject horizontalLine;
+        [SerializeField]
+        private GameObject diagonalLine;
+
+        [SerializeField]
+		private Transform marbleContainer;
         [SerializeField]
         public List<Ball> blackBalls;
         [SerializeField]
         public List<Ball> whiteBalls;
-
         [SerializeField]
         private UIManager uiManager;
 
         private Player player;
-        private string playerName;
-        private string playerPicURL;
+		private string playerName;
+		private string playerPicURL;
+        
+		public float timeToLaunchGameVSIA = 4;
 
-        public float timeToLaunchGameVSIA = 4;
-
-        private bool isGameFinished = false;
-        private int isWon = 0;
-        private int playerScore = 0;
-        private int otherPlayerScore = 0;
-
-        private bool isEqualityTurn = false;
-        public bool IsEqualityTurn { get { return isEqualityTurn; } }
+		//private bool isPlayer1 = false;
+		private bool isGameFinished = false;
+        private bool isWon = false;
         private bool isGameStarted = false;
-        private bool isPlayingVSIA = false;
-
-        private bool opponentGoesNextRound = false;
-        private bool playerGoesNextRound = false;
-        private int roundNumber;
+		private bool isPlayingVSIA = false;
 
         [SerializeField]
         private bool disableAI = false;
 
-        [HideInInspector]
-        public int numberOfTurnsPlayer1 = 0;
-        public int Player1NbOfTurn { get { return numberOfTurnsPlayer1; } }
-        private int numberOfTurnsPlayer2 = 0;
-        public int Player2NbOfTurn { get { return numberOfTurnsPlayer2; } }
 
-        void Start ()
+        private string[] randomNames = new string[] { "IA" };
+
+		void Start ()
         {
-            numberOfTurnsPlayer1 = 0;
-            numberOfTurnsPlayer2 = 0;
-            roundNumber = 1;
-
             aiBehaviour = new AIBehaviour(aiEvaluationData);
             
 			DisplayMarbleContainer (false);
 
+            DOVirtual.DelayedCall(timeToLaunchGameVSIA, StartGameVSIA);
+
             connection = GetComponent<Connection> ();
 
 			uiManager.Init();
-            uiManager.NextRound += OnNextRound;
 			uiManager.Restart += OnRestart;
 			uiManager.InviteFriend += OnInviteFriend;
 
@@ -97,10 +89,9 @@ namespace AppAdvisory.Item {
 			fbManager = FindObjectOfType<FBManager> ();
             if (fbManager)
             {
-                Debug.Log("fbManager != null");
-
                 playerName = fbManager.pName;
                 playerPicURL = fbManager.pUrlPic;
+
 
                 fbManager.NameLoaded += OnNameLoaded;
                 fbManager.PicURLLoaded += OnPicURLLoaded;
@@ -109,15 +100,7 @@ namespace AppAdvisory.Item {
             }
         }
 
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                StartGameVSIA();
-            }
-        }
-
-        public void StartGameVSIA() {
+		public void StartGameVSIA() {
 			if (isGameStarted)
 				return;
 
@@ -131,24 +114,24 @@ namespace AppAdvisory.Item {
 			CreateGrid ();
 
 			isGameStarted = true;
-            numberOfTurnsPlayer1 = 0;
-            numberOfTurnsPlayer2 = 0;
-            isPlayingVSIA = true;
+			isPlayingVSIA = true;
 
+			uiManager.DisplayYourTurn (true);
 			uiManager.DisplayPhase1Text (true);
 			uiManager.SetPlayer1Turn();
+			//isPlayer1 = true;
 
 			player = CreatePlayer (BallColor.White);
 			uiManager.InitPlayer2(BallColor.Black);
 
-			uiManager.DisplayYourTurn (true);
-			uiManager.SetPlayer2Name (GetIAName());
+			uiManager.DisplayPlayer1Arrow (true);
+			uiManager.SetPlayer2Name (GetRandomIAName());
 
 			player.StartTurn ();
 		}
 
-		private string GetIAName() {
-            return "IA";
+		private string GetRandomIAName() {
+            return randomNames [Random.Range (0, randomNames.Length - 1)];
 		}
 
 		private void DisplayMarbleContainer(bool isShown) {
@@ -161,14 +144,12 @@ namespace AppAdvisory.Item {
 
 		private void OnNameLoaded(string name) {
 			playerName = name;
-            uiManager.DisplayPlayer1(true);
 			print ("onnameloaded " + name);
 		}
 
 		private void OnPicURLLoaded(string url) {
 			playerPicURL = url;
-            uiManager.DisplayPlayer1(true);
-            print ("onpicurlloaded" + url);
+			print ("onpicurlloaded" + url);
 		}
 
 		private void CreateGrid()
@@ -177,56 +158,6 @@ namespace AppAdvisory.Item {
             optiGrid = new OptimizedGrid(5, 9);
             optiGrid.SetPatternData(aiEvaluationData);
 		}
-
-        public void GoToNextRound()
-        {
-            roundNumber++;
-
-            optiGrid.Reset();
-            modelGrid.Reset();
-
-            blackBalls.Clear();
-            whiteBalls.Clear();
-
-            Ball[] balls = FindObjectsOfType<Ball>();
-
-            foreach(Ball b in balls)
-            {
-                b.Reset();
-
-                if (b.Color == BallColor.Black)
-                    blackBalls.Add(b);
-                else
-                    whiteBalls.Add(b);
-            }
-            
-            isGameFinished = false;
-            isWon = 0;
-            isEqualityTurn = false;
-            isGameStarted = true;
-            
-            player.Reset();
-
-            numberOfTurnsPlayer1 = 0;
-            numberOfTurnsPlayer2 = 0;
-
-            uiManager.ResetGame();
-
-            SwitchPlayersColor();
-
-            // whites begin the game
-            if (player.color == BallColor.White)
-            {
-                player.StartTurn();
-                uiManager.SetPlayer1Turn();
-                uiManager.DisplayYourTurn(true);
-            }
-            else
-            {
-                uiManager.SetPlayer2Turn();
-                uiManager.DisplayOpponentTurn(true);
-            }
-        }
 
 		private Player CreatePlayer(BallColor color)
         {
@@ -238,20 +169,6 @@ namespace AppAdvisory.Item {
 			return player;
 		}
 
-        private void SwitchPlayersColor()
-        {
-            if (player.color == BallColor.Black)
-            {
-                player.ballPrefab = blackBallPrefab;
-                uiManager.InitPlayer2(BallColor.White);
-            }
-            else
-            {
-                player.ballPrefab = whiteBallPrefab;
-                uiManager.InitPlayer2(BallColor.Black);
-            }
-        }
-
 		public void PlaceBallIA(Cell cell)
         {
 			Ball ball = blackBalls.First ();
@@ -261,12 +178,7 @@ namespace AppAdvisory.Item {
 
 		public void PlayIAPhase1(Cell lastMove)
         {
-            numberOfTurnsPlayer2++;
-            StartCoroutine(aiBehaviour.GetBestMove(optiGrid, PlayIAPhase1CalculusEnded));
-        }
-
-        public void PlayIAPhase1CalculusEnded(Move move)
-        {
+            Move move = aiBehaviour.GetBestMove(optiGrid);
             StartCoroutine(waitFor(3f - aiBehaviour.timeSpent, move, PlayAIMovePhase1));
         }
 
@@ -274,36 +186,28 @@ namespace AppAdvisory.Item {
         {
             Cell cell = modelGrid.GetCellFromModel(move.toY, move.toX);
             PlaceBallIA(cell);
-            bool end = false;
-            if (Utils.CheckWinIA(modelGrid, cell) || isEqualityTurn)
+
+            if (Utils.CheckWinIA(modelGrid, cell))
             {
-                if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
-                {
-                    isEqualityTurn = true;
-                }
-                else
-                {
-                    Win(cell);
-                    end = true;
-                }
+                RestartGame(false, cell);
             }
-            
-            if (!end)
+            else
             {
+                if (player.ballCount == 0)
+                {
+                    uiManager.DisplayPhase1Text(false);
+                    uiManager.DisplayPhase2Text(true);
+                }
+
                 EndAIPhase();
             }
         }
 
         public void EndAIPhase()
         {
-            if (player.ballCount == 0)
-            {
-                uiManager.DisplayPhase1Text(false);
-                uiManager.DisplayPhase2Text(true);
-            }
-
             player.StartTurn();
 
+            uiManager.DisplayYourTurn(true);
             uiManager.SetPlayer1Turn();
         }
 			
@@ -317,38 +221,28 @@ namespace AppAdvisory.Item {
 
 		public void PlayIAPhase2()
         {
-            numberOfTurnsPlayer2++;
-            StartCoroutine(aiBehaviour.GetBestMove(optiGrid, PlayIAPhase2CalculusEnded));
-        }
-
-        public void PlayIAPhase2CalculusEnded(Move move)
-        {
+            Move move = aiBehaviour.GetBestMove(optiGrid);
             StartCoroutine(waitFor(3f - aiBehaviour.timeSpent, move, PlayAIMovePhase2));
         }
 
         public void PlayAIMovePhase2(Move move)
         {
+            //Debug.Log("move from : " + move.fromX + " ; " + move.fromY);
+            //Debug.Log("move to : " + move.toX + " ; " + move.toY);
+
             Cell cellFrom = modelGrid.GetCellFromModel(move.fromY, move.fromX);
             Cell cellTo = modelGrid.GetCellFromModel(move.toY, move.toX);
 
+            //Debug.Log("cellFrom" + cellFrom.x + " / " + cellFrom.y);
+            //Debug.Log("cellTo" + cellTo.x + " / " + cellTo.y);
+
             OptiGrid.DoMove(move);
             player.ChangeBallPosition(cellFrom, cellTo);
-
-            bool end = false;
-            if (Utils.CheckWinIA(modelGrid, cellTo) || isEqualityTurn)
+            if (Utils.CheckWinIA(modelGrid, cellTo))
             {
-                if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
-                {
-                    isEqualityTurn = true;
-                }
-                else
-                {
-                    Win(cellTo);
-                    end = true;
-                }
+                RestartGame(false, cellTo);
             }
-            
-            if (!end)
+            else
             {
                 EndAIPhase();
             }
@@ -356,60 +250,35 @@ namespace AppAdvisory.Item {
         
 		public void Phase1TurnFinishedPlayer(Vector2 pos) {
 			uiManager.DisplayPhase1Text (true);
+
 			Cell cell = modelGrid.GetCellFromModel (pos);
 
-            bool end = false;
-			if (isPlayingVSIA)
-            {
-                if (Utils.CheckWin(modelGrid, cell, false) || isEqualityTurn)
-                {
-                    if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
-                    {
-                        isEqualityTurn = true;
-                    }
-                    else
-                    {
-                        Win(cell);
-                        end = true;
-                    }
-                }
-                
-                if (!end)
-                {
-                    uiManager.SetPlayer2Turn();
-                    
-                    if (disableAI) // debug feature to test without AI
-                    {
-                        player.StartTurn();
+			if (isPlayingVSIA) {
+				if (Win (cell))
+					return;
 
-                        uiManager.SetPlayer1Turn();
-                    }
-                    else
-                    {
-                        PlayIAPhase1(cell);
-                    }
+				uiManager.DisplayYourTurn (false);
+				uiManager.SetPlayer2Turn ();
+
+                // debug feature to test without AI
+                if (disableAI)
+                {
+                    player.StartTurn();
+
+                    uiManager.DisplayYourTurn(true);
+                    uiManager.SetPlayer1Turn();
                 }
-            }
-            else
-            {
+                else
+                {
+                    PlayIAPhase1(cell);
+                }
+            } else {
+				
+
 				PhotonView photonView = PhotonView.Get(this);
-				photonView.RPC ("ReceiveMovementsPhase1", PhotonTargets.Others, pos, cell.ball.ballId);
-                
-                if (Utils.CheckWin(modelGrid, cell, false) || isEqualityTurn)
-                {
-                    if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
-                    {
-                        isEqualityTurn = true;
-                    }
-                    else
-                    {
-                        Win(cell);
-                        end = true;
-                    }
-                }
+				photonView.RPC ("ReceiveMovementsPhase1", PhotonTargets.Others, pos);
 
-                if (!end)
-				{
+				if (!Win (cell)) {
 					SetPlayerTurnOnEnd ();
 				}
 			}
@@ -421,183 +290,137 @@ namespace AppAdvisory.Item {
 		{
 			uiManager.DisplayPhase1Text (false);
 			uiManager.DisplayPhase2Text (true);
-            Vector2[] movementArray = movements.ToArray ();
+			Vector2[] movementArray = movements.ToArray ();
 			Cell cell = modelGrid.GetCellFromModel (movementArray [movementArray.Length - 1]);
-            bool end = false;
 
-			if (isPlayingVSIA)
-            {
-                if (Utils.CheckWin(modelGrid, cell, false) || isEqualityTurn)
-                {
-                    if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
-                    {
-                        isEqualityTurn = true;
-                    }
-                    else
-                    {
-                        Win(cell);
-                        end = true;
-                    }
-                }
-                if (!end)
-                {
-                    uiManager.SetPlayer2Turn();
-                    PlayIAPhase2();
-                }
-			}
-            else
-            {
+			if (isPlayingVSIA) {
+				if (Win (cell))
+					return;
+
+				uiManager.DisplayYourTurn (false);
+				uiManager.SetPlayer2Turn ();
+				PlayIAPhase2();
+			} else {
+				
+
 				PhotonView photonView = PhotonView.Get(this);
 				photonView.RPC("ReceiveMovementsPhase2", PhotonTargets.Others, movementArray);
 
-                if (Utils.CheckWin(modelGrid, cell, false) || isEqualityTurn)
-                {
-                    if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
-                    {
-                        isEqualityTurn = true;
-                    }
-                    else
-                    {
-                        Win(cell);
-                        end = true;
-                    }
-                }
-
-                if (!end)
-                {
-                    SetPlayerTurnOnEnd ();
+				if (!Win (cell)) {
+					SetPlayerTurnOnEnd ();
 				}
 			}
 		}
 
-		private void Win(Cell cell)
+		private bool Win(Cell cell) {
+			if (Utils.CheckWin (modelGrid, cell)) {
+
+				if (!isPlayingVSIA) {
+					PhotonView photonView = PhotonView.Get (this);
+					photonView.RPC ("ReceiveWin", PhotonTargets.Others, new Vector2 (cell.x, cell.y));
+					player.EndTurn ();
+				}
+                
+			    RestartGame (true, cell);
+				return true;
+			}
+			return false;
+
+        }
+
+        void RestartGame(bool isWin, Cell cell)
         {
-            bool playerWin = false, otherPlayerWin = false;
-
-            List<WinningPattern> winningPatterns;
-            OptiGrid.GetWinningPatterns(out winningPatterns);
-
-            // if we have a winningPattern for the color, notify it
-            foreach(WinningPattern pattern in winningPatterns)
-            {
-                if (pattern.color == (CellColor)player.color)
-                {
-                    playerWin = true;
-                    playerScore = GetWinningPatternScore(pattern);
-                }
-                else
-                {
-                    otherPlayerWin = true;
-                    otherPlayerScore = GetWinningPatternScore(pattern);
-                }
-            }
-            
-            // adjust win/loose if with score
-            if (playerScore > otherPlayerScore)
-            {
-                otherPlayerWin = false;
-            }
-            else if (otherPlayerScore > playerScore)
-            {
-                playerWin = false;
-            }
-
-            if (playerWin && otherPlayerWin)
-            {
-                isWon = 0;
-            }
-            else if (playerWin)
-            {
-                isWon = 1;
-
-            }
-            else if (otherPlayerWin)
-            {
-                isWon = -1;
-            }
+            //ShowAds();
 
             isGameFinished = true;
+            isWon = isWin;
             player.EndTurn();
 
-            PlayVictoryAnimation();
+            PlayVictoryAnimation(cell);
         }
 
         private void DisplayEndPanel()
         {
             uiManager.DisplayEndGamePanel(true);
+            RestartConnection();
 
-            if (isWon == 1)
+            if (isWon)
             {
-                uiManager.DisplayYouWon(true, playerScore, otherPlayerScore);
-            }
-            else if (isWon == -1)
-            {
-                uiManager.DisplayYouLost(true, playerScore, otherPlayerScore);
+                uiManager.DisplayYouWon(true, GetWinningPatternScore());
             }
             else
             {
-                uiManager.DisplayDraw(true, playerScore, otherPlayerScore);
+                uiManager.DisplayYouLost(true, GetWinningPatternScore());
             }
 
-            if (roundNumber == 2)
-            {
-                uiManager.DisplayRestartButton(true);
-                uiManager.DisplayNextRoundButton(false);
-            
-            }
-            else
-            {
-                uiManager.DisplayRestartButton(false);
-                uiManager.DisplayNextRoundButton(true);
-            
-            }
+            uiManager.DisplayRestartButton(true);
         }
 
-        private void PlayVictoryAnimation()
+        private void PlayVictoryAnimation(Cell cell)
         {
-            List<WinningPattern> winningPatterns = new List<WinningPattern>();
-            optiGrid.GetWinningPatterns(out winningPatterns);
+            List<Vector2> winningPattern = new List<Vector2>();
 
-            foreach(WinningPattern pattern in winningPatterns)
+            PatternType patternType;
+            optiGrid.GetWinningPatternAndType(out winningPattern, out patternType);
+
+            modelGrid.GetCellFromModel((int)winningPattern[0].y, (int)winningPattern[0].x).ball.transform.DOScale(1.1f, 1f).OnComplete(DisplayEndPanel);
+            modelGrid.GetCellFromModel((int)winningPattern[1].y, (int)winningPattern[1].x).ball.transform.DOScale(1.1f, 1f);
+            modelGrid.GetCellFromModel((int)winningPattern[2].y, (int)winningPattern[2].x).ball.transform.DOScale(1.1f, 1f);
+            modelGrid.GetCellFromModel((int)winningPattern[3].y, (int)winningPattern[3].x).ball.transform.DOScale(1.1f, 1f);
+            modelGrid.GetCellFromModel((int)winningPattern[4].y, (int)winningPattern[4].x).ball.transform.DOScale(1.1f, 1f);
+
+            /*
+            switch (patternType)
             {
-                modelGrid.GetCellFromModel((int)pattern.cells[0].y, (int)pattern.cells[0].x).ball.transform.DOScale(1.1f, 1f);
-                modelGrid.GetCellFromModel((int)pattern.cells[1].y, (int)pattern.cells[1].x).ball.transform.DOScale(1.1f, 1f);
-                modelGrid.GetCellFromModel((int)pattern.cells[2].y, (int)pattern.cells[2].x).ball.transform.DOScale(1.1f, 1f);
-                modelGrid.GetCellFromModel((int)pattern.cells[3].y, (int)pattern.cells[3].x).ball.transform.DOScale(1.1f, 1f);
-                modelGrid.GetCellFromModel((int)pattern.cells[4].y, (int)pattern.cells[4].x).ball.transform.DOScale(1.1f, 1f);
-            }
+                case PatternType.AALine:
+                    {
+                        //GameObject line = Instantiate(horizontalLine, modelGrid.GetCellFromModel((int)winningPattern[0].x, (int)winningPattern[0].y).transform.position, Quaternion.identity);
+                    }
+                    break;
+                case PatternType.DiagonalLine:
+                    {
+                        //GameObject line = Instantiate(horizontalLine, modelGrid.GetCellFromModel((int)winningPattern[0].x, (int)winningPattern[0].y).transform.position, Quaternion.identity);
+                    }
+                    break;
+                case PatternType.AACross:
+                    foreach(Vector2 part in winningPattern)
+                    {
+                        //GameObject line = Instantiate(horizontalLine, modelGrid.GetCellFromModel((int)winningPattern[0].x, (int)winningPattern[0].y).transform.position, Quaternion.identity);
+                    }
+                    break;
+                case PatternType.DiagonalCross:
+                    foreach (Vector2 part in winningPattern)
+                    {
+                        //GameObject line = Instantiate(horizontalLine, modelGrid.GetCellFromModel((int)winningPattern[0].x, (int)winningPattern[0].y).transform.position, Quaternion.identity);
+                    }
+                    break;
+            }*/
 
-            DOVirtual.DelayedCall(1.2f, DisplayEndPanel, true);
         }
 
-        public void HighlightAvailableMoveCells(Cell cell)
-        {
-            modelGrid.ResetCellsColor();
+        private void WinIA(Cell cell) {
+			if (Utils.CheckWinIA (modelGrid, cell)) {
+				RestartGame (false, cell);
+			}
+		}
 
-            List<Move> moves = optiGrid.GetAvailableMoves(cell);
-
-            foreach(Move move in moves)
-            {
-                Cell toCell = modelGrid.GetCellFromModel(move.toY, move.toX);
-                toCell.GetComponent<SpriteRenderer>().color = Color.red;
-            }
-        }
-
-        private int GetWinningPatternScore(WinningPattern winningPattern)
+        private int GetWinningPatternScore()
         {
             int score = 0;
-            if (winningPattern.cells.Length == 0)
+            List<Vector2> winningCells;
+            optiGrid.GetWinningPattern(out winningCells);
+
+            if (winningCells.Count < 0)
             {
                 Debug.Log("no winning pattern");
             }
             else
             {
-                for (int i = 0; i < winningPattern.cells.Length; ++i)
+                for (int i = 0; i < winningCells.Count; ++i)
                 {
-                    Cell cell = modelGrid.GetCellFromModel(new Vector2(winningPattern.cells[i].y, winningPattern.cells[i].x));
-
-                    if (cell && cell.ball)
-                        score += cell.ball.Score;
+                    Cell cell = modelGrid.GetCellFromModel(new Vector2(winningCells[i].y, winningCells[i].x));
+                    
+                    score += cell.ball.Score;
                 }
             }
 
@@ -610,7 +433,7 @@ namespace AppAdvisory.Item {
 			count++;
 
 			#if APPADVISORY_ADS
-			/*if(count > numberOfPlayToShowInterstitial)
+			if(count > numberOfPlayToShowInterstitial)
 			{
 
 				if(AdsManager.instance.IsReadyInterstitial())
@@ -623,7 +446,7 @@ namespace AppAdvisory.Item {
 			{
 				PlayerPrefs.SetInt("GAMEOVER_COUNT", count);
 			}
-			PlayerPrefs.Save();*/
+			PlayerPrefs.Save();
 			#else
 			if(count >= numberOfPlayToShowInterstitial)
 			{
@@ -647,88 +470,59 @@ namespace AppAdvisory.Item {
 		}
 
 		[PunRPC]
-		void ReceiveMovementsPhase1(Vector2 pos, int ballIndex)
+		void ReceiveMovementsPhase1(Vector2 pos)
 		{
-			if (player.ballCount > 0)
-            {
+
+			if (player.ballCount > 0) {
 				uiManager.DisplayPhase1Text (true);
-			}
-            else
-            {
+			} else {
 				uiManager.DisplayPhase1Text (false);
 				uiManager.DisplayPhase2Text (true);
 			}
 
-            numberOfTurnsPlayer2++;
-
-            Cell cell = modelGrid.GetCellFromModel (pos);
+			Cell cell = modelGrid.GetCellFromModel (pos);
 			Ball ball;
 
-			if (player.color == BallColor.White)
-            {
-                ball = blackBalls.Find(x => x.ballId == ballIndex);
-                blackBalls.Remove(ball);
-			}
-            else
-            {
-                ball = whiteBalls.Find(x => x.ballId == ballIndex);
-                whiteBalls.Remove(ball);
+			if (player.color == BallColor.White) {
+				ball = blackBalls.First ();
+				blackBalls.RemoveAt (0);
+			} else {
+				ball = whiteBalls.First ();
+				whiteBalls.RemoveAt (0);
 			}
 
 			ball.DOPlace (cell);
 
-            bool end = false;
-            if (Utils.CheckWin(modelGrid, cell, false) || isEqualityTurn)
-            {
-                if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
-                {
-                    isEqualityTurn = true;
-                }
-                else
-                {
-                    Win(cell);
-                    end = true;
-                }
-            }
 
-            if (!end)
-            {
-                player.StartTurn();
-                SetPlayerTurnOnReceive();
-            }
+			player.StartTurn ();
+
+			SetPlayerTurnOnReceive();
 		}
 			
 		[PunRPC]
 		void ReceiveMovementsPhase2(Vector2[] movements)
 		{
-			uiManager.DisplayPhase1Text(false);
-			uiManager.DisplayPhase2Text(true);
+			uiManager.DisplayPhase1Text (false);
+			uiManager.DisplayPhase2Text (true);
 
-            numberOfTurnsPlayer2++;
+			StartCoroutine (MoveCoroutine (movements));
+			uiManager.DisplayYourTurn (true);
+			player.StartTurn ();
 
-            StartCoroutine(MoveCoroutine (movements));
+			SetPlayerTurnOnReceive ();
+		}
 
-            Cell cell = modelGrid.GetCellFromModel(movements[movements.Length - 1]);
+		[PunRPC]
+		void ReceiveWin(Vector2 position) {
+			print ("receive win");
+			uiManager.ResetPlayerTurn ();
 
-            bool end = false;
-            if (Utils.CheckWin(modelGrid, cell, false) || isEqualityTurn)
-            {
-                if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
-                {
-                    isEqualityTurn = true;
-                }
-                else
-                {
-                    Win(cell);
-                    end = true;
-                }
-            }
+			player.EndTurn ();
+			uiManager.DisplayYourTurn (false);
 
-            if (!end)
-            {
-                player.StartTurn();
-                SetPlayerTurnOnReceive();
-            }
+			Cell cell = modelGrid.GetCellFromModel (position);
+
+            RestartGame (false, cell);
 		}
 
 		private void SendName(string name) {
@@ -745,6 +539,11 @@ namespace AppAdvisory.Item {
 		private void ReceiveName(string name) {
 			uiManager.SetPlayer2Name (name);
 			return;
+
+			/*if (isPlayer1)
+				uiManager.SetPlayer2Name (name);
+			else
+				uiManager.SetPlayer1Name (name);*/
 		}
 
 		[PunRPC] 
@@ -753,6 +552,7 @@ namespace AppAdvisory.Item {
 				uiManager.SetPlayer2Pic(sprite);
 			}));
 		}
+
 
 		override public void OnLeftRoom()
 		{
@@ -769,26 +569,43 @@ namespace AppAdvisory.Item {
 //
 //		}
 
-		IEnumerator MoveCoroutine(Vector2[] movements)
-        {
+		IEnumerator MoveCoroutine(Vector2[] movements) {
+
 			for (int i = 0; i < movements.Length-1; i++) {
 
 				player.ChangeBallPosition (modelGrid.GetCellFromModel (movements [i]), modelGrid.GetCellFromModel (movements [i+1]));
 				yield return new WaitForSeconds (1f);
 			}
-        }
+
+		}
 			
 		void SetPlayerTurnOnReceive() {
+			uiManager.DisplayYourTurn (true);
 			uiManager.SetPlayer1Turn ();
 
 			return;
+			/*
+            if(isPlayer1) {
+				uiManager.SetPlayer1Turn();
+			} else {
+				uiManager.SetPlayer2Turn();
+			}
+            */
 		}
 
 		void SetPlayerTurnOnEnd() {
+			uiManager.DisplayYourTurn (false);
 			uiManager.SetPlayer2Turn ();
 
 			return;
+			/*if(isPlayer1) {
+				uiManager.SetPlayer2Turn();
+			} else {
+				uiManager.SetPlayer1Turn();
+			}*/
 		}
+
+
 
 		public override void OnJoinedRoom()
 		{
@@ -799,14 +616,14 @@ namespace AppAdvisory.Item {
 				DisplayMarbleContainer (true);
 				CreateGrid ();
 				isGameStarted = true;
-                numberOfTurnsPlayer1 = 0;
-                numberOfTurnsPlayer2 = 0;
 
-                player = CreatePlayer (BallColor.Black);
+				player = CreatePlayer (BallColor.Black);
 
 				uiManager.InitPlayer1(BallColor.Black);
 				uiManager.InitPlayer2(BallColor.White);
 				uiManager.SetPlayer2Turn();
+
+				uiManager.DisplayYourTurn (false);
 
 				uiManager.DisplayPhase1Text (true);
 
@@ -820,6 +637,9 @@ namespace AppAdvisory.Item {
 				print ("2 players in the room, sending player name : " + playerName);
 				SendName (playerName);
 				SendPicURL (playerPicURL);
+
+				//isPlayer1 = false;
+
 			}
 			else
 			{
@@ -831,7 +651,7 @@ namespace AppAdvisory.Item {
 					uiManager.SetPlayer1Pic(sprite);
 				}));
 
-				uiManager.DisplayYourTurn (false);
+				uiManager.DisplayPlayer1Arrow (false);
 			}
 		}
 
@@ -844,11 +664,10 @@ namespace AppAdvisory.Item {
 				Debug.Log("Other player arrived");
 				CreateGrid ();
 				isGameStarted = true;
-                numberOfTurnsPlayer1 = 0;
-                numberOfTurnsPlayer2 = 0;
-
+				uiManager.DisplayYourTurn (true);
 				uiManager.DisplayPhase1Text (true);
 				uiManager.SetPlayer1Turn();
+				//isPlayer1 = true;
 
 				player = CreatePlayer (BallColor.White);
 				uiManager.InitPlayer2(BallColor.Black);
@@ -856,7 +675,7 @@ namespace AppAdvisory.Item {
 				SendName (playerName);
 				SendPicURL (playerPicURL);
 
-				uiManager.DisplayYourTurn (true);
+				uiManager.DisplayPlayer1Arrow (true);
 
 				player.StartTurn ();
 			} else 
@@ -877,45 +696,17 @@ namespace AppAdvisory.Item {
 			PhotonNetwork.Disconnect ();
 
 			uiManager.DisplayEndGamePanel (true);
-			uiManager.DisplayYouWon(true, 0, 0);
+			uiManager.DisplayYouWon(true, 0);
 			uiManager.DisplayByForfeit(true);
 
 			uiManager.DisplayRestartButton (true);
+
 		}
 
-		public void OnRestart()
-        {
-            PhotonNetwork.LoadLevel (1);
+		public void OnRestart() 
+		{
+			PhotonNetwork.LoadLevel (1);
 		}
-
-        public void OnNextRound()
-        {
-            if (playerGoesNextRound)
-                return;
-
-            playerGoesNextRound = true;
-
-            PhotonView photonView = PhotonView.Get(this);
-            photonView.RPC("SendNextRound", PhotonTargets.Others);
-
-            if (opponentGoesNextRound || isPlayingVSIA)
-            {
-                playerGoesNextRound = opponentGoesNextRound = false;
-                GoToNextRound();
-            }
-        }
-
-        [PunRPC]
-        public void SendNextRound()
-        {
-            opponentGoesNextRound = true;
-
-            if (playerGoesNextRound)
-            {
-                playerGoesNextRound = opponentGoesNextRound = false;
-                GoToNextRound();
-            }
-        }
 
 		public void OnInviteFriend() {
 			FB.AppRequest ("Viens jouer à Item");

@@ -48,5 +48,4 @@ MonoBehaviour:
   - ReceiveImage
   - ReceivePicURL
   - ReceiveName
-  - SendNextRound
   DisableAutoOpenWizard: 1

@@ -7,7 +7,7 @@ using DG.Tweening;
 
 namespace AppAdvisory.Item {
 
-	public class Player : MonoBehaviour {
+	public class Player : MonoBehaviour, IPlayer {
 		public string playerName;
 		public string picURL;
 
@@ -40,22 +40,9 @@ namespace AppAdvisory.Item {
 
 		public bool showHelp = false;
 
-        public void Reset()
-        {
-            ballCount = 10;
-            isTweening = false;
-            hasAlreadyJumpedOnce = false;
-            currentCell = null;
-            currentBall = null;
-            currentCellsToMove = new List<Cell>();
-            currentCellsToJump = new List<Cell>();
-            movements = new List<Vector2>();
-        }
-
 		public void StartTurn() {
-            Debug.Log("playerstartturn");
 			EasyTouch.On_TouchUp += OnTouchUp;
-            FindObjectOfType<GridManager>().numberOfTurnsPlayer1++;
+
 //			if (ballCount > 0) {
 //				EasyTouch.On_Drag += On_Drag;
 //				EasyTouch.On_DragStart += On_DragStart;
@@ -66,9 +53,7 @@ namespace AppAdvisory.Item {
 		}
 
 
-        public void EndTurn()
-        {
-            Debug.Log("playerendturn");
+		public void EndTurn() {
 			EasyTouch.On_TouchUp -= OnTouchUp;
 
 //			if (ballCount > 0) {
@@ -199,15 +184,13 @@ namespace AppAdvisory.Item {
 				On_DragEndPhase2 (pickedCell);
 			}
 		}
-        
+
 		void OnTouchUp(Gesture gesture) {
 			if (isTweening)
 				return;
 
 			if (!gesture.pickedObject)
 				return;
-
-            Debug.Log("ontouchup");
 
 			Cell pickedCell = gesture.pickedObject.GetComponent<Cell> (); 
 
@@ -222,7 +205,7 @@ namespace AppAdvisory.Item {
 				if (currentBall) {
 					if (!pickedCell) {
 
-						if (pickedBall && pickedBall.Color == color) {
+						if (pickedBall) {
 							currentBall.HideHighlight ();
 							currentBall = pickedBall;
 							currentBall.ShowHighlight ();

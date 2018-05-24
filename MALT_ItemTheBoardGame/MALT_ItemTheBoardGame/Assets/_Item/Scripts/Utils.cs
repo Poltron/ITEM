@@ -759,7 +759,7 @@ namespace AppAdvisory.Item {
 
 			List<Cell> patternCells = new List<Cell> ();
 			patternCells.Add (cell);
-			int count = 1;
+			int count = 0;
 
 			// left
 			for(int i = 1; i < nBallToAlignHorizontally; i++)

@@ -9,8 +9,8 @@ namespace AppAdvisory.Item {
 
 	public class UIManager : MonoBehaviour {
 
+
 		public event Action Restart;
-        public event Action NextRound;
 		public event Action FinishTurn;
 		public event Action InviteFriend;
 
@@ -44,10 +44,8 @@ namespace AppAdvisory.Item {
 		public GameObject endGamePanel;
 		public GameObject youWon;
 		public GameObject youLost;
-        public GameObject draw;
 		public GameObject byForfeit;
 		public GameObject restartButton;
-        public GameObject nextRound;
         public GameObject withPoints;
 
 		public GameObject inviteFriendButton;
@@ -65,33 +63,22 @@ namespace AppAdvisory.Item {
             timer = turnAnimationDuration;
 		}
 
-        public void ResetGame()
-        {
-            DisplayEndGamePanel(false);
-            DisplayYouWon(false, 0, 0);
-            DisplayByForfeit(false);
-            DisplayYouLost(false, 0, 0);
-            DisplayDraw(false, 0, 0);
-            DisplayPhase1Text(true);
-        }
-
 		public void Init() {
 			DisplayPlayer1(false);
 			DisplayPlayer2(false);
+			DisplayYourTurn (false);
 
 			DisPlayWaitingForPlayerPanel (true);
 
 			DisplayEndGamePanel (false);
-			DisplayYouWon (false, 0, 0);
+			DisplayYouWon (false, 0);
 			DisplayByForfeit(false);
-			DisplayYouLost (false, 0, 0);
-            DisplayDraw(false, 0, 0);
+			DisplayYouLost (false, 0);
 
-            DisplayPhase1Text (false);
+			DisplayPhase1Text (false);
 			DisplayPhase2Text (false);
 
-            DisplayRestartButton(false);
-            DisplayNextRoundButton(false);
+			DisplayRestartButton (false);
 		}
 
 		public void DisPlayWaitingForPlayerPanel(bool isShown) {
@@ -102,7 +89,13 @@ namespace AppAdvisory.Item {
 			endGamePanel.SetActive (isShown);
 			DisplayPhase1Text (false);
 			DisplayPhase2Text (false);
+			DisplayYourTurn (false);
 		}
+
+        public void DisplayYourTurn(bool isShown)
+        {
+
+        }
 
         public void DisplayPhase1Text(bool isShown) {
 			phase1Text.SetActive (isShown);
@@ -112,13 +105,8 @@ namespace AppAdvisory.Item {
 			phase2Text.SetActive (isShown);
 		}
 
-        public void DisplayRestartButton(bool isShown)
-        {
-            restartButton.SetActive(isShown);
-        }
-
-		public void DisplayNextRoundButton(bool isShown) {
-			nextRound.SetActive (isShown);
+		public void DisplayRestartButton(bool isShown) {
+			restartButton.SetActive (isShown);
 		}
 			
 		public void DisplayPlayer1(bool isShown) {
@@ -129,26 +117,19 @@ namespace AppAdvisory.Item {
 			player2.gameObject.SetActive (isShown);
 		}
 
-        public void DisplayYouWon(bool isShown, int yourPoints, int theirPoints) {
+        public void DisplayYouWon(bool isShown, int points) {
 			youWon.SetActive (isShown);
-            withPoints.SetActive(isShown);
-            withPoints.GetComponentInChildren<TextMeshProUGUI>().text = yourPoints + " - " + theirPoints;
+            withPoints.SetActive(true);
+            withPoints.GetComponentInChildren<TextMeshProUGUI>().text = "With " + points + " pts";
         }
 
-		public void DisplayYouLost(bool isShown, int yourPoints, int theirPoints) {
+		public void DisplayYouLost(bool isShown, int points) {
 			youLost.SetActive (isShown);
-            withPoints.SetActive(isShown);
-            withPoints.GetComponentInChildren<TextMeshProUGUI>().text = yourPoints + " - " + theirPoints;
+            withPoints.SetActive(true);
+            withPoints.GetComponentInChildren<TextMeshProUGUI>().text = "With " + points + " pts";
         }
 
-        public void DisplayDraw(bool isShown, int yourPoints, int theirPoints)
-        {
-            draw.SetActive(isShown);
-            withPoints.SetActive(isShown);
-            withPoints.GetComponentInChildren<TextMeshProUGUI>().text = yourPoints + " - " + theirPoints;
-        }
-
-        public void DisplayByForfeit(bool isShown) {
+		public void DisplayByForfeit(bool isShown) {
             withPoints.SetActive(false);
 			byForfeit.SetActive(isShown);
 		}
@@ -159,11 +140,13 @@ namespace AppAdvisory.Item {
 
 		public void InitPlayer1(BallColor color) {
 			DisplayPlayer1(true);
+			player1.DisplayArrow (false);
 			player1.SetColor (color);
 		}
 
 		public void InitPlayer2(BallColor color) {
 			DisplayPlayer2(true);
+			player2.DisplayArrow (false);
 			player2.SetColor (color);
 		}
 
@@ -192,7 +175,7 @@ namespace AppAdvisory.Item {
 
         private void SetPlayer1TurnReal()
         {
-            DisplayYourTurn(true);
+            DisplayPlayer1Arrow(true);
             timer = 0;
             isPlayer1Turn = true;
         }
@@ -204,7 +187,7 @@ namespace AppAdvisory.Item {
 
         private void SetPlayer2TurnReal()
         {
-            DisplayOpponentTurn(true);
+            DisplayPlayer2Arrow(true);
             isPlayer1Turn = false;
             timer = 0;
         }
@@ -245,13 +228,13 @@ namespace AppAdvisory.Item {
             //Debug.Log("player1 is shown : " + player1.gameObject.activeInHierarchy + " / player2 is shown : " + player2.gameObject.activeInHierarchy);
         }
 
-        public void DisplayYourTurn(bool isShown) {
+        public void DisplayPlayer1Arrow(bool isShown) {
             overlay.SetActive(isShown);
             yourTurn.SetActive(isShown);
             opponentsTurn.SetActive(!isShown);
 		}
 
-		public void DisplayOpponentTurn(bool isShown) {
+		public void DisplayPlayer2Arrow(bool isShown) {
             overlay.SetActive(isShown);
             opponentsTurn.SetActive(isShown);
             yourTurn.SetActive(!isShown);
@@ -262,16 +245,10 @@ namespace AppAdvisory.Item {
 			player2.SetColor (Color.white);
 		}
 
-		public void OnNextRoundButton() {
-            if (NextRound != null)
-                NextRound();
+		public void OnRestartButton() {
+			if(Restart != null)
+				Restart ();
 		}
-
-        public void OnRestartButton()
-        {
-            if (Restart != null)
-                Restart();
-        }
 
 		public void OnInviteFriendbutton() {
 			Debug.Log("invite friend");

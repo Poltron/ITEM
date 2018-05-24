@@ -19,10 +19,8 @@ using DG.Tweening;
 
 namespace AppAdvisory.Item
 {
-	public class Ball : MonoBehaviour
-    {
-        public int ballId;
-
+	public class Ball : MonoBehaviour 
+	{
         [SerializeField]
 		private BallColor color;
 
@@ -35,8 +33,7 @@ namespace AppAdvisory.Item
         
 		public Cell owner;
 
-		private Vector3 startPosition;
-        private Vector3 startScale;
+		//private Vector3 startPosition;
 
         [SerializeField]
 		private SpriteRenderer highlight;
@@ -48,8 +45,7 @@ namespace AppAdvisory.Item
 
 		void Awake()
         {
-            startPosition = transform.position;
-            startScale = transform.localScale;
+			//SetStartPosition();
 		}
 
         private void Start()
@@ -70,25 +66,17 @@ namespace AppAdvisory.Item
         public void ShowHighlight () {
             highlightCurveTimer = 0;
             highlight.gameObject.SetActive(true);
-
-            if (owner)
-                FindObjectOfType<GridManager>().HighlightAvailableMoveCells(owner);
 		}
 
 		public void HideHighlight() {
             highlight.gameObject.SetActive(false);
 		}
-
 		public void ResetPosition() {
 			//transform.position = startPosition;
 		}
 
-        public void Reset()
-        {
-            owner = null;
-            transform.position = startPosition;
-            transform.localScale = startScale;
-            Debug.Log(transform.position);
-        }
+		public void SetStartPosition() {
+			//startPosition = transform.position;
+		}
 	}
 }
