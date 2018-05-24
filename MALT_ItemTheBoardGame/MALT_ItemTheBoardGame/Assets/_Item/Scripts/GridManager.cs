@@ -12,8 +12,8 @@ using Facebook.Unity;
 using AppAdvisory.Ads;
 
 namespace AppAdvisory.Item {
-    public class GridManager : PunBehaviour {
-
+    public class GridManager : PunBehaviour
+    {
         private Connection connection;
         public FBManager fbManager;
 

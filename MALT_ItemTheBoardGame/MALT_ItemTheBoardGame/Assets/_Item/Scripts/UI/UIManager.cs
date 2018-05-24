@@ -62,7 +62,7 @@ namespace AppAdvisory.Item {
 
 		void Start ()
         {
-			
+            timer = turnAnimationDuration;
 		}
 
         public void ResetGame()
@@ -79,7 +79,7 @@ namespace AppAdvisory.Item {
 			DisplayPlayer1(false);
 			DisplayPlayer2(false);
 
-			DisPlayWaitingForPlayerPanel (false);
+			DisPlayWaitingForPlayerPanel (true);
 
 			DisplayEndGamePanel (false);
 			DisplayYouWon (false, 0, 0);
@@ -224,9 +224,15 @@ namespace AppAdvisory.Item {
                     boardOverlay.GetComponent<Animation>().Play();
 
                     if (isPlayer1Turn)
+                    {
                         player1.GetComponent<Animation>().Play();
+                        Debug.Log("player1turn");
+                    }
                     else
+                    {
                         player2.GetComponent<Animation>().Play();
+                        Debug.Log("player2turn");
+                    }
                 }
             }
             else
