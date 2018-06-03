@@ -1989,7 +1989,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cea2dc897ad846198b04243923e4506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfPlayToShowInterstitial: 1
   fbManager: {fileID: 0}
   aiEvaluationData: {fileID: 11400000, guid: 463bd3e212ed5f64a845470ad01bfdd7, type: 2}
   playerPrefab: {fileID: 114441408699545456, guid: 37b2c2248e9f14dc6990a002a3fd6d61,
@@ -1998,8 +1997,6 @@ MonoBehaviour:
     type: 2}
   blackBallPrefab: {fileID: 114026230691909298, guid: f92513f0f5e5c4ba0b6489ddc5ad06d2,
     type: 2}
-  horizontalLine: {fileID: 0}
-  diagonalLine: {fileID: 0}
   marbleContainer: {fileID: 0}
   blackBalls:
   - {fileID: 0}
@@ -2024,8 +2021,9 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   uiManager: {fileID: 0}
-  timeToLaunchGameVSIA: 2
+  timeToLaunchGameVSIA: 20
   disableAI: 0
+  numberOfTurnsPlayer1: 0
 --- !u!114 &114117778331956518
 MonoBehaviour:
   m_ObjectHideFlags: 1

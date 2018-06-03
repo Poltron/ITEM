@@ -12,6 +12,21 @@ using Facebook.Unity;
 using AppAdvisory.Ads;
 
 namespace AppAdvisory.Item {
+
+    public class RoundScore
+    {
+        public int playerScore;
+        public int otherPlayerScore;
+        public int result;
+
+        public RoundScore(int _playerScore, int _opponentScore, int _result)
+        {
+            playerScore = _playerScore;
+            otherPlayerScore = _opponentScore;
+            result = _result;
+        }
+    }
+
     public class GridManager : PunBehaviour
     {
         private Connection connection;
@@ -54,8 +69,12 @@ namespace AppAdvisory.Item {
 
         private bool isGameFinished = false;
         private int isWon = 0;
+
         private int playerScore = 0;
         private int otherPlayerScore = 0;
+
+        private int totalPlayerScore = 0;
+        private int totalOtherPlayerScore = 0;
 
         private bool isEqualityTurn = false;
         public bool IsEqualityTurn { get { return isEqualityTurn; } }
@@ -69,12 +88,15 @@ namespace AppAdvisory.Item {
         [SerializeField]
         private bool disableAI = false;
 
+        [SerializeField]
+        private int numberOfRound;
+
         [HideInInspector]
         public int numberOfTurnsPlayer1 = 0;
         public int Player1NbOfTurn { get { return numberOfTurnsPlayer1; } }
         private int numberOfTurnsPlayer2 = 0;
         public int Player2NbOfTurn { get { return numberOfTurnsPlayer2; } }
-
+        
         void Start ()
         {
             numberOfTurnsPlayer1 = 0;
@@ -87,7 +109,7 @@ namespace AppAdvisory.Item {
 
             connection = GetComponent<Connection> ();
 
-			uiManager.Init();
+            uiManager.Init();
             uiManager.NextRound += OnNextRound;
 			uiManager.Restart += OnRestart;
 			uiManager.InviteFriend += OnInviteFriend;
@@ -104,9 +126,11 @@ namespace AppAdvisory.Item {
 
                 fbManager.NameLoaded += OnNameLoaded;
                 fbManager.PicURLLoaded += OnPicURLLoaded;
-                
+
                 //fbManager.FacebookConnect += OnFacebookConnect;
             }
+
+            DOVirtual.DelayedCall(timeToLaunchGameVSIA, StartGameVSIA, true);
         }
 
         private void Update()
@@ -126,7 +150,7 @@ namespace AppAdvisory.Item {
 			PhotonNetwork.Disconnect ();
 
 
-			uiManager.DisPlayWaitingForPlayerPanel (false);
+			uiManager.DisplayWaitingForPlayerPanel (false);
 			DisplayMarbleContainer (true);
 			CreateGrid ();
 
@@ -135,7 +159,7 @@ namespace AppAdvisory.Item {
             numberOfTurnsPlayer2 = 0;
             isPlayingVSIA = true;
 
-			uiManager.DisplayPhase1Text (true);
+			uiManager.DisplayTurnSwitchPhase1(true);
 			uiManager.SetPlayer1Turn();
 
 			player = CreatePlayer (BallColor.White);
@@ -298,8 +322,8 @@ namespace AppAdvisory.Item {
         {
             if (player.ballCount == 0)
             {
-                uiManager.DisplayPhase1Text(false);
-                uiManager.DisplayPhase2Text(true);
+                uiManager.DisplayTurnSwitchPhase1(false);
+                uiManager.DisplayTurnSwitchPhase2(true);
             }
 
             player.StartTurn();
@@ -354,8 +378,9 @@ namespace AppAdvisory.Item {
             }
         }
         
-		public void Phase1TurnFinishedPlayer(Vector2 pos) {
-			uiManager.DisplayPhase1Text (true);
+		public void Phase1TurnFinishedPlayer(Vector2 pos)
+        {
+            uiManager.DisplayTurnSwitchPhase1(true);
 			Cell cell = modelGrid.GetCellFromModel (pos);
 
             bool end = false;
@@ -418,9 +443,9 @@ namespace AppAdvisory.Item {
 		}
 
 		public void Phase2TurnFinishedPlayer(List<Vector2> movements)
-		{
-			uiManager.DisplayPhase1Text (false);
-			uiManager.DisplayPhase2Text (true);
+        {
+            uiManager.DisplayTurnSwitchPhase1(false);
+            uiManager.DisplayTurnSwitchPhase2(true);
             Vector2[] movementArray = movements.ToArray ();
 			Cell cell = modelGrid.GetCellFromModel (movementArray [movementArray.Length - 1]);
             bool end = false;
@@ -477,6 +502,9 @@ namespace AppAdvisory.Item {
             List<WinningPattern> winningPatterns;
             OptiGrid.GetWinningPatterns(out winningPatterns);
 
+            playerScore = 0;
+            otherPlayerScore = 0;
+
             // if we have a winningPattern for the color, notify it
             foreach(WinningPattern pattern in winningPatterns)
             {
@@ -491,7 +519,10 @@ namespace AppAdvisory.Item {
                     otherPlayerScore = GetWinningPatternScore(pattern);
                 }
             }
-            
+
+            totalPlayerScore += playerScore;
+            totalOtherPlayerScore += otherPlayerScore;
+
             // adjust win/loose if with score
             if (playerScore > otherPlayerScore)
             {
@@ -522,34 +553,17 @@ namespace AppAdvisory.Item {
             PlayVictoryAnimation();
         }
 
-        private void DisplayEndPanel()
+        private void DisplayRoundResult()
         {
-            uiManager.DisplayEndGamePanel(true);
+            uiManager.DisplayRoundResultPanel(true, roundNumber, playerScore, otherPlayerScore);
 
-            if (isWon == 1)
+            if (roundNumber == numberOfRound)
             {
-                uiManager.DisplayYouWon(true, playerScore, otherPlayerScore);
-            }
-            else if (isWon == -1)
-            {
-                uiManager.DisplayYouLost(true, playerScore, otherPlayerScore);
+                uiManager.roundResultPanel.ActivateGameResultsButton(true);
             }
             else
             {
-                uiManager.DisplayDraw(true, playerScore, otherPlayerScore);
-            }
-
-            if (roundNumber == 2)
-            {
-                uiManager.DisplayRestartButton(true);
-                uiManager.DisplayNextRoundButton(false);
-            
-            }
-            else
-            {
-                uiManager.DisplayRestartButton(false);
-                uiManager.DisplayNextRoundButton(true);
-            
+                uiManager.roundResultPanel.ActivateNextRoundButton(true);
             }
         }
 
@@ -567,7 +581,7 @@ namespace AppAdvisory.Item {
                 modelGrid.GetCellFromModel((int)pattern.cells[4].y, (int)pattern.cells[4].x).ball.transform.DOScale(1.1f, 1f);
             }
 
-            DOVirtual.DelayedCall(1.2f, DisplayEndPanel, true);
+            DOVirtual.DelayedCall(1.2f, DisplayRoundResult, true);
         }
 
         public void HighlightAvailableMoveCells(Cell cell)
@@ -651,13 +665,13 @@ namespace AppAdvisory.Item {
 		{
 			if (player.ballCount > 0)
             {
-				uiManager.DisplayPhase1Text (true);
-			}
+                uiManager.DisplayTurnSwitchPhase1(true);
+            }
             else
             {
-				uiManager.DisplayPhase1Text (false);
-				uiManager.DisplayPhase2Text (true);
-			}
+                uiManager.DisplayTurnSwitchPhase1(false);
+                uiManager.DisplayTurnSwitchPhase2(true);
+            }
 
             numberOfTurnsPlayer2++;
 
@@ -700,9 +714,9 @@ namespace AppAdvisory.Item {
 			
 		[PunRPC]
 		void ReceiveMovementsPhase2(Vector2[] movements)
-		{
-			uiManager.DisplayPhase1Text(false);
-			uiManager.DisplayPhase2Text(true);
+        {
+            uiManager.DisplayTurnSwitchPhase1(false);
+            uiManager.DisplayTurnSwitchPhase2(true);
 
             numberOfTurnsPlayer2++;
 
@@ -795,7 +809,7 @@ namespace AppAdvisory.Item {
 
 			if (PhotonNetwork.room.PlayerCount == 2)
 			{
-				uiManager.DisPlayWaitingForPlayerPanel (false);
+				uiManager.DisplayWaitingForPlayerPanel (false);
 				DisplayMarbleContainer (true);
 				CreateGrid ();
 				isGameStarted = true;
@@ -808,10 +822,9 @@ namespace AppAdvisory.Item {
 				uiManager.InitPlayer2(BallColor.White);
 				uiManager.SetPlayer2Turn();
 
-				uiManager.DisplayPhase1Text (true);
+                uiManager.DisplayTurnSwitchPhase1(true);
 
-
-				uiManager.SetPlayer1Name (playerName);
+                uiManager.SetPlayer1Name (playerName);
 				StartCoroutine (Utils.LoadSpriteFromURL (playerPicURL, (sprite) => {
 					uiManager.SetPlayer1Pic(sprite);
 				}));
@@ -824,7 +837,7 @@ namespace AppAdvisory.Item {
 			else
 			{
 				print ("alone in the room, name is : " + playerName);
-				uiManager.DisPlayWaitingForPlayerPanel (true);
+				uiManager.DisplayWaitingForPlayerPanel (true);
 				uiManager.InitPlayer1(BallColor.White);
 				uiManager.SetPlayer1Name (playerName);
 				StartCoroutine (Utils.LoadSpriteFromURL (playerPicURL, (sprite) => {
@@ -839,7 +852,7 @@ namespace AppAdvisory.Item {
 		{
 			if (PhotonNetwork.room.PlayerCount == 2)
 			{
-				uiManager.DisPlayWaitingForPlayerPanel (false);
+				uiManager.DisplayWaitingForPlayerPanel (false);
 				DisplayMarbleContainer (true);
 				Debug.Log("Other player arrived");
 				CreateGrid ();
@@ -847,7 +860,7 @@ namespace AppAdvisory.Item {
                 numberOfTurnsPlayer1 = 0;
                 numberOfTurnsPlayer2 = 0;
 
-				uiManager.DisplayPhase1Text (true);
+                uiManager.DisplayTurnSwitchPhase1(true);
 				uiManager.SetPlayer1Turn();
 
 				player = CreatePlayer (BallColor.White);
@@ -862,7 +875,7 @@ namespace AppAdvisory.Item {
 			} else 
 			{
 				print("alone");
-				uiManager.DisPlayWaitingForPlayerPanel (true);
+				uiManager.DisplayWaitingForPlayerPanel (true);
 			}
 		}
 			
@@ -875,12 +888,8 @@ namespace AppAdvisory.Item {
 			connection.enabled = false;
 			PhotonNetwork.LeaveRoom ();
 			PhotonNetwork.Disconnect ();
-
-			uiManager.DisplayEndGamePanel (true);
-			uiManager.DisplayYouWon(true, 0, 0);
-			uiManager.DisplayByForfeit(true);
-
-			uiManager.DisplayRestartButton (true);
+            
+			uiManager.DisplayForfeit(true);
 		}
 
 		public void OnRestart()
@@ -896,7 +905,8 @@ namespace AppAdvisory.Item {
             playerGoesNextRound = true;
 
             PhotonView photonView = PhotonView.Get(this);
-            photonView.RPC("SendNextRound", PhotonTargets.Others);
+            if (PhotonNetwork.connectedAndReady)
+                photonView.RPC("SendNextRound", PhotonTargets.Others);
 
             if (opponentGoesNextRound || isPlayingVSIA)
             {

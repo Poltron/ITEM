@@ -17,7 +17,7 @@ namespace AppAdvisory.Item
         EQUALITYTURN
     };
 
-    public class DebugGUI : MonoBehaviour {
+    public class UIDebugValue : MonoBehaviour {
 
         [SerializeField]
         private GridManager gridManager;

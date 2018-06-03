@@ -5,48 +5,49 @@ using UnityEngine.UI;
 
 namespace AppAdvisory.Item {
 
-	public class PlayerPanel : MonoBehaviour {
+	public class PlayerPanel : MonoBehaviour
+    {
+        private Image panel;
 
-		public Text playerName;
+        public Text playerName;
 		public Image image;
 
 		public Image whiteMarble;
 		public Image blackMarble;
 
-		public Image whiteArrow;
-		public Image blackArrow;
-
-		public GameObject maskArrow;
-
-		private Image panel;
-
-		void Awake () {
+		void Awake ()
+        {
 			panel = GetComponent<Image> ();
 		}
 
-		public void SetName(string name) {
+        public void HideAll()
+        {
+            panel.gameObject.SetActive(false);
+        }
+
+		public void SetName(string name)
+        {
 			this.playerName.text = name;
 		}
 
-		public void SetPic(Sprite sprite) {
+		public void SetPic(Sprite sprite)
+        {
 			this.image.sprite = sprite;
 		}
 
-		public void SetColor(BallColor color) {
+		public void SetColor(BallColor color)
+        {
 			if (color == BallColor.Black) {
 				whiteMarble.enabled = false;
-				//whiteArrow.enabled = false;
 				blackMarble.enabled = true;
-				//blackArrow.enabled = true;
 			} else {
 				whiteMarble.enabled = true;
-				//whiteArrow.enabled = true;
 				blackMarble.enabled = false;
-				//blackArrow.enabled = false;
 			}
 		}
 
-		public void SetColor(Color color) {
+		public void SetColor(Color color)
+        {
 			panel.color = color;
 		}
 	}

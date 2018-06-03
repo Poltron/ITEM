@@ -19,7 +19,13 @@ using DG.Tweening;
 
 namespace AppAdvisory.Item
 {
-	public class Ball : MonoBehaviour
+    public enum BallColor : int
+    {
+        White = 1,
+        Black = 2
+    };
+
+    public class Ball : MonoBehaviour
     {
         public int ballId;
 
@@ -88,7 +94,6 @@ namespace AppAdvisory.Item
             owner = null;
             transform.position = startPosition;
             transform.localScale = startScale;
-            Debug.Log(transform.position);
         }
 	}
 }

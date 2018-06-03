@@ -11,14 +11,9 @@ namespace AppAdvisory.Item {
 
 		public event Action Restart;
         public event Action NextRound;
-		public event Action FinishTurn;
+        public event Action FinishTurn;
 		public event Action InviteFriend;
 
-        [SerializeField]
-        private AnimationCurve turnOpacity;
-
-        [SerializeField]
-        private float turnAnimationDuration;
         [SerializeField]
         private float timeBeforeNextTurn;
         private float timer;
@@ -26,33 +21,20 @@ namespace AppAdvisory.Item {
         [SerializeField]
         private SpriteRenderer boardOverlay;
 
-        [SerializeField]
-        private GameObject overlay;
-        [SerializeField]
-        private GameObject yourTurn;
-        [SerializeField]
-        private GameObject opponentsTurn;
-
-        public GameObject phase1Text;
-		public GameObject phase2Text;
-
 		public PlayerPanel player1;
 		public PlayerPanel player2;
 
 		public GameObject waitingForPlayerPanel;
 
-		public GameObject endGamePanel;
-		public GameObject youWon;
-		public GameObject youLost;
-        public GameObject draw;
-		public GameObject byForfeit;
-		public GameObject restartButton;
-        public GameObject nextRound;
-        public GameObject withPoints;
+        public RoundPanel roundResultPanel;
+        public EndGamePanel endGamePanel;
+        public TurnSwitchPanel turnSwitchPanel;
 
 		public GameObject inviteFriendButton;
 
         private bool isPlayer1Turn;
+
+        private List<RoundScore> roundScores;
 
         IEnumerator waitFor(float t, Action toDo)
         {
@@ -62,63 +44,39 @@ namespace AppAdvisory.Item {
 
 		void Start ()
         {
-			
+            roundScores = new List<RoundScore>();
+            turnSwitchPanel.SetUIManager(this);
 		}
 
         public void ResetGame()
         {
-            DisplayEndGamePanel(false);
-            DisplayYouWon(false, 0, 0);
-            DisplayByForfeit(false);
-            DisplayYouLost(false, 0, 0);
-            DisplayDraw(false, 0, 0);
-            DisplayPhase1Text(true);
+            endGamePanel.HideAll();
+            turnSwitchPanel.SetPhase1(true);
         }
 
 		public void Init() {
-			DisplayPlayer1(false);
-			DisplayPlayer2(false);
+            player1.HideAll();
+            player2.HideAll();
 
-			DisPlayWaitingForPlayerPanel (false);
-
-			DisplayEndGamePanel (false);
-			DisplayYouWon (false, 0, 0);
-			DisplayByForfeit(false);
-			DisplayYouLost (false, 0, 0);
-            DisplayDraw(false, 0, 0);
-
-            DisplayPhase1Text (false);
-			DisplayPhase2Text (false);
-
-            DisplayRestartButton(false);
-            DisplayNextRoundButton(false);
+			DisplayWaitingForPlayerPanel (false);
+            
+            endGamePanel.HideAll();
+            roundResultPanel.HideAll();
+            turnSwitchPanel.HideAll();
 		}
 
-		public void DisPlayWaitingForPlayerPanel(bool isShown) {
-			waitingForPlayerPanel.SetActive (isShown);
-		}
-
-		public void DisplayEndGamePanel(bool isShown) {
-			endGamePanel.SetActive (isShown);
-			DisplayPhase1Text (false);
-			DisplayPhase2Text (false);
-		}
-
-        public void DisplayPhase1Text(bool isShown) {
-			phase1Text.SetActive (isShown);
-		}
-
-		public void DisplayPhase2Text(bool isShown) {
-			phase2Text.SetActive (isShown);
-		}
-
-        public void DisplayRestartButton(bool isShown)
+        public void DisplayTurnSwitchPhase1(bool isShown)
         {
-            restartButton.SetActive(isShown);
+            turnSwitchPanel.SetPhase1(isShown);
         }
 
-		public void DisplayNextRoundButton(bool isShown) {
-			nextRound.SetActive (isShown);
+        public void DisplayTurnSwitchPhase2(bool isShown)
+        {
+            turnSwitchPanel.SetPhase2(isShown);
+        }
+
+        public void DisplayWaitingForPlayerPanel(bool isShown) {
+			waitingForPlayerPanel.SetActive (isShown);
 		}
 			
 		public void DisplayPlayer1(bool isShown) {
@@ -129,28 +87,43 @@ namespace AppAdvisory.Item {
 			player2.gameObject.SetActive (isShown);
 		}
 
+        public void DisplayRoundResultPanel(bool isShown, int roundNumber, int yourPoints, int theirPoints)
+        {
+            int isWon = 0;
+            if (yourPoints > theirPoints)
+            {
+                isWon = 1;
+            }
+            else if (theirPoints > yourPoints)
+            {
+                isWon = -1;
+            }
+
+            roundScores.Add(new RoundScore(yourPoints, theirPoints, isWon));
+
+            roundResultPanel.DisplayRoundResult(isShown);
+            roundResultPanel.SetScore(yourPoints, theirPoints);
+            roundResultPanel.SetRoundNumber(roundNumber);
+        }
+
         public void DisplayYouWon(bool isShown, int yourPoints, int theirPoints) {
-			youWon.SetActive (isShown);
-            withPoints.SetActive(isShown);
-            withPoints.GetComponentInChildren<TextMeshProUGUI>().text = yourPoints + " - " + theirPoints;
+            endGamePanel.DisplayWonScreen(isShown);
+            endGamePanel.SetScore(yourPoints, theirPoints);
         }
 
 		public void DisplayYouLost(bool isShown, int yourPoints, int theirPoints) {
-			youLost.SetActive (isShown);
-            withPoints.SetActive(isShown);
-            withPoints.GetComponentInChildren<TextMeshProUGUI>().text = yourPoints + " - " + theirPoints;
+            endGamePanel.DisplayLooseScreen(isShown);
+            endGamePanel.SetScore(yourPoints, theirPoints);
         }
 
         public void DisplayDraw(bool isShown, int yourPoints, int theirPoints)
         {
-            draw.SetActive(isShown);
-            withPoints.SetActive(isShown);
-            withPoints.GetComponentInChildren<TextMeshProUGUI>().text = yourPoints + " - " + theirPoints;
+            endGamePanel.DisplayDrawScreen(isShown);
+            endGamePanel.SetScore(yourPoints, theirPoints);
         }
 
-        public void DisplayByForfeit(bool isShown) {
-            withPoints.SetActive(false);
-			byForfeit.SetActive(isShown);
+        public void DisplayForfeit(bool isShown) {
+            endGamePanel.DisplayWonByForfeit(isShown);
 		}
 
 		public void DisplayInviteFriendButton(bool isShown) {
@@ -193,8 +166,9 @@ namespace AppAdvisory.Item {
         private void SetPlayer1TurnReal()
         {
             DisplayYourTurn(true);
-            timer = 0;
             isPlayer1Turn = true;
+            timer = 0;
+            turnSwitchPanel.StartTurnSwitchAnimation();
         }
 
         public void SetPlayer2Turn()
@@ -207,58 +181,48 @@ namespace AppAdvisory.Item {
             DisplayOpponentTurn(true);
             isPlayer1Turn = false;
             timer = 0;
+            turnSwitchPanel.StartTurnSwitchAnimation();
         }
 
         void Update()
         {
-            if (timer < turnAnimationDuration)
-            {
-                timer += Time.deltaTime;
-                float opacity = turnOpacity.Evaluate(timer);
-
-                Image spriteR = overlay.GetComponent<Image>();
-                spriteR.color = new Color(spriteR.color.r, spriteR.color.g, spriteR.color.b, opacity);
-
-                if (timer >= turnAnimationDuration)
-                {
-                    boardOverlay.GetComponent<Animation>().Play();
-
-                    if (isPlayer1Turn)
-                        player1.GetComponent<Animation>().Play();
-                    else
-                        player2.GetComponent<Animation>().Play();
-                }
-            }
-            else
-            {
-                overlay.SetActive(false);
-                yourTurn.SetActive(false);
-                opponentsTurn.SetActive(false);
-            }
             //Debug.Log(timer);
             //Debug.Log("player1 is shown : " + player1.gameObject.activeInHierarchy + " / player2 is shown : " + player2.gameObject.activeInHierarchy);
         }
 
-        public void DisplayYourTurn(bool isShown) {
-            overlay.SetActive(isShown);
-            yourTurn.SetActive(isShown);
-            opponentsTurn.SetActive(!isShown);
-		}
+        public void AnimateNextTurn()
+        {
+            boardOverlay.GetComponent<Animation>().Play();
 
-		public void DisplayOpponentTurn(bool isShown) {
-            overlay.SetActive(isShown);
-            opponentsTurn.SetActive(isShown);
-            yourTurn.SetActive(!isShown);
+            if (isPlayer1Turn)
+                player1.GetComponent<Animation>().Play();
+            else
+                player2.GetComponent<Animation>().Play();
         }
 
-		public void ResetPlayerTurn() {
+        public void DisplayYourTurn(bool isShown)
+        {
+            turnSwitchPanel.SetYourTurn(isShown);
+		}
+
+		public void DisplayOpponentTurn(bool isShown)
+        {
+            turnSwitchPanel.SetOpponentsTurn(isShown);
+        }
+
+		public void ResetPlayerTurn()
+        {
 			player1.SetColor (Color.white);
 			player2.SetColor (Color.white);
 		}
 
-		public void OnNextRoundButton() {
+		public void OnNextRoundButton()
+        {
             if (NextRound != null)
+            {
                 NextRound();
+                roundResultPanel.HideAll();
+            }
 		}
 
         public void OnRestartButton()
@@ -267,12 +231,45 @@ namespace AppAdvisory.Item {
                 Restart();
         }
 
-		public void OnInviteFriendbutton() {
+		public void OnInviteFriendbutton()
+        {
 			Debug.Log("invite friend");
 
 			if (InviteFriend != null)
 				InviteFriend ();
 		}
-	}
 
+        public void OnGoToGameResults()
+        {
+            int playerScore = 0;
+            int opponentScore = 0;
+
+            foreach (RoundScore score in roundScores)
+            {
+                playerScore += score.playerScore;
+                opponentScore += score.otherPlayerScore;
+            }
+
+            int isWon = EvaluateWin(playerScore, opponentScore);
+
+            endGamePanel.DisplayResult(isWon);
+            endGamePanel.SetScore(playerScore, opponentScore);
+            roundResultPanel.HideAll();
+        }
+
+        private int EvaluateWin(int playerPoints, int opponentPoints)
+        {
+            int isWon = 0;
+            if (playerPoints > opponentPoints)
+            {
+                isWon = 1;
+            }
+            else if (opponentPoints > playerPoints)
+            {
+                isWon = -1;
+            }
+
+            return isWon;
+        }
+	}
 }

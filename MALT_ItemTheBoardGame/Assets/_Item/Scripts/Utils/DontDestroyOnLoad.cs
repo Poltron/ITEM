@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DontDestoryOnLoad : MonoBehaviour {
+public class DontDestroyOnLoad : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
