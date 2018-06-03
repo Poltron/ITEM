@@ -18,5 +18,5 @@ EditorBuildSettings:
     path: Assets/FBPro/Demo/Main.unity
     guid: df1c35ef9327d034bb4555b52841621e
   - enabled: 0
-    path: Assets/_Item/Scenes/chromeBugScene.unity
+    path: 
     guid: f7a554e234e407942b70e944a3f6e9a5

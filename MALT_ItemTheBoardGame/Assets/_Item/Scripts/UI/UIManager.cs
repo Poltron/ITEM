@@ -29,8 +29,10 @@ namespace AppAdvisory.Item {
         public RoundPanel roundResultPanel;
         public EndGamePanel endGamePanel;
         public TurnSwitchPanel turnSwitchPanel;
+        public OptionsPanel optionsPanel;
+        public RectTransform helpPanel;
 
-		public GameObject inviteFriendButton;
+        public GameObject inviteFriendButton;
 
         private bool isPlayer1Turn;
 
@@ -237,7 +239,17 @@ namespace AppAdvisory.Item {
 
 			if (InviteFriend != null)
 				InviteFriend ();
-		}
+        }
+
+        public void OnHelpButton()
+        {
+            helpPanel.gameObject.SetActive(!helpPanel.gameObject.activeInHierarchy);
+        }
+
+        public void OnOptionsButton()
+        {
+            optionsPanel.ToggleShowPanel();
+        }
 
         public void OnGoToGameResults()
         {
