@@ -27,11 +27,18 @@ namespace AppAdvisory.Item
         
 		public Ball ball;
 
+        private SpriteRenderer spriteRenderer;
 		private CircleCollider2D circleCollider;
-        
-		void Awake() {
+
+        [SerializeField]
+        private Sprite normalCell;
+        [SerializeField]
+        private Sprite highlightedCell;
+
+        void Awake() {
 			circleCollider = GetComponent<CircleCollider2D> ();
-		}
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        }
 
 		public void SetCollider(bool isActive) {
 			circleCollider.enabled = isActive;
@@ -54,6 +61,18 @@ namespace AppAdvisory.Item
         {
             this.x = x;
             this.y = y;
+        }
+
+        public void SetHighlightedCell(bool isHighlighted)
+        {
+            if (isHighlighted)
+            {
+                spriteRenderer.sprite = highlightedCell;
+            }
+            else
+            {
+                spriteRenderer.sprite = normalCell;
+            }
         }
     }
 }

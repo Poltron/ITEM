@@ -69,7 +69,10 @@ namespace AppAdvisory.Item {
         public void EndTurn()
         {
             Debug.Log("playerendturn");
-			EasyTouch.On_TouchUp -= OnTouchUp;
+
+            modelGrid.ResetCellsColor();
+
+            EasyTouch.On_TouchUp -= OnTouchUp;
 
 //			if (ballCount > 0) {
 //				EasyTouch.On_Drag -= On_Drag;

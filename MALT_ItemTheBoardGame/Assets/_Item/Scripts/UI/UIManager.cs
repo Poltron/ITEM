@@ -244,11 +244,13 @@ namespace AppAdvisory.Item {
         public void OnHelpButton()
         {
             helpPanel.gameObject.SetActive(!helpPanel.gameObject.activeInHierarchy);
+            optionsPanel.ToggleShowPanel(false);
         }
 
         public void OnOptionsButton()
         {
             optionsPanel.ToggleShowPanel();
+            helpPanel.gameObject.SetActive(false);
         }
 
         public void OnGoToGameResults()

@@ -586,6 +586,9 @@ namespace AppAdvisory.Item {
 
         public void HighlightAvailableMoveCells(Cell cell)
         {
+            if (!Options.GetEnablePlacementHelp())
+                return;
+
             modelGrid.ResetCellsColor();
 
             List<Move> moves = optiGrid.GetAvailableMoves(cell);
@@ -593,7 +596,7 @@ namespace AppAdvisory.Item {
             foreach(Move move in moves)
             {
                 Cell toCell = modelGrid.GetCellFromModel(move.toY, move.toX);
-                toCell.GetComponent<SpriteRenderer>().color = Color.red;
+                toCell.SetHighlightedCell(true);
             }
         }
 

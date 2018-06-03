@@ -44,12 +44,12 @@ namespace AppAdvisory.Item {
 
         public void ResetCellsColor()
         {
-            for (int i = 0; i < grid.Length;++i)
+            for (int i = 0; i < grid.Length; ++i)
             {
                 for (int j = 0; j < grid[i].Length; j++)
                 {
                     if (grid[i][j])
-                    grid[i][j].GetComponent<SpriteRenderer>().color = cellBaseColor;
+                        grid[i][j].SetHighlightedCell(false);
                 }
             }
         }
