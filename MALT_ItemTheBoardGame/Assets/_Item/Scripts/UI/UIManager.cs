@@ -9,14 +9,16 @@ namespace AppAdvisory.Item {
 
 	public class UIManager : MonoBehaviour {
 
-		public event Action Restart;
+        [SerializeField]
+        private GridManager gridManager;
+
+        public event Action Restart;
         public event Action NextRound;
-        public event Action FinishTurn;
+        //public event Action FinishTurn;
 		public event Action InviteFriend;
 
         [SerializeField]
         private float timeBeforeNextTurn;
-        private float timer;
 
         [SerializeField]
         private SpriteRenderer boardOverlay;
@@ -31,6 +33,8 @@ namespace AppAdvisory.Item {
         public TurnSwitchPanel turnSwitchPanel;
         public OptionsPanel optionsPanel;
         public RectTransform helpPanel;
+        public TutorialPanel tutoPanel;
+        public RectTransform overlayPanel;
 
         public GameObject inviteFriendButton;
 
@@ -65,6 +69,9 @@ namespace AppAdvisory.Item {
             endGamePanel.HideAll();
             roundResultPanel.HideAll();
             turnSwitchPanel.HideAll();
+            tutoPanel.HideAll();
+
+            tutoPanel.DisplayAskForTuto(true);
 		}
 
         public void DisplayTurnSwitchPhase1(bool isShown)
@@ -169,7 +176,6 @@ namespace AppAdvisory.Item {
         {
             DisplayYourTurn(true);
             isPlayer1Turn = true;
-            timer = 0;
             turnSwitchPanel.StartTurnSwitchAnimation();
         }
 
@@ -182,7 +188,6 @@ namespace AppAdvisory.Item {
         {
             DisplayOpponentTurn(true);
             isPlayer1Turn = false;
-            timer = 0;
             turnSwitchPanel.StartTurnSwitchAnimation();
         }
 
@@ -269,6 +274,11 @@ namespace AppAdvisory.Item {
             endGamePanel.DisplayResult(isWon);
             endGamePanel.SetScore(playerScore, opponentScore);
             roundResultPanel.HideAll();
+        }
+
+        private void DisplayOverlay(bool isShown)
+        {
+            overlayPanel.gameObject.SetActive(isShown);
         }
 
         private int EvaluateWin(int playerPoints, int opponentPoints)

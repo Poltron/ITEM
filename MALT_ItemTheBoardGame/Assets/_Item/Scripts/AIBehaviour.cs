@@ -103,9 +103,9 @@ namespace AppAdvisory.Item
 
             if (!done)
             {
-                int depth = 5;
-                if (optiGrid.BlackBallsLeft > 0 || optiGrid.WhiteBallsLeft > 0)
-                    depth = 3;
+                int depth = 3;
+                //if (optiGrid.BlackBallsLeft > 0 || optiGrid.WhiteBallsLeft > 0)
+                 //   depth = 3;
 
                 bestMove = MiniMaxRoot(depth, true);
             }

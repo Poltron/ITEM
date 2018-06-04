@@ -68,7 +68,6 @@ namespace AppAdvisory.Item {
         public float timeToLaunchGameVSIA = 4;
 
         private bool isGameFinished = false;
-        private int isWon = 0;
 
         private int playerScore = 0;
         private int otherPlayerScore = 0;
@@ -81,9 +80,13 @@ namespace AppAdvisory.Item {
         private bool isGameStarted = false;
         private bool isPlayingVSIA = false;
 
+        private bool isPlayingTutorial = false;
+
         private bool opponentGoesNextRound = false;
         private bool playerGoesNextRound = false;
         private int roundNumber;
+
+        private bool lookingForGame = false;
 
         [SerializeField]
         private bool disableAI = false;
@@ -105,7 +108,7 @@ namespace AppAdvisory.Item {
 
             aiBehaviour = new AIBehaviour(aiEvaluationData);
             
-			DisplayMarbleContainer (false);
+			//DisplayMarbleContainer (false);
 
             connection = GetComponent<Connection> ();
 
@@ -130,7 +133,7 @@ namespace AppAdvisory.Item {
                 //fbManager.FacebookConnect += OnFacebookConnect;
             }
 
-            DOVirtual.DelayedCall(timeToLaunchGameVSIA, StartGameVSIA, true);
+            //DOVirtual.DelayedCall(timeToLaunchGameVSIA, StartGameVSIA, true);
         }
 
         private void Update()
@@ -141,6 +144,12 @@ namespace AppAdvisory.Item {
             }
         }
 
+        public void StartLookingForGame()
+        {
+            PhotonNetwork.JoinRandomRoom();
+            lookingForGame = true;
+        }
+
         public void StartGameVSIA() {
 			if (isGameStarted)
 				return;
@@ -148,7 +157,6 @@ namespace AppAdvisory.Item {
 			connection.enabled = false;
 			PhotonNetwork.LeaveRoom ();
 			PhotonNetwork.Disconnect ();
-
 
 			uiManager.DisplayWaitingForPlayerPanel (false);
 			DisplayMarbleContainer (true);
@@ -169,9 +177,19 @@ namespace AppAdvisory.Item {
 			uiManager.SetPlayer2Name (GetIAName());
 
 			player.StartTurn ();
+
+            if (isPlayingTutorial)
+            {
+                //uiManager.
+            }
 		}
 
-		private string GetIAName() {
+        public void SetPlayingTuto(bool isPlaying)
+        {
+            isPlayingTutorial = isPlaying;
+        }
+
+        private string GetIAName() {
             return "IA";
 		}
 
@@ -225,7 +243,6 @@ namespace AppAdvisory.Item {
             }
             
             isGameFinished = false;
-            isWon = 0;
             isEqualityTurn = false;
             isGameStarted = true;
             
@@ -497,8 +514,6 @@ namespace AppAdvisory.Item {
 
 		private void Win(Cell cell)
         {
-            bool playerWin = false, otherPlayerWin = false;
-
             List<WinningPattern> winningPatterns;
             OptiGrid.GetWinningPatterns(out winningPatterns);
 
@@ -510,42 +525,16 @@ namespace AppAdvisory.Item {
             {
                 if (pattern.color == (CellColor)player.color)
                 {
-                    playerWin = true;
                     playerScore = GetWinningPatternScore(pattern);
                 }
                 else
                 {
-                    otherPlayerWin = true;
                     otherPlayerScore = GetWinningPatternScore(pattern);
                 }
             }
 
             totalPlayerScore += playerScore;
             totalOtherPlayerScore += otherPlayerScore;
-
-            // adjust win/loose if with score
-            if (playerScore > otherPlayerScore)
-            {
-                otherPlayerWin = false;
-            }
-            else if (otherPlayerScore > playerScore)
-            {
-                playerWin = false;
-            }
-
-            if (playerWin && otherPlayerWin)
-            {
-                isWon = 0;
-            }
-            else if (playerWin)
-            {
-                isWon = 1;
-
-            }
-            else if (otherPlayerWin)
-            {
-                isWon = -1;
-            }
 
             isGameFinished = true;
             player.EndTurn();

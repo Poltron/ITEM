@@ -15,17 +15,12 @@ namespace AppAdvisory.Item {
 
 		private Transform parent;
 
-        private Color cellBaseColor;
-
 		public ModelGrid(int width, int height, List<Cell> cells)
 	    {
 	        this.width = width;
 	        this.height = height;
 
 	        InitGridWithCells(cells);
-
-            cellBaseColor = grid[0][0].GetComponent<SpriteRenderer>().color;
-
         }
 
         public void Reset()

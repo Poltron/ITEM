@@ -45,8 +45,9 @@ public class Connection : PunBehaviour {
 		}
 		else
 		{
-			// else: join a random room
-			PhotonNetwork.JoinRandomRoom();
+            // else: join a random room
+            Debug.Log("joinrandomroom");
+			//PhotonNetwork.JoinRandomRoom();
 		}
 	}
 
@@ -57,8 +58,9 @@ public class Connection : PunBehaviour {
 
 	public override void OnPhotonRandomJoinFailed(object[] codeAndMsg)
 	{
-		PhotonNetwork.CreateRoom(null, new RoomOptions() { MaxPlayers = 2, PlayerTtl = 5000 }, null);
-	}
+        Debug.Log("randomjoinfailed then create");
+        PhotonNetwork.CreateRoom(null, new RoomOptions() { MaxPlayers = 2, PlayerTtl = 5000 }, null);
+    }
 
 	public override void OnJoinedRoom()
 	{
