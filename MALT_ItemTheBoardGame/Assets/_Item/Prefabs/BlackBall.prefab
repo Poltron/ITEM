@@ -116,7 +116,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1397747512153346}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.29, y: 4.95, z: 0}
+  m_LocalPosition: {x: -8, y: -6, z: 0}
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_Children:
   - {fileID: 4690675050238552}
@@ -232,9 +232,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10d15d192fb9f455d8b4737870102140, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ballId: 0
   color: 2
   score: 1
   owner: {fileID: 0}
+  ballSprite: {fileID: 212594361854813038}
+  ballNumberText: {fileID: 114450694929290980}
+  ballShadow: {fileID: 212542296717182298}
   highlight: {fileID: 212806420231044536}
   highlightCurve:
     serializedVersion: 2
