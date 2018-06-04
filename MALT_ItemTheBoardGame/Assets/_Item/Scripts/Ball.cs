@@ -16,6 +16,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using TMPro;
 
 namespace AppAdvisory.Item
 {
@@ -30,7 +31,7 @@ namespace AppAdvisory.Item
         public int ballId;
 
         [SerializeField]
-		private BallColor color;
+        private BallColor color;
 
         public BallColor Color { get { return color; } }
 
@@ -38,25 +39,31 @@ namespace AppAdvisory.Item
         int score;
 
         public int Score { get { return score; } }
-        
-		public Cell owner;
 
-		private Vector3 startPosition;
+        public Cell owner;
+
+        private Vector3 startPosition;
         private Vector3 startScale;
 
         [SerializeField]
-		private SpriteRenderer highlight;
+        private SpriteRenderer ballSprite;
+        [SerializeField]
+        private TextMeshPro ballNumberText;
+        [SerializeField]
+        private SpriteRenderer ballShadow;
+        [SerializeField]
+        private SpriteRenderer highlight;
 
         [SerializeField]
         private AnimationCurve highlightCurve;
 
         float highlightCurveTimer;
 
-		void Awake()
+        void Awake()
         {
             startPosition = transform.position;
             startScale = transform.localScale;
-		}
+        }
 
         private void Start()
         {
@@ -73,21 +80,39 @@ namespace AppAdvisory.Item
             }
         }
 
-        public void ShowHighlight () {
+        public void ShowHighlight() {
             highlightCurveTimer = 0;
             highlight.gameObject.SetActive(true);
 
             if (owner)
                 FindObjectOfType<GridManager>().HighlightAvailableMoveCells(owner);
-		}
+        }
 
-		public void HideHighlight() {
+        public void HideHighlight() {
             highlight.gameObject.SetActive(false);
-		}
+        }
 
-		public void ResetPosition() {
-			//transform.position = startPosition;
-		}
+        public void ResetPosition() {
+            //transform.position = startPosition;
+        }
+
+        public void PassAboveUI(bool enabled)
+        {
+            if (enabled)
+            {
+                ballSprite.sortingLayerID = SortingLayer.GetLayerValueFromName("AboveUI");
+                ballNumberText.sortingLayerID = SortingLayer.GetLayerValueFromName("AboveUI");
+                ballShadow.sortingLayerID = SortingLayer.GetLayerValueFromName("AboveUI");
+                highlight.sortingLayerID = SortingLayer.GetLayerValueFromName("AboveUI");
+            }
+            else
+            {
+                ballSprite.sortingLayerID = SortingLayer.GetLayerValueFromName("Ball");
+                ballNumberText.sortingLayerID = SortingLayer.GetLayerValueFromName("BallNumber");
+                ballShadow.sortingLayerID = SortingLayer.GetLayerValueFromName("Default");
+                highlight.sortingLayerID = SortingLayer.GetLayerValueFromName("Highlight");
+            }
+        }
 
         public void Reset()
         {
