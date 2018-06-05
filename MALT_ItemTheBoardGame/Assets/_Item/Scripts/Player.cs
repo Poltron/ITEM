@@ -40,6 +40,8 @@ namespace AppAdvisory.Item {
 		private int fingerIndex;
 		private Ball currentBall;
 
+        private GameObject exclusivePickableObject;
+
 		public bool showHelp = false;
 
         public void Reset()
@@ -206,6 +208,11 @@ namespace AppAdvisory.Item {
 			}
 		}
         
+        public void SetExclusivePickableObject(GameObject go)
+        {
+            exclusivePickableObject = go;
+        }
+
         public void OnTouchUpPublic(Gesture gesture)
         {
             OnTouchUp(gesture);
@@ -218,6 +225,9 @@ namespace AppAdvisory.Item {
             Debug.Log("nopickedobject");
             if (!gesture.pickedObject)
 				return;
+
+            if (exclusivePickableObject != null && gesture.pickedObject != exclusivePickableObject)
+                return;
 
             Debug.Log("ontouchup");
 
@@ -256,6 +266,9 @@ namespace AppAdvisory.Item {
 					currentBall.DOPlace (pickedCell);
 					currentBall.HideHighlight ();
 					currentBall = null;
+
+                    if (OnCellSelection != null)
+                        OnCellSelection(pickedCell);
 
 					SendTurnDataPhase1 (pickedCell);
 

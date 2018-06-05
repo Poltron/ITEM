@@ -37,6 +37,7 @@ namespace AppAdvisory.Item {
         public TutorialPanel tutoPanel;
         public RectTransform overlayPanel;
         public followworldelement followWorldElement;
+        public Transform arrowFocus;
 
         public GameObject inviteFriendButton;
 
@@ -44,11 +45,9 @@ namespace AppAdvisory.Item {
 
         private List<RoundScore> roundScores;
 
-        [SerializeField]
-        private Ball Phase1Tuto_BallToMove;
+        public Ball Phase1Tuto_BallToMove;
 
-        [SerializeField]
-        private Cell Phase1Tuto_CellToMoveTo;
+        public Cell Phase1Tuto_CellToMoveTo;
 
         IEnumerator waitFor(float t, Action toDo)
         {
@@ -316,38 +315,53 @@ namespace AppAdvisory.Item {
             overlayPanel.gameObject.SetActive(true);
             Phase1Tuto_BallToMove.PassAboveUI(true);
 
-            followWorldElement.gameObject.SetActive(true);
-            followWorldElement.target = Phase1Tuto_BallToMove.transform;
-            followWorldElement.GetComponent<Button>().onClick.AddListener(pickBallHack);
+            EasyTouch.SetEnableUIDetection(false);
+            gridManager.player.SetExclusivePickableObject(Phase1Tuto_BallToMove.gameObject);
+            gridManager.player.OnBallSelection += pickBallHack;
+
+            EasyTouch.On_TouchUp += gridManager.player.OnTouchUpPublic;
+            FindObjectOfType<GridManager>().numberOfTurnsPlayer1++;
+
+            arrowFocus.gameObject.SetActive(true);
+            arrowFocus.position = Phase1Tuto_BallToMove.transform.position + new Vector3(0, 0.5f, 0);
+
+            //followWorldElement.gameObject.SetActive(true);
+            //followWorldElement.target = Phase1Tuto_BallToMove.transform;
+            //followWorldElement.GetComponent<Button>().onClick.AddListener(pickBallHack);
         }
 
-        private void pickBallHack()
+        private void pickBallHack(Ball ball)
         {
-            Gesture gesture = new Gesture();
+            /*Gesture gesture = new Gesture();
             gesture.pickedObject = Phase1Tuto_BallToMove.gameObject;
-            gridManager.player.OnTouchUpPublic(gesture);
+            gridManager.player.OnTouchUpPublic(gesture);*/
 
             Phase1Tuto_BallSelected(Phase1Tuto_BallToMove);
+            gridManager.player.OnBallSelection -= pickBallHack;
         }
         
         public void Phase1Tuto_BallSelected(Ball ball)
         {
             Phase1Tuto_CellToMoveTo.PassAboveUI(true);
 
-            followWorldElement.target = Phase1Tuto_CellToMoveTo.transform;
-            followWorldElement.GetComponent<Button>().onClick.AddListener(pickCellHack);
+            gridManager.player.SetExclusivePickableObject(Phase1Tuto_CellToMoveTo.gameObject);
+            gridManager.player.OnCellSelection += pickCellHack;
+
+            arrowFocus.position = Phase1Tuto_CellToMoveTo.transform.position + new Vector3(0, 1, 0);
+
+            //followWorldElement.target = Phase1Tuto_CellToMoveTo.transform;
+            //followWorldElement.GetComponent<Button>().onClick.AddListener(pickCellHack);
         }
 
-        private void pickCellHack()
+        private void pickCellHack(Cell cell)
         {
-            Gesture gesture = new Gesture();
-            gesture.pickedObject = Phase1Tuto_CellToMoveTo.gameObject;
-            gridManager.player.OnTouchUpPublic(gesture);
-
             Phase1Tuto_BackToNormal(Phase1Tuto_CellToMoveTo);
+            gridManager.player.OnCellSelection -= pickCellHack;
 
-            followWorldElement.gameObject.SetActive(false);
-            followWorldElement.target = null;
+            EasyTouch.On_TouchUp -= gridManager.player.OnTouchUpPublic;
+
+            //followWorldElement.gameObject.SetActive(false);
+            //followWorldElement.target = null;
         }
 
         public void Phase1Tuto_BackToNormal(Cell cell)
@@ -356,6 +370,11 @@ namespace AppAdvisory.Item {
             overlayPanel.gameObject.SetActive(false);
             Phase1Tuto_BallToMove.PassAboveUI(false);
             Phase1Tuto_CellToMoveTo.PassAboveUI(false);
+            arrowFocus.gameObject.SetActive(false);
+
+            gridManager.player.SetExclusivePickableObject(null);
+
+            EasyTouch.SetEnableUIDetection(true);
         }
     }
 }

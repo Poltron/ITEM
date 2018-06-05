@@ -16,7 +16,8 @@ public class followworldelement : MonoBehaviour
 	void Update ()
     {
         if (target != null)
-        {//Convert the world for screen point so that it can be used with ScreenPointToLocalPointInRectangle function
+        {
+            //Convert the world for screen point so that it can be used with ScreenPointToLocalPointInRectangle function
             Vector3 screenPos = Camera.main.WorldToScreenPoint(target.position);
             Vector2 movePos;
 

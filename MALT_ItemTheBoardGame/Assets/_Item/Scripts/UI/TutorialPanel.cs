@@ -1,4 +1,5 @@
 ﻿using AppAdvisory.Item;
+using HedgehogTeam.EasyTouch;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -98,6 +99,7 @@ public class TutorialPanel : MonoBehaviour
         DisplayPhase1MovementsScreen(false);
         gridManager.StartGameVSIA();
         uiManager.turnSwitchPanel.SetCallbackAnimationEnd(uiManager.Phase1Tuto_ShowBall);
+        //gridManager.player.OnlyPickObject(ball);
     }
 
     public void DisplayPhase2MovementsScreen(bool isShown)

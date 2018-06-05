@@ -139,8 +139,6 @@ namespace AppAdvisory.Item {
 
                 //fbManager.FacebookConnect += OnFacebookConnect;
             }
-
-            DOVirtual.DelayedCall(timeToLaunchGameVSIA, StartGameVSIA, true);
         }
 
         private void Update()
@@ -155,6 +153,7 @@ namespace AppAdvisory.Item {
         {
             PhotonNetwork.JoinRandomRoom();
             lookingForGame = true;
+            DOVirtual.DelayedCall(timeToLaunchGameVSIA, StartGameVSIA, true);
         }
 
         public void StartGameVSIA() {

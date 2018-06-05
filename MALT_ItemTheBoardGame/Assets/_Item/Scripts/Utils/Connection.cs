@@ -46,7 +46,7 @@ public class Connection : PunBehaviour {
 		else
 		{
             // else: join a random room
-            Debug.Log("joinrandomroom");
+            //Debug.Log("joinrandomroom");
 			//PhotonNetwork.JoinRandomRoom();
 		}
 	}
