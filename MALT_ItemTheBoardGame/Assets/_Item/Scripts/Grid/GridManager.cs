@@ -61,7 +61,8 @@ namespace AppAdvisory.Item {
         [SerializeField]
         private UIManager uiManager;
 
-        private Player player;
+        [HideInInspector]
+        public Player player;
         private string playerName;
         private string playerPicURL;
 
@@ -86,6 +87,9 @@ namespace AppAdvisory.Item {
         private bool playerGoesNextRound = false;
         private int roundNumber;
 
+        [SerializeField]
+        private Sprite IASprite;
+
         private bool lookingForGame = false;
 
         [SerializeField]
@@ -102,6 +106,8 @@ namespace AppAdvisory.Item {
         
         void Start ()
         {
+            Options.Init();
+
             numberOfTurnsPlayer1 = 0;
             numberOfTurnsPlayer2 = 0;
             roundNumber = 1;
@@ -116,6 +122,7 @@ namespace AppAdvisory.Item {
             uiManager.NextRound += OnNextRound;
 			uiManager.Restart += OnRestart;
 			uiManager.InviteFriend += OnInviteFriend;
+            uiManager.FinishTurn += OnFinishTurn;
 
 			connection.ApplyUserIdAndConnect ();
 
@@ -133,7 +140,7 @@ namespace AppAdvisory.Item {
                 //fbManager.FacebookConnect += OnFacebookConnect;
             }
 
-            //DOVirtual.DelayedCall(timeToLaunchGameVSIA, StartGameVSIA, true);
+            DOVirtual.DelayedCall(timeToLaunchGameVSIA, StartGameVSIA, true);
         }
 
         private void Update()
@@ -167,21 +174,14 @@ namespace AppAdvisory.Item {
             numberOfTurnsPlayer2 = 0;
             isPlayingVSIA = true;
 
-			uiManager.DisplayTurnSwitchPhase1(true);
-			uiManager.SetPlayer1Turn();
-
-			player = CreatePlayer (BallColor.White);
+            player = CreatePlayer(BallColor.White);
 			uiManager.InitPlayer2(BallColor.Black);
 
-			uiManager.DisplayYourTurn (true);
-			uiManager.SetPlayer2Name (GetIAName());
-
-			player.StartTurn ();
-
-            if (isPlayingTutorial)
-            {
-                //uiManager.
-            }
+            uiManager.SetPlayer2Name(GetIAName());
+            uiManager.SetPlayer2Pic(GetIASprite());
+            uiManager.DisplayTurnSwitchPhase1(true);
+            uiManager.DisplayYourTurn(true);
+            uiManager.SetPlayer1Turn(player.StartTurn);
 		}
 
         public void SetPlayingTuto(bool isPlaying)
@@ -192,6 +192,10 @@ namespace AppAdvisory.Item {
         private string GetIAName() {
             return "IA";
 		}
+
+        private Sprite GetIASprite() {
+            return IASprite;
+        }
 
 		private void DisplayMarbleContainer(bool isShown) {
 			marbleContainer.gameObject.SetActive (isShown);
@@ -258,13 +262,12 @@ namespace AppAdvisory.Item {
             // whites begin the game
             if (player.color == BallColor.White)
             {
-                player.StartTurn();
-                uiManager.SetPlayer1Turn();
+                uiManager.SetPlayer1Turn(player.StartTurn);
                 uiManager.DisplayYourTurn(true);
             }
             else
             {
-                uiManager.SetPlayer2Turn();
+                uiManager.SetPlayer2Turn(null);
                 uiManager.DisplayOpponentTurn(true);
             }
         }
@@ -335,19 +338,25 @@ namespace AppAdvisory.Item {
             }
         }
 
+        bool alreadyPassed = false;
         public void EndAIPhase()
         {
             if (player.ballCount == 0)
             {
                 uiManager.DisplayTurnSwitchPhase1(false);
                 uiManager.DisplayTurnSwitchPhase2(true);
+
+                if (isPlayingTutorial && !alreadyPassed) // torefacto
+                {
+                    uiManager.DisplayTutorialPhase2Movement();
+                    alreadyPassed = true;
+                    return;
+                }
             }
 
-            player.StartTurn();
-
-            uiManager.SetPlayer1Turn();
+            uiManager.SetPlayer1Turn(player.StartTurn);
         }
-			
+
         IEnumerator waitFor(float t, Move move, System.Action<Move> func)
         {
             while ((t -= Time.deltaTime) > 0)
@@ -418,16 +427,14 @@ namespace AppAdvisory.Item {
                 
                 if (!end)
                 {
-                    uiManager.SetPlayer2Turn();
                     
                     if (disableAI) // debug feature to test without AI
                     {
-                        player.StartTurn();
-
-                        uiManager.SetPlayer1Turn();
+                        uiManager.SetPlayer1Turn(player.StartTurn);
                     }
                     else
                     {
+                        uiManager.SetPlayer2Turn(null);
                         PlayIAPhase1(cell);
                     }
                 }
@@ -452,7 +459,7 @@ namespace AppAdvisory.Item {
 
                 if (!end)
 				{
-					SetPlayerTurnOnEnd ();
+                    uiManager.SetPlayer2Turn(null);
 				}
 			}
 
@@ -483,7 +490,7 @@ namespace AppAdvisory.Item {
                 }
                 if (!end)
                 {
-                    uiManager.SetPlayer2Turn();
+                    uiManager.SetPlayer2Turn(null);
                     PlayIAPhase2();
                 }
 			}
@@ -507,7 +514,7 @@ namespace AppAdvisory.Item {
 
                 if (!end)
                 {
-                    SetPlayerTurnOnEnd ();
+                    uiManager.SetPlayer2Turn(null);
 				}
 			}
 		}
@@ -699,8 +706,7 @@ namespace AppAdvisory.Item {
 
             if (!end)
             {
-                player.StartTurn();
-                SetPlayerTurnOnReceive();
+                uiManager.SetPlayer1Turn(player.StartTurn);
             }
 		}
 			
@@ -732,8 +738,7 @@ namespace AppAdvisory.Item {
 
             if (!end)
             {
-                player.StartTurn();
-                SetPlayerTurnOnReceive();
+                uiManager.SetPlayer1Turn(player.StartTurn);
             }
 		}
 
@@ -784,18 +789,6 @@ namespace AppAdvisory.Item {
 			}
         }
 			
-		void SetPlayerTurnOnReceive() {
-			uiManager.SetPlayer1Turn ();
-
-			return;
-		}
-
-		void SetPlayerTurnOnEnd() {
-			uiManager.SetPlayer2Turn ();
-
-			return;
-		}
-
 		public override void OnJoinedRoom()
 		{
 
@@ -812,7 +805,7 @@ namespace AppAdvisory.Item {
 
 				uiManager.InitPlayer1(BallColor.Black);
 				uiManager.InitPlayer2(BallColor.White);
-				uiManager.SetPlayer2Turn();
+				uiManager.SetPlayer2Turn(null);
 
                 uiManager.DisplayTurnSwitchPhase1(true);
 
@@ -853,7 +846,8 @@ namespace AppAdvisory.Item {
                 numberOfTurnsPlayer2 = 0;
 
                 uiManager.DisplayTurnSwitchPhase1(true);
-				uiManager.SetPlayer1Turn();
+                uiManager.DisplayYourTurn(true);
+                uiManager.SetPlayer1Turn(player.StartTurn);
 
 				player = CreatePlayer (BallColor.White);
 				uiManager.InitPlayer2(BallColor.Black);
@@ -861,9 +855,6 @@ namespace AppAdvisory.Item {
 				SendName (playerName);
 				SendPicURL (playerPicURL);
 
-				uiManager.DisplayYourTurn (true);
-
-				player.StartTurn ();
 			} else 
 			{
 				print("alone");
@@ -905,6 +896,11 @@ namespace AppAdvisory.Item {
                 playerGoesNextRound = opponentGoesNextRound = false;
                 GoToNextRound();
             }
+        }
+
+        public void OnFinishTurn()
+        {
+            //
         }
 
         [PunRPC]

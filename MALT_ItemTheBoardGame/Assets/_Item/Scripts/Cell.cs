@@ -74,5 +74,13 @@ namespace AppAdvisory.Item
                 spriteRenderer.sprite = normalCell;
             }
         }
+
+        public void PassAboveUI(bool isEnabled)
+        {
+            if (isEnabled)
+                spriteRenderer.sortingLayerID = SortingLayer.NameToID("AboveUI");
+            else
+                spriteRenderer.sortingLayerID = SortingLayer.NameToID("Cell");
+        }
     }
 }

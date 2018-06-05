@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,6 +23,7 @@ namespace AppAdvisory.Item
         private RectTransform opponentTurn;
         
         private UIManager uiManager;
+        private Action callBack;
 
         public void SetUIManager(UIManager ui)
         {
@@ -71,6 +73,14 @@ namespace AppAdvisory.Item
         {
             uiManager.AnimateNextTurn();
             gameObject.SetActive(false);
+
+            if (callBack != null)
+                callBack();
+        }
+
+        public void SetCallbackAnimationEnd(Action _callBack)
+        {
+            callBack = _callBack;
         }
     }
 }

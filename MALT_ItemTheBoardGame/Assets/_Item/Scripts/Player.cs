@@ -11,8 +11,10 @@ namespace AppAdvisory.Item {
 		public string playerName;
 		public string picURL;
 
+        public event Action<Ball> OnBallSelection;
+        public event Action<Cell> OnCellSelection;
 
-		private ModelGrid modelGrid;
+        private ModelGrid modelGrid;
         private OptimizedGrid optiGrid;
 
         public BallColor color {
@@ -54,6 +56,7 @@ namespace AppAdvisory.Item {
 
 		public void StartTurn() {
             Debug.Log("playerstartturn");
+            
 			EasyTouch.On_TouchUp += OnTouchUp;
             FindObjectOfType<GridManager>().numberOfTurnsPlayer1++;
 //			if (ballCount > 0) {
@@ -203,11 +206,17 @@ namespace AppAdvisory.Item {
 			}
 		}
         
+        public void OnTouchUpPublic(Gesture gesture)
+        {
+            OnTouchUp(gesture);
+        }
+
 		void OnTouchUp(Gesture gesture) {
 			if (isTweening)
 				return;
 
-			if (!gesture.pickedObject)
+            Debug.Log("nopickedobject");
+            if (!gesture.pickedObject)
 				return;
 
             Debug.Log("ontouchup");
@@ -229,6 +238,9 @@ namespace AppAdvisory.Item {
 							currentBall.HideHighlight ();
 							currentBall = pickedBall;
 							currentBall.ShowHighlight ();
+
+                            if (OnBallSelection != null)
+                                OnBallSelection(currentBall);
 						}
 						return;
 					}
@@ -320,6 +332,9 @@ namespace AppAdvisory.Item {
 
 			currentBall = currentCell.ball;
 			currentBall.ShowHighlight ();
+
+            if (OnBallSelection != null)
+                OnBallSelection(currentBall);
 		}
 
 		void ResetCurrentCells() {
@@ -381,8 +396,6 @@ namespace AppAdvisory.Item {
 
 		public void MoveBall(Cell pickedCell) {
 			if (pickedCell == currentCell) {
-
-
 				currentBall.ResetPosition ();
 				//Utils.ResetCellsColor (grid);
 
@@ -435,15 +448,37 @@ namespace AppAdvisory.Item {
 				currentBall.ResetPosition ();
 				//Utils.ResetCellsColor (grid);
 				return;
-			}
-				
+            }
 
-			Utils.CheckWin (modelGrid, pickedCell);
+            if (OnCellSelection != null)
+                OnCellSelection(pickedCell);
+
+            Utils.CheckWin (modelGrid, pickedCell);
 		}
 
-		void RegisterBall(Gesture gesture, Ball ball)  {
+        public void PickBall(Ball ball)
+        {
+            currentBall = ball;
+            currentBall.ShowHighlight();
+
+            if (OnBallSelection != null)
+                OnBallSelection(ball);
+        }
+
+        public void PickCell(Cell cell)
+        {
+            currentCell = cell;
+
+            if (OnCellSelection != null)
+                OnCellSelection(cell);
+        }
+
+        void RegisterBall(Gesture gesture, Ball ball)  {
 			currentBall = ball;
 			currentBall.ShowHighlight ();
+
+            if (OnBallSelection != null)
+                OnBallSelection(ball);
 
 			fingerIndex = gesture.fingerIndex;
 

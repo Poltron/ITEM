@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using UnityEngine.UI;
 using TMPro;
+using HedgehogTeam.EasyTouch;
 
 namespace AppAdvisory.Item {
 
@@ -14,7 +15,7 @@ namespace AppAdvisory.Item {
 
         public event Action Restart;
         public event Action NextRound;
-        //public event Action FinishTurn;
+        public event Action FinishTurn;
 		public event Action InviteFriend;
 
         [SerializeField]
@@ -35,12 +36,19 @@ namespace AppAdvisory.Item {
         public RectTransform helpPanel;
         public TutorialPanel tutoPanel;
         public RectTransform overlayPanel;
+        public followworldelement followWorldElement;
 
         public GameObject inviteFriendButton;
 
         private bool isPlayer1Turn;
 
         private List<RoundScore> roundScores;
+
+        [SerializeField]
+        private Ball Phase1Tuto_BallToMove;
+
+        [SerializeField]
+        private Cell Phase1Tuto_CellToMoveTo;
 
         IEnumerator waitFor(float t, Action toDo)
         {
@@ -167,10 +175,16 @@ namespace AppAdvisory.Item {
 			player2.SetPic (sprite);
 		}
 
-		public void SetPlayer1Turn()
+		public void SetPlayer1Turn(Action callBack)
         {
+            turnSwitchPanel.SetCallbackAnimationEnd(callBack);
             StartCoroutine(waitFor(timeBeforeNextTurn, SetPlayer1TurnReal));
 		}
+
+        public void DisplayTutorialPhase2Movement()
+        {
+            tutoPanel.DisplayPhase2MovementsScreen(true);
+        }
 
         private void SetPlayer1TurnReal()
         {
@@ -179,8 +193,9 @@ namespace AppAdvisory.Item {
             turnSwitchPanel.StartTurnSwitchAnimation();
         }
 
-        public void SetPlayer2Turn()
+        public void SetPlayer2Turn(Action callBack)
         {
+            turnSwitchPanel.SetCallbackAnimationEnd(callBack);
             StartCoroutine(waitFor(timeBeforeNextTurn, SetPlayer2TurnReal));
         }
 
@@ -190,7 +205,7 @@ namespace AppAdvisory.Item {
             isPlayer1Turn = false;
             turnSwitchPanel.StartTurnSwitchAnimation();
         }
-
+            
         void Update()
         {
             //Debug.Log(timer);
@@ -295,5 +310,52 @@ namespace AppAdvisory.Item {
 
             return isWon;
         }
-	}
+
+        public void Phase1Tuto_ShowBall()
+        {
+            overlayPanel.gameObject.SetActive(true);
+            Phase1Tuto_BallToMove.PassAboveUI(true);
+
+            followWorldElement.gameObject.SetActive(true);
+            followWorldElement.target = Phase1Tuto_BallToMove.transform;
+            followWorldElement.GetComponent<Button>().onClick.AddListener(pickBallHack);
+        }
+
+        private void pickBallHack()
+        {
+            Gesture gesture = new Gesture();
+            gesture.pickedObject = Phase1Tuto_BallToMove.gameObject;
+            gridManager.player.OnTouchUpPublic(gesture);
+
+            Phase1Tuto_BallSelected(Phase1Tuto_BallToMove);
+        }
+        
+        public void Phase1Tuto_BallSelected(Ball ball)
+        {
+            Phase1Tuto_CellToMoveTo.PassAboveUI(true);
+
+            followWorldElement.target = Phase1Tuto_CellToMoveTo.transform;
+            followWorldElement.GetComponent<Button>().onClick.AddListener(pickCellHack);
+        }
+
+        private void pickCellHack()
+        {
+            Gesture gesture = new Gesture();
+            gesture.pickedObject = Phase1Tuto_CellToMoveTo.gameObject;
+            gridManager.player.OnTouchUpPublic(gesture);
+
+            Phase1Tuto_BackToNormal(Phase1Tuto_CellToMoveTo);
+
+            followWorldElement.gameObject.SetActive(false);
+            followWorldElement.target = null;
+        }
+
+        public void Phase1Tuto_BackToNormal(Cell cell)
+        {
+            Debug.Log("backtonormal");
+            overlayPanel.gameObject.SetActive(false);
+            Phase1Tuto_BallToMove.PassAboveUI(false);
+            Phase1Tuto_CellToMoveTo.PassAboveUI(false);
+        }
+    }
 }

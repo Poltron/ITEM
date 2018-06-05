@@ -9,6 +9,9 @@ public class TutorialPanel : MonoBehaviour
     private GridManager gridManager;
 
     [SerializeField]
+    private UIManager uiManager;
+
+    [SerializeField]
     private RectTransform panel;
 
     [SerializeField]
@@ -51,15 +54,15 @@ public class TutorialPanel : MonoBehaviour
         {
             DisplayAskForTuto(false);
             DisplayTutoScreen1(true);
+            gridManager.SetPlayingTuto(true);
         }
         else
         {
-            gridManager.SetPlayingTuto(true);
             gridManager.StartLookingForGame();
             DisplayAskForTuto(false);
         }
     }
-    
+
     public void DisplayTutoScreen1(bool isShown)
     {
         panel.gameObject.SetActive(isShown);
@@ -94,6 +97,7 @@ public class TutorialPanel : MonoBehaviour
     {
         DisplayPhase1MovementsScreen(false);
         gridManager.StartGameVSIA();
+        uiManager.turnSwitchPanel.SetCallbackAnimationEnd(uiManager.Phase1Tuto_ShowBall);
     }
 
     public void DisplayPhase2MovementsScreen(bool isShown)
@@ -104,7 +108,7 @@ public class TutorialPanel : MonoBehaviour
 
     public void OnPhase2MovementsScreenNextButton()
     {
-        //DisplayTutoScreen2(false);
-        //DisplayPhase2MovementsScreen(true);
+        DisplayPhase2MovementsScreen(false);
+        uiManager.SetPlayer1Turn(gridManager.player.StartTurn);
     }
 }

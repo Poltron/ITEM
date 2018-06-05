@@ -100,17 +100,17 @@ namespace AppAdvisory.Item
         {
             if (enabled)
             {
-                ballSprite.sortingLayerID = SortingLayer.GetLayerValueFromName("AboveUI");
-                ballNumberText.sortingLayerID = SortingLayer.GetLayerValueFromName("AboveUI");
-                ballShadow.sortingLayerID = SortingLayer.GetLayerValueFromName("AboveUI");
-                highlight.sortingLayerID = SortingLayer.GetLayerValueFromName("AboveUI");
+                ballSprite.sortingLayerID = SortingLayer.NameToID("AboveUI");
+                ballNumberText.sortingLayerID = SortingLayer.NameToID("AboveUI");
+                ballShadow.sortingLayerID = SortingLayer.NameToID("AboveUI");
+                highlight.sortingLayerID = SortingLayer.NameToID("AboveUI");
             }
             else
             {
-                ballSprite.sortingLayerID = SortingLayer.GetLayerValueFromName("Ball");
-                ballNumberText.sortingLayerID = SortingLayer.GetLayerValueFromName("BallNumber");
-                ballShadow.sortingLayerID = SortingLayer.GetLayerValueFromName("Default");
-                highlight.sortingLayerID = SortingLayer.GetLayerValueFromName("Highlight");
+                ballSprite.sortingLayerID = SortingLayer.NameToID("Ball");
+                ballNumberText.sortingLayerID = SortingLayer.NameToID("BallNumber");
+                ballShadow.sortingLayerID = SortingLayer.NameToID("Default");
+                highlight.sortingLayerID = SortingLayer.NameToID("Highlight");
             }
         }
 
