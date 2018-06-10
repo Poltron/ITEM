@@ -120,5 +120,17 @@ namespace AppAdvisory.Item
             transform.position = startPosition;
             transform.localScale = startScale;
         }
-	}
+
+        private void OnBallTouchBoard()
+        {
+            Debug.Log("balltouchboard");
+            Camera.main.GetComponent<CameraShake>().Shake(0.1f, 0.5f, 0.3f);
+        }
+
+        private void OnBallTouchBoardVictory()
+        {
+            Debug.Log("balltouchboard");
+            Camera.main.GetComponent<CameraShake>().Shake(0.40f, 0.5f, 0.5f);
+        }
+    }
 }
