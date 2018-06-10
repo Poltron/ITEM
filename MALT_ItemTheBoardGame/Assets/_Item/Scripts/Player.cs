@@ -222,14 +222,11 @@ namespace AppAdvisory.Item {
 			if (isTweening)
 				return;
 
-            Debug.Log("nopickedobject");
             if (!gesture.pickedObject)
 				return;
 
             if (exclusivePickableObject != null && gesture.pickedObject != exclusivePickableObject)
                 return;
-
-            Debug.Log("ontouchup");
 
 			Cell pickedCell = gesture.pickedObject.GetComponent<Cell> (); 
 

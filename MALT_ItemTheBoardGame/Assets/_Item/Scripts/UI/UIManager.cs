@@ -33,12 +33,10 @@ namespace AppAdvisory.Item {
         public EndGamePanel endGamePanel;
         public TurnSwitchPanel turnSwitchPanel;
         public OptionsPanel optionsPanel;
-        public RectTransform helpPanel;
+        public HelpPanel helpPanel;
         public TutorialPanel tutoPanel;
         public RectTransform overlayPanel;
-        public followworldelement followWorldElement;
         public Transform arrowFocus;
-
         public GameObject inviteFriendButton;
 
         private bool isPlayer1Turn;
@@ -78,7 +76,8 @@ namespace AppAdvisory.Item {
             turnSwitchPanel.HideAll();
             tutoPanel.HideAll();
 
-            tutoPanel.DisplayAskForTuto(true);
+            tutoPanel.gameObject.SetActive(true);
+            tutoPanel.PopAskForTuto(true);
 		}
 
         public void DisplayTurnSwitchPhase1(bool isShown)
@@ -182,7 +181,7 @@ namespace AppAdvisory.Item {
 
         public void DisplayTutorialPhase2Movement()
         {
-            tutoPanel.DisplayPhase2MovementsScreen(true);
+            tutoPanel.PopPhase2MoveScreen(true);
         }
 
         private void SetPlayer1TurnReal()
@@ -262,14 +261,30 @@ namespace AppAdvisory.Item {
 
         public void OnHelpButton()
         {
-            helpPanel.gameObject.SetActive(!helpPanel.gameObject.activeInHierarchy);
-            optionsPanel.ToggleShowPanel(false);
+            optionsPanel.PopOut();
+
+            if (helpPanel.IsFadingIn)
+            {
+                helpPanel.PopOut();
+            }
+            else
+            {
+                helpPanel.PopIn();
+            }
         }
 
         public void OnOptionsButton()
         {
-            optionsPanel.ToggleShowPanel();
-            helpPanel.gameObject.SetActive(false);
+            helpPanel.PopOut();
+
+            if (optionsPanel.IsFadingIn)
+            {
+                optionsPanel.PopOut();
+            }
+            else
+            {
+                optionsPanel.PopIn();
+            }
         }
 
         public void OnGoToGameResults()
@@ -324,18 +339,10 @@ namespace AppAdvisory.Item {
 
             arrowFocus.gameObject.SetActive(true);
             arrowFocus.position = Phase1Tuto_BallToMove.transform.position + new Vector3(0, 0.5f, 0);
-
-            //followWorldElement.gameObject.SetActive(true);
-            //followWorldElement.target = Phase1Tuto_BallToMove.transform;
-            //followWorldElement.GetComponent<Button>().onClick.AddListener(pickBallHack);
         }
 
         private void pickBallHack(Ball ball)
         {
-            /*Gesture gesture = new Gesture();
-            gesture.pickedObject = Phase1Tuto_BallToMove.gameObject;
-            gridManager.player.OnTouchUpPublic(gesture);*/
-
             Phase1Tuto_BallSelected(Phase1Tuto_BallToMove);
             gridManager.player.OnBallSelection -= pickBallHack;
         }
@@ -348,9 +355,6 @@ namespace AppAdvisory.Item {
             gridManager.player.OnCellSelection += pickCellHack;
 
             arrowFocus.position = Phase1Tuto_CellToMoveTo.transform.position + new Vector3(0, 1, 0);
-
-            //followWorldElement.target = Phase1Tuto_CellToMoveTo.transform;
-            //followWorldElement.GetComponent<Button>().onClick.AddListener(pickCellHack);
         }
 
         private void pickCellHack(Cell cell)
@@ -359,9 +363,6 @@ namespace AppAdvisory.Item {
             gridManager.player.OnCellSelection -= pickCellHack;
 
             EasyTouch.On_TouchUp -= gridManager.player.OnTouchUpPublic;
-
-            //followWorldElement.gameObject.SetActive(false);
-            //followWorldElement.target = null;
         }
 
         public void Phase1Tuto_BackToNormal(Cell cell)

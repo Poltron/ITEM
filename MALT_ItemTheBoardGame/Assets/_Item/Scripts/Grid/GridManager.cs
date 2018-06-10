@@ -258,16 +258,23 @@ namespace AppAdvisory.Item {
 
             SwitchPlayersColor();
 
-            // whites begin the game
-            if (player.color == BallColor.White)
+            if (isPlayingTutorial)
             {
-                uiManager.SetPlayer1Turn(player.StartTurn);
-                uiManager.DisplayYourTurn(true);
+                uiManager.DisplayTutorialPhase2Movement();
             }
             else
             {
-                uiManager.SetPlayer2Turn(null);
-                uiManager.DisplayOpponentTurn(true);
+                // whites begin the game
+                if (player.color == BallColor.White)
+                {
+                    uiManager.SetPlayer1Turn(player.StartTurn);
+                    uiManager.DisplayYourTurn(true);
+                }
+                else
+                {
+                    uiManager.SetPlayer2Turn(null);
+                    uiManager.DisplayOpponentTurn(true);
+                }
             }
         }
 
@@ -337,20 +344,12 @@ namespace AppAdvisory.Item {
             }
         }
 
-        bool alreadyPassed = false;
         public void EndAIPhase()
         {
             if (player.ballCount == 0)
             {
                 uiManager.DisplayTurnSwitchPhase1(false);
                 uiManager.DisplayTurnSwitchPhase2(true);
-
-                if (isPlayingTutorial && !alreadyPassed) // torefacto
-                {
-                    uiManager.DisplayTutorialPhase2Movement();
-                    alreadyPassed = true;
-                    return;
-                }
             }
 
             uiManager.SetPlayer1Turn(player.StartTurn);

@@ -7,33 +7,34 @@ using UnityEngine;
 public class TutorialPanel : MonoBehaviour
 {
     [SerializeField]
+    private Animator animator;
+
+    [SerializeField]
     private GridManager gridManager;
 
     [SerializeField]
     private UIManager uiManager;
 
     [SerializeField]
-    private RectTransform panel;
+    private Animator askForTuto;
 
     [SerializeField]
-    private RectTransform askForTuto;
+    private Animator tutoScreen1;
 
     [SerializeField]
-    private RectTransform tutoScreen1;
+    private Animator tutoScreen2;
 
     [SerializeField]
-    private RectTransform tutoScreen2;
+    private Animator phase1MovementsScreen;
 
     [SerializeField]
-    private RectTransform phase1MovementsScreen;
+    private Animator phase2MovementsScreen;
 
-    [SerializeField]
-    private RectTransform phase2MovementsScreen;
-
+    private bool toClose;
+    
     public void HideAll()
     {
-        panel.gameObject.SetActive(false);
-
+        animator.gameObject.SetActive(false);
         askForTuto.gameObject.SetActive(false);
 
         tutoScreen1.gameObject.SetActive(false);
@@ -43,74 +44,159 @@ public class TutorialPanel : MonoBehaviour
         phase2MovementsScreen.gameObject.SetActive(false);
     }
 
-    public void DisplayAskForTuto(bool isShown)
+    /*
+     *  ASK FOR TUTO
+     */
+
+    public void PopAskForTuto(bool isShown)
     {
-        panel.gameObject.SetActive(isShown);
-        askForTuto.gameObject.SetActive(isShown);
+        if (isShown)
+        {
+            animator.SetTrigger("PopIn");
+            askForTuto.gameObject.SetActive(isShown);
+            askForTuto.SetTrigger("PopIn");
+        }
+        else
+        {
+            askForTuto.SetTrigger("PopOut");
+        }
+    }
+
+    public void DisableAskForTuto()
+    {
+        askForTuto.gameObject.SetActive(false);
     }
 
     public void OnAskForTutoButtonPress(bool value)
     {
         if (value)
         {
-            DisplayAskForTuto(false);
-            DisplayTutoScreen1(true);
+            PopAskForTuto(false);
+            PopTutoScreen1(true);
             gridManager.SetPlayingTuto(true);
         }
         else
         {
+            animator.SetTrigger("PopOut");
             gridManager.StartLookingForGame();
-            DisplayAskForTuto(false);
+            PopAskForTuto(false);
         }
     }
 
-    public void DisplayTutoScreen1(bool isShown)
+    /*
+     *  TUTO SCREEN 1
+     */
+
+    public void PopTutoScreen1(bool isShown)
     {
-        panel.gameObject.SetActive(isShown);
-        tutoScreen1.gameObject.SetActive(isShown);
+        if (isShown)
+        {
+            tutoScreen1.gameObject.SetActive(isShown);
+            tutoScreen1.SetTrigger("PopIn");
+        }
+        else
+        {
+            tutoScreen1.SetTrigger("PopOut");
+        }
+    }
+
+    public void DisableTutoScreen1()
+    {
+        tutoScreen1.gameObject.SetActive(false);
     }
 
     public void OnTutoScreen1NextButton()
     {
-        DisplayTutoScreen1(false);
-        DisplayTutoScreen2(true);
+        PopTutoScreen1(false);
+        PopTutoScreen2(true);
     }
 
-    public void DisplayTutoScreen2(bool isShown)
+    /*
+     *  TUTO SCREEN 2
+     */
+
+    public void PopTutoScreen2(bool isShown)
     {
-        panel.gameObject.SetActive(isShown);
-        tutoScreen2.gameObject.SetActive(isShown);
+        if (isShown)
+        {
+            tutoScreen2.gameObject.SetActive(isShown);
+            tutoScreen2.SetTrigger("PopIn");
+        }
+        else
+        {
+            tutoScreen2.SetTrigger("PopOut");
+        }
+    }
+
+    public void DisableTutoScreen2()
+    {
+        tutoScreen2.gameObject.SetActive(false);
     }
 
     public void OnTutoScreen2NextButton()
     {
-        DisplayTutoScreen2(false);
-        DisplayPhase1MovementsScreen(true);
+        PopTutoScreen2(false);
+        PopPhase1MoveScreen(true);
     }
 
-    public void DisplayPhase1MovementsScreen(bool isShown)
+    /*
+     *  TUTO MOVE 1 SCREEN
+     */
+
+    public void PopPhase1MoveScreen(bool isShown)
     {
-        panel.gameObject.SetActive(isShown);
-        phase1MovementsScreen.gameObject.SetActive(isShown);
+        if (isShown)
+        {
+            phase1MovementsScreen.gameObject.SetActive(isShown);
+            phase1MovementsScreen.SetTrigger("PopIn");
+        }
+        else
+        {
+            phase1MovementsScreen.SetTrigger("PopOut");
+        }
     }
 
-    public void OnPhase1MovementsScreenNextButton()
+    public void DisablePhase1MoveScreen()
     {
-        DisplayPhase1MovementsScreen(false);
+        phase1MovementsScreen.gameObject.SetActive(false);
+    }
+
+    public void OnPhase1MoveScreenNextButton()
+    {
+        PopPhase1MoveScreen(false);
+        animator.SetTrigger("PopOut");
         gridManager.StartGameVSIA();
         uiManager.turnSwitchPanel.SetCallbackAnimationEnd(uiManager.Phase1Tuto_ShowBall);
-        //gridManager.player.OnlyPickObject(ball);
     }
 
-    public void DisplayPhase2MovementsScreen(bool isShown)
+    /*
+     *  TUTO MOVE 2 SCREEN
+     */
+
+    public void PopPhase2MoveScreen(bool isShown)
     {
-        panel.gameObject.SetActive(isShown);
-        phase2MovementsScreen.gameObject.SetActive(isShown);
+        if (isShown)
+        {
+            animator.gameObject.SetActive(true);
+            animator.SetTrigger("PopIn");
+            phase2MovementsScreen.gameObject.SetActive(true);
+            phase2MovementsScreen.SetTrigger("PopIn");
+        }
+        else
+        {
+            phase2MovementsScreen.SetTrigger("PopOut");
+        }
     }
 
-    public void OnPhase2MovementsScreenNextButton()
+    public void DisablePhase2MoveScreen()
     {
-        DisplayPhase2MovementsScreen(false);
+        phase2MovementsScreen.gameObject.SetActive(false);
+    }
+
+    public void OnPhase2MoveScreenNextButton()
+    {
+        PopPhase2MoveScreen(false);
         uiManager.SetPlayer1Turn(gridManager.player.StartTurn);
+        animator.SetTrigger("PopOut");
     }
 }
