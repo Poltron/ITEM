@@ -105,8 +105,16 @@ namespace AppAdvisory.Item {
         private int numberOfTurnsPlayer2 = 0;
         public int Player2NbOfTurn { get { return numberOfTurnsPlayer2; } }
 
+        [Header("Victory Animation")]
+
         [SerializeField]
         private float timeBeforeVictoryAnimation;
+        [SerializeField]
+        private float timeBetweenBallsPhase1AnimBegin;
+        [SerializeField]
+        private float timeBeforePhase2AnimBegin;
+        [SerializeField]
+        private float timeFromPhase2AnimBeginToRoundResultPanel;
 
         void Start ()
         {
@@ -612,12 +620,6 @@ namespace AppAdvisory.Item {
 
                 alreadyAnimatedPattern.Add(pattern);
 
-                modelGrid.GetCellFromModel((int)pattern.cells[0].y, (int)pattern.cells[0].x).ball.transform.DOScale(1.1f, 1f);
-                modelGrid.GetCellFromModel((int)pattern.cells[1].y, (int)pattern.cells[1].x).ball.transform.DOScale(1.1f, 1f);
-                modelGrid.GetCellFromModel((int)pattern.cells[2].y, (int)pattern.cells[2].x).ball.transform.DOScale(1.1f, 1f);
-                modelGrid.GetCellFromModel((int)pattern.cells[3].y, (int)pattern.cells[3].x).ball.transform.DOScale(1.1f, 1f);
-                modelGrid.GetCellFromModel((int)pattern.cells[4].y, (int)pattern.cells[4].x).ball.transform.DOScale(1.1f, 1f);
-
                 StartCoroutine(playVictoryAnimationPhase1(pattern));
             }
         }
@@ -625,16 +627,17 @@ namespace AppAdvisory.Item {
         IEnumerator playVictoryAnimationPhase1(WinningPattern pattern)
         {
             modelGrid.GetCellFromModel((int)pattern.cells[0].y, (int)pattern.cells[0].x).ball.GetComponent<Animator>().SetTrigger("WinPhase1");
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(timeBetweenBallsPhase1AnimBegin);
             modelGrid.GetCellFromModel((int)pattern.cells[1].y, (int)pattern.cells[1].x).ball.GetComponent<Animator>().SetTrigger("WinPhase1");
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(timeBetweenBallsPhase1AnimBegin);
             modelGrid.GetCellFromModel((int)pattern.cells[2].y, (int)pattern.cells[2].x).ball.GetComponent<Animator>().SetTrigger("WinPhase1");
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(timeBetweenBallsPhase1AnimBegin);
             modelGrid.GetCellFromModel((int)pattern.cells[3].y, (int)pattern.cells[3].x).ball.GetComponent<Animator>().SetTrigger("WinPhase1");
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(timeBetweenBallsPhase1AnimBegin);
             modelGrid.GetCellFromModel((int)pattern.cells[4].y, (int)pattern.cells[4].x).ball.GetComponent<Animator>().SetTrigger("WinPhase1");
 
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(timeBeforePhase2AnimBegin);
+
             StartCoroutine(playVictoryAnimationPhase2(pattern));
         }
 
@@ -646,7 +649,8 @@ namespace AppAdvisory.Item {
             modelGrid.GetCellFromModel((int)pattern.cells[3].y, (int)pattern.cells[3].x).ball.GetComponent<Animator>().SetTrigger("WinPhase2");
             modelGrid.GetCellFromModel((int)pattern.cells[4].y, (int)pattern.cells[4].x).ball.GetComponent<Animator>().SetTrigger("WinPhase2");
 
-            yield return new WaitForSeconds(2.0f);
+            yield return new WaitForSeconds(timeFromPhase2AnimBeginToRoundResultPanel);
+
             playVictoryAnimationEnd(pattern);
         }
 
