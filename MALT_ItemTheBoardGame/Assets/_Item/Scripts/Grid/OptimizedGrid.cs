@@ -67,6 +67,19 @@ namespace AppAdvisory.Item
             type = _type;
             color = _color;
         }
+
+        public bool IsSame(WinningPattern pattern)
+        {
+            for (int i = 0; i < pattern.cells.Length; ++i)
+            {
+                if (cells[i].x != pattern.cells[i].x || cells[i].y != pattern.cells[i].y)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 
     public class OptimizedGrid

@@ -380,7 +380,7 @@ namespace AppAdvisory.Item {
             optiGrid.DoMove(move);
 
 			isTweening = true;
-            ball.GetComponent<Animation>().Play();
+            ball.GetComponent<Animator>().SetTrigger("Move");
 			ball.transform.DOMove (secondCell.transform.position, 1f).OnComplete (() => {
 				ball.transform.position = secondCell.transform.position;
 				//ball.SetStartPosition ();

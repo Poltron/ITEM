@@ -227,6 +227,8 @@ namespace AppAdvisory.Item {
         {
             roundNumber++;
 
+            alreadyAnimatedPattern.Clear();
+
             optiGrid.Reset();
             modelGrid.Reset();
 
@@ -327,6 +329,7 @@ namespace AppAdvisory.Item {
             bool end = false;
             if (Utils.CheckWinIA(modelGrid, cell) || isEqualityTurn)
             {
+                DOVirtual.DelayedCall(1.0f, PlayVictoryAnimation, true);
                 if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
                 {
                     isEqualityTurn = true;
@@ -385,6 +388,7 @@ namespace AppAdvisory.Item {
             bool end = false;
             if (Utils.CheckWinIA(modelGrid, cellTo) || isEqualityTurn)
             {
+                DOVirtual.DelayedCall(1.0f, PlayVictoryAnimation, true);
                 if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
                 {
                     isEqualityTurn = true;
@@ -412,6 +416,7 @@ namespace AppAdvisory.Item {
             {
                 if (Utils.CheckWin(modelGrid, cell, false) || isEqualityTurn)
                 {
+                    DOVirtual.DelayedCall(1.0f, PlayVictoryAnimation, true);
                     if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
                     {
                         isEqualityTurn = true;
@@ -444,6 +449,7 @@ namespace AppAdvisory.Item {
                 
                 if (Utils.CheckWin(modelGrid, cell, false) || isEqualityTurn)
                 {
+                    DOVirtual.DelayedCall(1.0f, PlayVictoryAnimation, true);
                     if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
                     {
                         isEqualityTurn = true;
@@ -476,6 +482,7 @@ namespace AppAdvisory.Item {
             {
                 if (Utils.CheckWin(modelGrid, cell, false) || isEqualityTurn)
                 {
+                    DOVirtual.DelayedCall(1.0f, PlayVictoryAnimation, true);
                     if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
                     {
                         isEqualityTurn = true;
@@ -499,6 +506,7 @@ namespace AppAdvisory.Item {
 
                 if (Utils.CheckWin(modelGrid, cell, false) || isEqualityTurn)
                 {
+                    DOVirtual.DelayedCall(1.0f, PlayVictoryAnimation, true);
                     if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
                     {
                         isEqualityTurn = true;
@@ -544,7 +552,7 @@ namespace AppAdvisory.Item {
             isGameFinished = true;
             player.EndTurn();
 
-            PlayVictoryAnimation();
+            DOVirtual.DelayedCall(1.2f, DisplayRoundResult, true);
         }
 
         private void DisplayRoundResult()
@@ -561,6 +569,7 @@ namespace AppAdvisory.Item {
             }
         }
 
+        List<WinningPattern> alreadyAnimatedPattern = new List<WinningPattern>();
         private void PlayVictoryAnimation()
         {
             List<WinningPattern> winningPatterns = new List<WinningPattern>();
@@ -568,14 +577,63 @@ namespace AppAdvisory.Item {
 
             foreach(WinningPattern pattern in winningPatterns)
             {
+                bool alreadyDone = false;
+
+                foreach(WinningPattern alreadyDonePattern in alreadyAnimatedPattern)
+                {
+                    if (pattern.IsSame(pattern))
+                    {
+                        alreadyDone = true;
+                        break;
+                    }
+                }
+
+                if (alreadyDone)
+                    continue;
+
+                alreadyAnimatedPattern.Add(pattern);
+
                 modelGrid.GetCellFromModel((int)pattern.cells[0].y, (int)pattern.cells[0].x).ball.transform.DOScale(1.1f, 1f);
                 modelGrid.GetCellFromModel((int)pattern.cells[1].y, (int)pattern.cells[1].x).ball.transform.DOScale(1.1f, 1f);
                 modelGrid.GetCellFromModel((int)pattern.cells[2].y, (int)pattern.cells[2].x).ball.transform.DOScale(1.1f, 1f);
                 modelGrid.GetCellFromModel((int)pattern.cells[3].y, (int)pattern.cells[3].x).ball.transform.DOScale(1.1f, 1f);
                 modelGrid.GetCellFromModel((int)pattern.cells[4].y, (int)pattern.cells[4].x).ball.transform.DOScale(1.1f, 1f);
-            }
 
-            DOVirtual.DelayedCall(1.2f, DisplayRoundResult, true);
+                StartCoroutine(playVictoryAnimationPhase1(pattern));
+            }
+        }
+
+        IEnumerator playVictoryAnimationPhase1(WinningPattern pattern)
+        {
+            modelGrid.GetCellFromModel((int)pattern.cells[0].y, (int)pattern.cells[0].x).ball.GetComponent<Animator>().SetTrigger("WinPhase1");
+            yield return new WaitForSeconds(0.1f);
+            modelGrid.GetCellFromModel((int)pattern.cells[1].y, (int)pattern.cells[1].x).ball.GetComponent<Animator>().SetTrigger("WinPhase1");
+            yield return new WaitForSeconds(0.1f);
+            modelGrid.GetCellFromModel((int)pattern.cells[2].y, (int)pattern.cells[2].x).ball.GetComponent<Animator>().SetTrigger("WinPhase1");
+            yield return new WaitForSeconds(0.1f);
+            modelGrid.GetCellFromModel((int)pattern.cells[3].y, (int)pattern.cells[3].x).ball.GetComponent<Animator>().SetTrigger("WinPhase1");
+            yield return new WaitForSeconds(0.1f);
+            modelGrid.GetCellFromModel((int)pattern.cells[4].y, (int)pattern.cells[4].x).ball.GetComponent<Animator>().SetTrigger("WinPhase1");
+
+            yield return new WaitForSeconds(0.5f);
+            StartCoroutine(playVictoryAnimationPhase2(pattern));
+        }
+
+        IEnumerator playVictoryAnimationPhase2(WinningPattern pattern)
+        {
+            modelGrid.GetCellFromModel((int)pattern.cells[0].y, (int)pattern.cells[0].x).ball.GetComponent<Animator>().SetTrigger("WinPhase2");
+            modelGrid.GetCellFromModel((int)pattern.cells[1].y, (int)pattern.cells[1].x).ball.GetComponent<Animator>().SetTrigger("WinPhase2");
+            modelGrid.GetCellFromModel((int)pattern.cells[2].y, (int)pattern.cells[2].x).ball.GetComponent<Animator>().SetTrigger("WinPhase2");
+            modelGrid.GetCellFromModel((int)pattern.cells[3].y, (int)pattern.cells[3].x).ball.GetComponent<Animator>().SetTrigger("WinPhase2");
+            modelGrid.GetCellFromModel((int)pattern.cells[4].y, (int)pattern.cells[4].x).ball.GetComponent<Animator>().SetTrigger("WinPhase2");
+
+            yield return new WaitForSeconds(0.5f);
+            playVictoryAnimationEnd(pattern);
+        }
+
+        public void playVictoryAnimationEnd(WinningPattern pattern)
+        {
+            Debug.Log("lol");
         }
 
         public void HighlightAvailableMoveCells(Cell cell)

@@ -1239,8 +1239,9 @@ namespace AppAdvisory.Item {
 
             GameObject.FindObjectOfType<GridManager>().OptiGrid.DoMove(move);
 
-            ball.GetComponent<Animation>().Play();
-			ball.transform.DOMove (pickedCell.transform.position, 1f).OnComplete (() =>  {
+            ball.GetComponent<Animator>().SetTrigger("Move");
+            //ball.GetComponent<Animation>().Play();
+			ball.transform.DOMove (pickedCell.transform.position, 1.5f).OnComplete (() =>  {
 				ball.transform.position = pickedCell.transform.position;
 				ball.owner = pickedCell;
 				//ball.SetStartPosition ();

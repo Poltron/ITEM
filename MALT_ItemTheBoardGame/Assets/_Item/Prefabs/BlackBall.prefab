@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4453365750349798}
   - component: {fileID: 114026230691909298}
   - component: {fileID: 58694727342525424}
-  - component: {fileID: 111344151241868910}
+  - component: {fileID: 95441030002907710}
   m_Layer: 8
   m_Name: BlackBall
   m_TagString: Untagged
@@ -206,21 +206,23 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 2
---- !u!111 &111344151241868910
-Animation:
+--- !u!95 &95441030002907710
+Animator:
+  serializedVersion: 3
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1397747512153346}
   m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: 37c9a7dfc07be8545b779517c867536e, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: 37c9a7dfc07be8545b779517c867536e, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 0
-  m_AnimatePhysics: 0
-  m_CullingType: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d98b8a88ba85eee409df293f4937b22c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &114026230691909298
 MonoBehaviour:
   m_ObjectHideFlags: 1
