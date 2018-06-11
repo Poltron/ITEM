@@ -272,12 +272,6 @@ namespace AppAdvisory.Item {
 
             SwitchPlayersColor();
 
-            if (isPlayingTutorial)
-            {
-                uiManager.DisplayTutorialPhase2Movement();
-            }
-            else
-            {
                 // whites begin the game
                 if (player.color == BallColor.White)
                 {
@@ -289,7 +283,6 @@ namespace AppAdvisory.Item {
                     uiManager.SetPlayer2Turn(null);
                     uiManager.DisplayOpponentTurn(true);
                 }
-            }
         }
 
 		private Player CreatePlayer(BallColor color)
@@ -364,15 +357,24 @@ namespace AppAdvisory.Item {
             }
         }
 
+        bool alreadyPassed = false;
         public void EndAIPhase()
         {
-            if (player.ballCount == 0)
+            if (player.ballCount == 0 && !alreadyPassed)
             {
                 uiManager.DisplayTurnSwitchPhase1(false);
                 uiManager.DisplayTurnSwitchPhase2(true);
-            }
+                alreadyPassed = true;
 
-            uiManager.SetPlayer1Turn(player.StartTurn);
+                if (isPlayingTutorial)
+                    uiManager.SetPlayer1Turn(uiManager.DisplayTutorialPhase2Movement);
+                else
+                    uiManager.SetPlayer1Turn(player.StartTurn);
+            }
+            else
+            {
+                uiManager.SetPlayer1Turn(player.StartTurn);
+            }
         }
 
         IEnumerator waitFor(float t, Move move, System.Action<Move> func)
