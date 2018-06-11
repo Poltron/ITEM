@@ -55,6 +55,12 @@ namespace AppAdvisory.Item
         private SpriteRenderer highlight;
 
         [SerializeField]
+        private GameObject FXTouchBoard;
+
+        [SerializeField]
+        private GameObject FXTouchBoardVictory;
+
+        [SerializeField]
         private AnimationCurve highlightCurve;
 
         float highlightCurveTimer;
@@ -125,12 +131,14 @@ namespace AppAdvisory.Item
         {
             Debug.Log("balltouchboard");
             //Camera.main.GetComponent<CameraShake>().Shake(0.1f, 0.5f, 0.3f);
+            GameObject.Instantiate(FXTouchBoard, transform.position, Quaternion.identity);
         }
 
         private void OnBallTouchBoardVictory()
         {
             Debug.Log("balltouchboardvictory");
-            Camera.main.GetComponent<CameraShake>().Shake();
+            Camera.main.GetComponent<CameraShake>().Shake();    
+            GameObject.Instantiate(FXTouchBoardVictory, transform.position, Quaternion.identity);
         }
     }
 }

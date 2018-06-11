@@ -242,6 +242,10 @@ MonoBehaviour:
   ballNumberText: {fileID: 114836107822811222}
   ballShadow: {fileID: 212398223627078968}
   highlight: {fileID: 212607580302560000}
+  FXTouchBoard: {fileID: 1231629238060906, guid: c8c06128a42d766439cc12c7e8c3afbc,
+    type: 2}
+  FXTouchBoardVictory: {fileID: 1231629238060906, guid: c8c06128a42d766439cc12c7e8c3afbc,
+    type: 2}
   highlightCurve:
     serializedVersion: 2
     m_Curve:
