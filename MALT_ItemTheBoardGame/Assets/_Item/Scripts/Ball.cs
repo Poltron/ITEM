@@ -129,14 +129,11 @@ namespace AppAdvisory.Item
 
         private void OnBallTouchBoard()
         {
-            Debug.Log("balltouchboard");
-            //Camera.main.GetComponent<CameraShake>().Shake(0.1f, 0.5f, 0.3f);
             GameObject.Instantiate(FXTouchBoard, transform.position, Quaternion.identity);
         }
 
         private void OnBallTouchBoardVictory()
         {
-            Debug.Log("balltouchboardvictory");
             Camera.main.GetComponent<CameraShake>().Shake();    
             GameObject.Instantiate(FXTouchBoardVictory, transform.position, Quaternion.identity);
         }

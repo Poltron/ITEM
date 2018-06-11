@@ -212,12 +212,19 @@ namespace AppAdvisory.Item {
 
         public void AnimateNextTurn()
         {
+            Debug.Log("AnimateNextTurn");
             boardOverlay.GetComponent<Animation>().Play();
 
             if (isPlayer1Turn)
-                player1.GetComponent<Animation>().Play();
+            {
+                player1.PlayPortraitAnimation();
+                player2.StopPortraitAnimation();
+            }
             else
-                player2.GetComponent<Animation>().Play();
+            {
+                player1.StopPortraitAnimation();
+                player2.PlayPortraitAnimation();
+            }
         }
 
         public void DisplayYourTurn(bool isShown)

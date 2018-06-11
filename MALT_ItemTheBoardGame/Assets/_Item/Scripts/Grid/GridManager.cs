@@ -374,6 +374,7 @@ namespace AppAdvisory.Item {
             else
             {
                 uiManager.SetPlayer1Turn(player.StartTurn);
+                
             }
         }
 

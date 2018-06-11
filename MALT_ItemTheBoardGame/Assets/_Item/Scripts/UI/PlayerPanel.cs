@@ -15,7 +15,13 @@ namespace AppAdvisory.Item {
 		public Image whiteMarble;
 		public Image blackMarble;
 
-		void Awake ()
+        [SerializeField]
+        private Animation portraitRotationAnimation;
+
+        [SerializeField]
+        private Animator portraitTurnAnimation;
+
+        void Awake ()
         {
 			panel = GetComponent<Image> ();
 		}
@@ -50,6 +56,19 @@ namespace AppAdvisory.Item {
         {
 			panel.color = color;
 		}
+
+        public void PlayPortraitAnimation()
+        {
+            portraitRotationAnimation.Play();
+
+            portraitTurnAnimation.gameObject.SetActive(true);
+            portraitTurnAnimation.SetTrigger("PopIn");
+        }
+
+        public void StopPortraitAnimation()
+        {
+            portraitTurnAnimation.SetTrigger("PopOut");
+        }
 	}
 
 }
