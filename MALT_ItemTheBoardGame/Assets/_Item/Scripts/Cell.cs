@@ -30,17 +30,17 @@ namespace AppAdvisory.Item
         private SpriteRenderer spriteRenderer;
 		private CircleCollider2D circleCollider;
 
-        [SerializeField]
-        private Sprite normalCell;
-        [SerializeField]
-        private Sprite highlightedCell;
+        private Animator animator;
 
-        void Awake() {
+        void Awake()
+        {
+            animator = GetComponent<Animator>();
 			circleCollider = GetComponent<CircleCollider2D> ();
             spriteRenderer = GetComponent<SpriteRenderer>();
         }
 
-		public void SetCollider(bool isActive) {
+        public void SetCollider(bool isActive)
+        {
 			circleCollider.enabled = isActive;
         }
 
@@ -67,11 +67,11 @@ namespace AppAdvisory.Item
         {
             if (isHighlighted)
             {
-                spriteRenderer.sprite = highlightedCell;
+                animator.SetTrigger("PopIn");
             }
             else
             {
-                spriteRenderer.sprite = normalCell;
+                animator.SetTrigger("PopOut");
             }
         }
 

@@ -696,9 +696,11 @@ namespace AppAdvisory.Item {
 
         public void HighlightAvailableMoveCells(Cell cell)
         {
+            Debug.Log("highlight cell !");
             if (!Options.GetEnablePlacementHelp())
                 return;
 
+            Debug.Log("doweet !");
             modelGrid.ResetCellsColor();
 
             List<Move> moves = optiGrid.GetAvailableMoves(cell);
