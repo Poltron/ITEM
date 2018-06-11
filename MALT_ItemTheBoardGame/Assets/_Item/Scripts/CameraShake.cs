@@ -10,9 +10,11 @@ public class CameraShake : MonoBehaviour
     private float shakeTimeLeft;
 
     [SerializeField]
-    private float magnitude;
+    private float durationVictoryShake;
     [SerializeField]
-    private float frequency;
+    private float magnitudeVictoryShake;
+    [SerializeField]
+    private float frequencyVictoryShake;
 
 
     private void Awake()
@@ -32,9 +34,16 @@ public class CameraShake : MonoBehaviour
     public void Shake(float _time, float _magnitude, float _frequency)
     {
         shakeTimeLeft = _time;
-        magnitude = _magnitude;
-        frequency = _frequency;
+        magnitudeVictoryShake = _magnitude;
+        frequencyVictoryShake = _frequency;
 
+        isShaking = true;
+        StartCoroutine(shakeTimer());
+    }
+
+    public void Shake()
+    {
+        shakeTimeLeft = durationVictoryShake;
         isShaking = true;
         StartCoroutine(shakeTimer());
     }
@@ -42,10 +51,10 @@ public class CameraShake : MonoBehaviour
     private Vector2 PerlinShake()
     {
         Vector2 result;
-        float seed = Time.time * frequency;
+        float seed = Time.time * frequencyVictoryShake;
         result.x = Mathf.Clamp01(Mathf.PerlinNoise(seed, 0f)) - 0.5f;
         result.y = Mathf.Clamp01(Mathf.PerlinNoise(0f, seed)) - 0.5f;
-        result = result * magnitude;
+        result = result * magnitudeVictoryShake;
         return result;
     }
 

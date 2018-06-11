@@ -124,13 +124,13 @@ namespace AppAdvisory.Item
         private void OnBallTouchBoard()
         {
             Debug.Log("balltouchboard");
-            Camera.main.GetComponent<CameraShake>().Shake(0.1f, 0.5f, 0.3f);
+            //Camera.main.GetComponent<CameraShake>().Shake(0.1f, 0.5f, 0.3f);
         }
 
         private void OnBallTouchBoardVictory()
         {
-            Debug.Log("balltouchboard");
-            Camera.main.GetComponent<CameraShake>().Shake(0.40f, 0.5f, 0.5f);
+            Debug.Log("balltouchboardvictory");
+            Camera.main.GetComponent<CameraShake>().Shake();
         }
     }
 }
