@@ -214,7 +214,7 @@ namespace AppAdvisory.Item {
         public void PopScoreParticle(Ball ball)
         {
             GameObject g = GameObject.Instantiate(scoreParticle, ball.transform.position, Quaternion.identity);
-            g.transform.parent = FindObjectOfType<Canvas>().transform;
+            g.transform.SetParent(FindObjectOfType<Canvas>().transform, true);
             if (isPlayer1Turn)
             {
                 g.transform.DOMove(player1.textCounter.transform.position, 0.5f).OnComplete(() =>
