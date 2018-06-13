@@ -213,13 +213,15 @@ namespace AppAdvisory.Item {
             
         public void PopScoreParticle(Ball ball)
         {
-            GameObject g = GameObject.Instantiate(scoreParticle, ball.gameObject.transform);
+            GameObject g = GameObject.Instantiate(scoreParticle, ball.transform.position, Quaternion.identity);
+            g.transform.parent = FindObjectOfType<Canvas>().transform;
             if (isPlayer1Turn)
             {
                 g.transform.DOMove(player1.textCounter.transform.position, 0.5f).OnComplete(() =>
                 {
                     player1.StartScoreAnim();
                     gridManager.AddPlayer1Score(ball.Score);
+                    Destroy(g);
                 });
             }
             else
@@ -228,6 +230,7 @@ namespace AppAdvisory.Item {
                 {
                     player2.StartScoreAnim();
                     gridManager.AddPlayer2Score(ball.Score);
+                    Destroy(g);
                 });
             }
         }
