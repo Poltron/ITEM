@@ -268,6 +268,9 @@ namespace AppAdvisory.Item {
             
             player.Reset();
 
+            playerScore = 0;
+            otherPlayerScore = 0;
+
             numberOfTurnsPlayer1 = 0;
             numberOfTurnsPlayer2 = 0;
 
@@ -559,7 +562,7 @@ namespace AppAdvisory.Item {
 
 		private void Win(Cell cell, bool justWon)
         {
-            List<WinningPattern> winningPatterns;
+            /*List<WinningPattern> winningPatterns;
             OptiGrid.GetWinningPatterns(out winningPatterns);
 
             playerScore = 0;
@@ -580,7 +583,7 @@ namespace AppAdvisory.Item {
 
             totalPlayerScore += playerScore;
             totalOtherPlayerScore += otherPlayerScore;
-
+            */
             isGameFinished = true;
             player.EndTurn();
 
@@ -716,11 +719,9 @@ namespace AppAdvisory.Item {
 
         public void HighlightAvailableMoveCells(Cell cell)
         {
-            Debug.Log("highlight cell !");
             if (!Options.GetEnablePlacementHelp())
                 return;
 
-            Debug.Log("doweet !");
             modelGrid.ResetCellsColor();
 
             List<Move> moves = optiGrid.GetAvailableMoves(cell);
@@ -758,28 +759,18 @@ namespace AppAdvisory.Item {
             uiManager.PopScoreParticle(ball);
         }
 
-        public void AddScore(int nb, BallColor color)
-        {
-            if (color == player.color)
-            {
-                playerScore += nb;
-            }
-            else
-            {
-                otherPlayerScore += nb;
-            }
-        }
-
         public void AddPlayer1Score(int nb)
         {
             playerScore += nb;
-            uiManager.player1.SetScoreCounter(playerScore);
+            totalPlayerScore += nb;
+            uiManager.player1.SetScoreCounter(totalPlayerScore);
         }
 
         public void AddPlayer2Score(int nb)
         {
             otherPlayerScore += nb;
-            uiManager.player2.SetScoreCounter(otherPlayerScore);
+            totalOtherPlayerScore += nb;
+            uiManager.player2.SetScoreCounter(totalOtherPlayerScore);
         }
 
         public void ShowAds()
