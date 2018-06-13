@@ -65,14 +65,7 @@ namespace AppAdvisory.Item
 
         public void SetHighlightedCell(bool isHighlighted)
         {
-            if (isHighlighted)
-            {
-                animator.SetTrigger("PopIn");
-            }
-            else
-            {
-                animator.SetTrigger("PopOut");
-            }
+            animator.SetBool("Highlighted", isHighlighted);
         }
 
         public void PassAboveUI(bool isEnabled)

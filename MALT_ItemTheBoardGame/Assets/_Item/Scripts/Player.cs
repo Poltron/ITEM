@@ -410,6 +410,7 @@ namespace AppAdvisory.Item {
 				//Utils.ResetCellsColor (grid);
 
 				currentBall.HideHighlight ();
+                modelGrid.ResetCellsColor();
 
 				if (hasAlreadyJumpedOnce) {
 					currentBall.HideHighlight ();
@@ -426,16 +427,14 @@ namespace AppAdvisory.Item {
 				currentBall.ResetPosition ();
 				return;
 			}
-				
-
-			//Utils.ResetCellsColor (grid);
 
 			if (currentCellsToMove.Contains (pickedCell)) {
 				movements = new List<Vector2> ();
 				movements.Add (new Vector2 (currentCell.x, currentCell.y));
 				movements.Add (new Vector2 (pickedCell.x, pickedCell.y));
 
-				ChangeBallPosition (currentCell, pickedCell);
+                modelGrid.ResetCellsColor();
+                ChangeBallPosition (currentCell, pickedCell);
 				currentBall.HideHighlight ();
 				ResetCurrentCells ();
 				EndTurn ();
@@ -450,6 +449,7 @@ namespace AppAdvisory.Item {
 					movements.Add (new Vector2 (pickedCell.x, pickedCell.y));
 				}
 
+                modelGrid.ResetCellsColor();
 				ChangeBallPosition (currentCell, pickedCell);
 				ResetCurrentCells ();
 				hasAlreadyJumpedOnce = true;

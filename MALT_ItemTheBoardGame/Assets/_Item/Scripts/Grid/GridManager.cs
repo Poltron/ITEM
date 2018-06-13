@@ -779,7 +779,7 @@ namespace AppAdvisory.Item {
         public void AddPlayer2Score(int nb)
         {
             otherPlayerScore += nb;
-            uiManager.player2.SetScoreCounter(playerScore);
+            uiManager.player2.SetScoreCounter(otherPlayerScore);
         }
 
         public void ShowAds()
