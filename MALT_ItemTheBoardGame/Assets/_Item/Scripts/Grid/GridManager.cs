@@ -116,6 +116,9 @@ namespace AppAdvisory.Item {
         [SerializeField]
         private float timeFromPhase2AnimBeginToRoundResultPanel;
 
+        [HideInInspector]
+        public WinningPattern actualWinningPattern;
+
         void Start ()
         {
             Options.Init();
@@ -125,7 +128,7 @@ namespace AppAdvisory.Item {
             roundNumber = 1;
 
             aiBehaviour = new AIBehaviour(aiEvaluationData);
-            
+
 			//DisplayMarbleContainer (false);
 
             connection = GetComponent<Connection> ();
@@ -272,17 +275,17 @@ namespace AppAdvisory.Item {
 
             SwitchPlayersColor();
 
-                // whites begin the game
-                if (player.color == BallColor.White)
-                {
-                    uiManager.SetPlayer1Turn(player.StartTurn);
-                    uiManager.DisplayYourTurn(true);
-                }
-                else
-                {
-                    uiManager.SetPlayer2Turn(null);
-                    uiManager.DisplayOpponentTurn(true);
-                }
+            // whites begin the game
+            if (player.color == BallColor.White)
+            {
+                uiManager.SetPlayer1Turn(player.StartTurn);
+                uiManager.DisplayYourTurn(true);
+            }
+            else
+            {
+                uiManager.SetPlayer2Turn(null);
+                uiManager.DisplayOpponentTurn(true);
+            }
         }
 
 		private Player CreatePlayer(BallColor color)
@@ -654,6 +657,23 @@ namespace AppAdvisory.Item {
 
             yield return new WaitForSeconds(timeFromPhase2AnimBeginToRoundResultPanel);
 
+            StartCoroutine(addVictoryPoints(pattern));
+        }
+
+        IEnumerator addVictoryPoints(WinningPattern pattern)
+        {
+            modelGrid.GetCellFromModel((int)pattern.cells[0].y, (int)pattern.cells[0].x).ball.GetComponent<Animator>().SetTrigger("ScoreCounting");
+            yield return new WaitForSeconds(1.0f);
+            modelGrid.GetCellFromModel((int)pattern.cells[1].y, (int)pattern.cells[1].x).ball.GetComponent<Animator>().SetTrigger("ScoreCounting");
+            yield return new WaitForSeconds(1.0f);
+            modelGrid.GetCellFromModel((int)pattern.cells[2].y, (int)pattern.cells[2].x).ball.GetComponent<Animator>().SetTrigger("ScoreCounting");
+            yield return new WaitForSeconds(1.0f);
+            modelGrid.GetCellFromModel((int)pattern.cells[3].y, (int)pattern.cells[3].x).ball.GetComponent<Animator>().SetTrigger("ScoreCounting");
+            yield return new WaitForSeconds(1.0f);
+            modelGrid.GetCellFromModel((int)pattern.cells[4].y, (int)pattern.cells[4].x).ball.GetComponent<Animator>().SetTrigger("ScoreCounting");
+
+            yield return new WaitForSeconds(3.0f);
+
             playVictoryAnimationEnd(pattern);
         }
 
@@ -733,7 +753,36 @@ namespace AppAdvisory.Item {
             return score;
         }
 
-		public void ShowAds()
+        public void BallAddScore(Ball ball)
+        {
+            uiManager.PopScoreParticle(ball);
+        }
+
+        public void AddScore(int nb, BallColor color)
+        {
+            if (color == player.color)
+            {
+                playerScore += nb;
+            }
+            else
+            {
+                otherPlayerScore += nb;
+            }
+        }
+
+        public void AddPlayer1Score(int nb)
+        {
+            playerScore += nb;
+            uiManager.player1.SetScoreCounter(playerScore);
+        }
+
+        public void AddPlayer2Score(int nb)
+        {
+            otherPlayerScore += nb;
+            uiManager.player2.SetScoreCounter(playerScore);
+        }
+
+        public void ShowAds()
 		{
 			int count = PlayerPrefs.GetInt("GAMEOVER_COUNT",0);
 			count++;

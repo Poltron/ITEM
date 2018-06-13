@@ -5,6 +5,7 @@ using System;
 using UnityEngine.UI;
 using TMPro;
 using HedgehogTeam.EasyTouch;
+using DG.Tweening;
 
 namespace AppAdvisory.Item {
 
@@ -47,6 +48,9 @@ namespace AppAdvisory.Item {
 
         public Cell Phase1Tuto_CellToMoveTo;
 
+        [SerializeField]
+        private GameObject scoreParticle;
+        
         IEnumerator waitFor(float t, Action toDo)
         {
             yield return new WaitForSeconds(t);
@@ -115,6 +119,9 @@ namespace AppAdvisory.Item {
             }
 
             roundScores.Add(new RoundScore(yourPoints, theirPoints, isWon));
+            
+            player1.StopPortraitAnimation();
+            player2.StopPortraitAnimation();
 
             roundResultPanel.DisplayRoundResult(isShown);
             roundResultPanel.SetScore(yourPoints, theirPoints);
@@ -204,10 +211,25 @@ namespace AppAdvisory.Item {
             turnSwitchPanel.StartTurnSwitchAnimation();
         }
             
-        void Update()
+        public void PopScoreParticle(Ball ball)
         {
-            //Debug.Log(timer);
-            //Debug.Log("player1 is shown : " + player1.gameObject.activeInHierarchy + " / player2 is shown : " + player2.gameObject.activeInHierarchy);
+            GameObject g = GameObject.Instantiate(scoreParticle, ball.gameObject.transform);
+            if (isPlayer1Turn)
+            {
+                g.transform.DOMove(player1.textCounter.transform.position, 0.5f).OnComplete(() =>
+                {
+                    player1.StartScoreAnim();
+                    gridManager.AddPlayer1Score(ball.Score);
+                });
+            }
+            else
+            {
+                g.transform.DOMove(player2.textCounter.transform.position, 0.5f).OnComplete(() =>
+                {
+                    player2.StartScoreAnim();
+                    gridManager.AddPlayer2Score(ball.Score);
+                });
+            }
         }
 
         public void AnimateNextTurn()
@@ -374,7 +396,6 @@ namespace AppAdvisory.Item {
 
         public void Phase1Tuto_BackToNormal(Cell cell)
         {
-            Debug.Log("backtonormal");
             overlayPanel.gameObject.SetActive(false);
             Phase1Tuto_BallToMove.PassAboveUI(false);
             Phase1Tuto_CellToMoveTo.PassAboveUI(false);

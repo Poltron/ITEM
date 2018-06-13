@@ -65,6 +65,9 @@ namespace AppAdvisory.Item
 
         float highlightCurveTimer;
 
+        /*public delegate void BallEventHandler(Ball ball);
+        public event BallEventHandler OnBallAddScore;*/
+
         void Awake()
         {
             startPosition = transform.position;
@@ -136,6 +139,11 @@ namespace AppAdvisory.Item
         {
             Camera.main.GetComponent<CameraShake>().Shake();    
             GameObject.Instantiate(FXTouchBoardVictory, transform.position, Quaternion.identity);
+        }
+
+        private void PopScoreParticle()
+        {
+            FindObjectOfType<GridManager>().BallAddScore(this);
         }
     }
 }

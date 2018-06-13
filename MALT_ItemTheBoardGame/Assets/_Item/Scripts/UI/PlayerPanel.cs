@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +10,8 @@ namespace AppAdvisory.Item {
 	public class PlayerPanel : MonoBehaviour
     {
         private Image panel;
+
+        public Text textCounter;
 
         public Text playerName;
 		public Image image;
@@ -20,6 +24,9 @@ namespace AppAdvisory.Item {
 
         [SerializeField]
         private Animator portraitTurnAnimation;
+
+        [SerializeField]
+        private Animator scoreCounterAnimator;
 
         void Awake ()
         {
@@ -40,6 +47,18 @@ namespace AppAdvisory.Item {
         {
 			this.image.sprite = sprite;
 		}
+
+        public BallColor GetColor()
+        {
+            if (whiteMarble.enabled)
+            {
+                return BallColor.White;
+            }
+            else
+            {
+                return BallColor.Black;
+            }
+        }
 
 		public void SetColor(BallColor color)
         {
@@ -68,6 +87,16 @@ namespace AppAdvisory.Item {
         public void StopPortraitAnimation()
         {
             portraitTurnAnimation.SetTrigger("PopOut");
+        }
+
+        public void StartScoreAnim()
+        {
+            scoreCounterAnimator.SetTrigger("PointReceived");
+        }
+
+        public void SetScoreCounter(int nb)
+        {
+            textCounter.text = nb.ToString();
         }
 	}
 
