@@ -219,8 +219,12 @@ namespace AppAdvisory.Item {
             {
                 g.transform.DOMove(player1.textCounter.transform.position, 0.5f).OnComplete(() =>
                 {
-                    player1.StartScoreAnim();
-                    gridManager.AddPlayer1Score(ball.Score);
+                    if (ball.Score != 0)
+                    {
+                        player1.StartScoreAnim();
+                        gridManager.AddPlayer1Score(ball.Score);
+                    }
+
                     Destroy(g);
                 });
             }
@@ -228,8 +232,12 @@ namespace AppAdvisory.Item {
             {
                 g.transform.DOMove(player2.textCounter.transform.position, 0.5f).OnComplete(() =>
                 {
-                    player2.StartScoreAnim();
-                    gridManager.AddPlayer2Score(ball.Score);
+                    if (ball.Score != 0)
+                    {
+                        player2.StartScoreAnim();
+                        gridManager.AddPlayer2Score(ball.Score);
+                    }
+
                     Destroy(g);
                 });
             }
@@ -386,7 +394,7 @@ namespace AppAdvisory.Item {
             gridManager.player.SetExclusivePickableObject(Phase1Tuto_CellToMoveTo.gameObject);
             gridManager.player.OnCellSelection += pickCellHack;
 
-            arrowFocus.position = Phase1Tuto_CellToMoveTo.transform.position + new Vector3(0, 1, 0);
+            arrowFocus.DOMove(Phase1Tuto_CellToMoveTo.transform.position + new Vector3(0, 1, 0), 1.0f);
         }
 
         private void pickCellHack(Cell cell)
@@ -399,13 +407,24 @@ namespace AppAdvisory.Item {
 
         public void Phase1Tuto_BackToNormal(Cell cell)
         {
-            overlayPanel.gameObject.SetActive(false);
-            Phase1Tuto_BallToMove.PassAboveUI(false);
-            Phase1Tuto_CellToMoveTo.PassAboveUI(false);
-            arrowFocus.gameObject.SetActive(false);
+            // fade out overlay panel
+            Image overlayImg = overlayPanel.GetComponent<Image>();
+            Color overlayColor = overlayImg.color;
+            overlayColor.a = 0f;
+            overlayImg.DOColor(overlayColor, 1.0f).OnComplete(() => {
+                overlayPanel.gameObject.SetActive(false);
+                Phase1Tuto_BallToMove.PassAboveUI(false);
+                Phase1Tuto_CellToMoveTo.PassAboveUI(false);
+            });
+            
+            // fade out arrow
+            SpriteRenderer spriteRenderer = arrowFocus.GetComponentInChildren<SpriteRenderer>();
+            Color newcol = spriteRenderer.color;
+            newcol.a = 0f;
+            spriteRenderer.DOColor(newcol, 1.0f).OnComplete(() => { arrowFocus.gameObject.SetActive(false); });
 
+            // setup input detection back to normal
             gridManager.player.SetExclusivePickableObject(null);
-
             EasyTouch.SetEnableUIDetection(true);
         }
     }

@@ -719,10 +719,15 @@ namespace AppAdvisory.Item
         }
 
 
-        public List<Move> GetAvailableMoves(Cell cell)
+        public List<Move> GetAvailableMoves(Cell cell, bool canOnlyJump = false)
         {
             List<Move> moves = new List<Move>();
-            List<Move> potentialMoves = GetAvailableMoves((CellColor)cell.ball.Color);
+
+            List<Move> potentialMoves = new List<Move>();
+            if (canOnlyJump)
+                potentialMoves = GetAvailableMoves((CellColor)cell.ball.Color, true, true);
+            else
+                potentialMoves = GetAvailableMoves((CellColor)cell.ball.Color);
 
             foreach (Move move in potentialMoves)
             {
@@ -735,7 +740,7 @@ namespace AppAdvisory.Item
             return moves;
         }
 
-        public List<Move> GetAvailableMoves(CellColor color, bool enableJump = true)
+        public List<Move> GetAvailableMoves(CellColor color, bool enableJump = true, bool canOnlyJump = false)
         {
             List<Move> moves = new List<Move>();
 
@@ -765,6 +770,9 @@ namespace AppAdvisory.Item
                             {
                                 if (cell.color == CellColor.None)
                                 {
+                                    if (canOnlyJump)
+                                        continue;
+
                                     Move move = new Move();
                                     move.fromX = actualCell.x;
                                     move.fromY = actualCell.y;

@@ -30,7 +30,7 @@ namespace AppAdvisory.Item {
 		public event Action<Vector2> OnPhase1TurnFinished;
 		public event Action<List<Vector2>> OnPhase2TurnFinished;
 
-		private bool hasAlreadyJumpedOnce = false;
+		public bool hasAlreadyJumpedOnce = false;
 		private Cell currentCell;
 		private List<Cell> currentCellsToMove;
 		private List<Cell> currentCellsToJump;
@@ -330,16 +330,6 @@ namespace AppAdvisory.Item {
 				}
 			}
 
-
-			//Utils.ResetCellsColor (grid);
-
-
-			if (showHelp) {
-				//Utils.HighlighCell (pickedCell, Color.red);
-				//Utils.HighlighCells (currentCellsToMove, Color.green);
-				//Utils.HighlighCells (currentCellsToJump, Color.yellow);
-			}
-
 			currentBall = currentCell.ball;
 			currentBall.PickUpBall();
 
@@ -352,14 +342,6 @@ namespace AppAdvisory.Item {
 			currentCellsToJump = null;
 			currentCellsToMove = null;
 		}
-
-//		public void PlaceBall(Cell pickedCell) {
-//			Ball ball = Instantiate(ballPrefab);
-//			pickedCell.ball = ball;
-//			ball.transform.position = pickedCell.transform.position;
-//
-//			ballCount--;
-//		}
 
 		public void ChangeBallPosition(Cell firstCell, Cell secondCell) {
 
@@ -380,8 +362,15 @@ namespace AppAdvisory.Item {
             optiGrid.DoMove(move);
 
 			isTweening = true;
-            ball.GetComponent<Animator>().SetTrigger("Move");
-			ball.transform.DOMove (secondCell.transform.position, 1f).OnComplete (() => {
+
+            if (ball.isPickedUp)
+                ball.GetComponent<Animator>().SetTrigger("PlaceBall");
+            else
+                ball.GetComponent<Animator>().SetTrigger("Move");
+
+            ball.isPickedUp = false;
+
+            ball.transform.DOMove (secondCell.transform.position, 1f).OnComplete (() => {
 				ball.transform.position = secondCell.transform.position;
 				//ball.SetStartPosition ();
 				isTweening = false;

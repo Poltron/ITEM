@@ -1227,8 +1227,8 @@ namespace AppAdvisory.Item {
 			//ball.SetStartPosition ();
 		}
 
-		public static void DOPlace(this Ball ball, Cell pickedCell) {
-			pickedCell.ball = ball;
+        public static void DOPlace(this Ball ball, Cell pickedCell) {
+            pickedCell.ball = ball;
 
             Move move = new Move();
             move.fromX = -1;
@@ -1239,12 +1239,16 @@ namespace AppAdvisory.Item {
 
             GameObject.FindObjectOfType<GridManager>().OptiGrid.DoMove(move);
 
-            ball.GetComponent<Animator>().SetTrigger("Move");
-            //ball.GetComponent<Animation>().Play();
-			ball.transform.DOMove (pickedCell.transform.position, 1.0f).OnComplete (() =>  {
+            if (ball.isPickedUp)
+                ball.GetComponent<Animator>().SetTrigger("PlaceBall");
+            else
+                ball.GetComponent<Animator>().SetTrigger("Move");
+
+            ball.isPickedUp = false;
+
+            ball.transform.DOMove (pickedCell.transform.position, 1.0f).OnComplete (() =>  {
 				ball.transform.position = pickedCell.transform.position;
 				ball.owner = pickedCell;
-				//ball.SetStartPosition ();
 			});
 		}
 

@@ -43,6 +43,8 @@ namespace AppAdvisory.Item
         AIEvaluationData evaluationData;
         OptimizedGrid grid;
 
+        public bool canOnlyJump;
+
         public AIBehaviour(AIEvaluationData _evaluationData)
         {
             evaluationData = _evaluationData;

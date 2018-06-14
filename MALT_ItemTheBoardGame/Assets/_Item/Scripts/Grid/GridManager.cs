@@ -726,9 +726,13 @@ namespace AppAdvisory.Item {
 
             modelGrid.ResetCellsColor();
 
-            List<Move> moves = optiGrid.GetAvailableMoves(cell);
+            List<Move> moves = new List<Move>();
+            if (player.hasAlreadyJumpedOnce)
+                moves = optiGrid.GetAvailableMoves(cell, true);
+            else
+                moves = optiGrid.GetAvailableMoves(cell);
 
-            foreach(Move move in moves)
+            foreach (Move move in moves)
             {
                 Cell toCell = modelGrid.GetCellFromModel(move.toY, move.toX);
                 toCell.SetHighlightedCell(true);

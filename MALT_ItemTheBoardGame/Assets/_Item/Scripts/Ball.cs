@@ -66,12 +66,16 @@ namespace AppAdvisory.Item
         float highlightCurveTimer;
 
         private Animator _animator;
+        public bool isPickedUp;
+
+        private bool noFX;
 
         void Awake()
         {
             startPosition = transform.position;
             startScale = transform.localScale;
             _animator =  GetComponent<Animator>();
+            noFX = false;
         }
 
         private void Start()
@@ -93,12 +97,14 @@ namespace AppAdvisory.Item
         {
             ShowHighlight();
             _animator.SetTrigger("PickUp");
+            isPickedUp = true;
         }
 
         public void PutDownBall()
         {
             HideHighlight();
             _animator.SetTrigger("PutDown");
+            isPickedUp = false;
         }
 
         public void ShowHighlight() {
@@ -138,17 +144,29 @@ namespace AppAdvisory.Item
         public void Reset()
         {
             owner = null;
-            //transform.position = startPosition;
             transform.localScale = startScale;
+            isPickedUp = false;
         }
 
         private void OnBallTouchBoard()
         {
+            if (noFX)
+            {
+                noFX = false;
+                return;
+            }
+
             GameObject.Instantiate(FXTouchBoard, transform.position, Quaternion.identity);
         }
 
         private void OnBallTouchBoardVictory()
         {
+            if (noFX)
+            {
+                noFX = false;
+                return;
+            }
+
             Camera.main.GetComponent<CameraShake>().Shake();    
             GameObject.Instantiate(FXTouchBoardVictory, transform.position, Quaternion.identity);
         }
@@ -165,6 +183,7 @@ namespace AppAdvisory.Item
 
             transform.DOMove(startPosition, 1.0f);
             _animator.SetTrigger("Move");
+            noFX = true;
         }
     }
 }
