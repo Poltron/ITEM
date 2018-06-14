@@ -65,13 +65,13 @@ namespace AppAdvisory.Item
 
         float highlightCurveTimer;
 
-        /*public delegate void BallEventHandler(Ball ball);
-        public event BallEventHandler OnBallAddScore;*/
+        private Animator _animator;
 
         void Awake()
         {
             startPosition = transform.position;
             startScale = transform.localScale;
+            _animator =  GetComponent<Animator>();
         }
 
         private void Start()
@@ -87,6 +87,18 @@ namespace AppAdvisory.Item
                 float scale = highlightCurve.Evaluate(highlightCurveTimer);
                 highlight.transform.localScale = new Vector3(scale, scale, 1);
             }
+        }
+
+        public void PickUpBall()
+        {
+            ShowHighlight();
+            _animator.SetTrigger("PickUp");
+        }
+
+        public void PutDownBall()
+        {
+            HideHighlight();
+            _animator.SetTrigger("PutDown");
         }
 
         public void ShowHighlight() {
@@ -126,7 +138,7 @@ namespace AppAdvisory.Item
         public void Reset()
         {
             owner = null;
-            transform.position = startPosition;
+            //transform.position = startPosition;
             transform.localScale = startScale;
         }
 
@@ -144,6 +156,15 @@ namespace AppAdvisory.Item
         private void PopScoreParticle()
         {
             FindObjectOfType<GridManager>().BallAddScore(this);
+        }
+
+        public void MoveToResetPosition()
+        {
+            if (transform.position == startPosition)
+                return;
+
+            transform.DOMove(startPosition, 1.0f);
+            _animator.SetTrigger("Move");
         }
     }
 }

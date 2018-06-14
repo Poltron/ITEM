@@ -239,12 +239,12 @@ namespace AppAdvisory.Item {
 			if (ballCount > 0) {
 
 				if (currentBall) {
-					if (!pickedCell) {
-
+					if (!pickedCell)
+                    {
 						if (pickedBall && pickedBall.Color == color) {
-							currentBall.HideHighlight ();
+							currentBall.PutDownBall();
 							currentBall = pickedBall;
-							currentBall.ShowHighlight ();
+							currentBall.PickUpBall();
 
                             if (OnBallSelection != null)
                                 OnBallSelection(currentBall);
@@ -341,7 +341,7 @@ namespace AppAdvisory.Item {
 			}
 
 			currentBall = currentCell.ball;
-			currentBall.ShowHighlight ();
+			currentBall.PickUpBall();
 
             if (OnBallSelection != null)
                 OnBallSelection(currentBall);
@@ -469,7 +469,7 @@ namespace AppAdvisory.Item {
         public void PickBall(Ball ball)
         {
             currentBall = ball;
-            currentBall.ShowHighlight();
+            currentBall.PickUpBall();
 
             if (OnBallSelection != null)
                 OnBallSelection(ball);
@@ -485,7 +485,7 @@ namespace AppAdvisory.Item {
 
         void RegisterBall(Gesture gesture, Ball ball)  {
 			currentBall = ball;
-			currentBall.ShowHighlight ();
+			currentBall.PickUpBall();
 
             if (OnBallSelection != null)
                 OnBallSelection(ball);

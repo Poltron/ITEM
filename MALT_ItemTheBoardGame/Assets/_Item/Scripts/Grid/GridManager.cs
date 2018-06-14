@@ -260,6 +260,8 @@ namespace AppAdvisory.Item {
                     blackBalls.Add(b);
                 else
                     whiteBalls.Add(b);
+
+                b.MoveToResetPosition();
             }
             
             isGameFinished = false;
