@@ -70,8 +70,8 @@ namespace AppAdvisory.Item {
         }
 
 		public void Init() {
-            player1.HideAll();
-            player2.HideAll();
+            //player1.HideAll();
+            //player2.HideAll();
 
 			DisplayWaitingForPlayerPanel (false);
             
@@ -245,7 +245,6 @@ namespace AppAdvisory.Item {
 
         public void AnimateNextTurn()
         {
-            Debug.Log("AnimateNextTurn");
             boardOverlay.GetComponent<Animation>().Play();
 
             if (isPlayer1Turn)

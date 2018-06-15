@@ -86,7 +86,9 @@ namespace AppAdvisory.Item {
 
         public void StopPortraitAnimation()
         {
-            portraitTurnAnimation.SetTrigger("PopOut");
+            AnimatorStateInfo stateInfo = portraitTurnAnimation.GetCurrentAnimatorStateInfo(0);
+            if (!stateInfo.IsName("Base.Empty"))
+                portraitTurnAnimation.SetTrigger("PopOut");
         }
 
         public void StartScoreAnim()
