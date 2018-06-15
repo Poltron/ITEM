@@ -960,7 +960,6 @@ namespace AppAdvisory.Item {
                 numberOfTurnsPlayer2 = 0;
 
                 player = CreatePlayer (BallColor.Black);
-
 				uiManager.InitPlayer1(BallColor.Black);
 				uiManager.InitPlayer2(BallColor.White);
 				uiManager.SetPlayer2Turn(null);
@@ -1003,13 +1002,12 @@ namespace AppAdvisory.Item {
                 numberOfTurnsPlayer1 = 0;
                 numberOfTurnsPlayer2 = 0;
 
+                player = CreatePlayer(BallColor.White);
+                uiManager.InitPlayer2(BallColor.Black);
+
                 uiManager.DisplayTurnSwitchPhase1(true);
                 uiManager.DisplayYourTurn(true);
                 uiManager.SetPlayer1Turn(player.StartTurn);
-
-				player = CreatePlayer (BallColor.White);
-				uiManager.InitPlayer2(BallColor.Black);
-
 				SendName (playerName);
 				SendPicURL (playerPicURL);
 
