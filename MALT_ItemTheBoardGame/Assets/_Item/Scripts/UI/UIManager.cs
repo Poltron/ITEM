@@ -29,7 +29,6 @@ namespace AppAdvisory.Item {
 		public PlayerPanel player2;
 
 		public GameObject waitingForPlayerPanel;
-
         public RoundPanel roundResultPanel;
         public EndGamePanel endGamePanel;
         public TurnSwitchPanel turnSwitchPanel;
@@ -214,10 +213,10 @@ namespace AppAdvisory.Item {
         public void PopScoreParticle(Ball ball)
         {
             GameObject g = GameObject.Instantiate(scoreParticle, ball.transform.position, Quaternion.identity);
-            g.transform.SetParent(FindObjectOfType<Canvas>().transform, true);
+
             if (isPlayer1Turn)
             {
-                g.transform.DOMove(player1.textCounter.transform.position, 0.5f).OnComplete(() =>
+                g.transform.DOMove(player1.textCounter.rectTransform.position, 0.5f).OnComplete(() =>
                 {
                     if (ball.Score != 0)
                     {
@@ -230,7 +229,7 @@ namespace AppAdvisory.Item {
             }
             else
             {
-                g.transform.DOMove(player2.textCounter.transform.position, 0.5f).OnComplete(() =>
+                g.transform.DOMove(player2.textCounter.rectTransform.position, 0.5f).OnComplete(() =>
                 {
                     if (ball.Score != 0)
                     {
