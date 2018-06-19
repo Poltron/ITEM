@@ -218,7 +218,7 @@ PlayerSettings:
   AndroidTargetDevice: 0
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: D:/etien_000/Projets/Unity/MALT_ItemTheBoardGame/MALT_ItemTheBoardGame/item.keystore
+  AndroidKeystoreName: D:/etien_000/Projets/Unity/ITEM_Git/MALT_ItemTheBoardGame/release.keystore
   AndroidKeyaliasName: upload
   AndroidTVCompatibility: 1
   AndroidIsGame: 1
