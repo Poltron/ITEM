@@ -395,10 +395,7 @@ namespace AppAdvisory.Item {
 
 		public void MoveBall(Cell pickedCell) {
 			if (pickedCell == currentCell) {
-				currentBall.ResetPosition ();
-				//Utils.ResetCellsColor (grid);
-
-				currentBall.HideHighlight ();
+                currentBall.PutDownBall();
                 modelGrid.ResetCellsColor();
 
 				if (hasAlreadyJumpedOnce) {
