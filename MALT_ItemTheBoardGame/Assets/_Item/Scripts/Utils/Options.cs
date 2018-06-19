@@ -18,7 +18,31 @@ public static class Options
         }
     }
 
-    // Ball Placement Help
+    // Language
+    public static void SetLanguage(string language)
+    {
+        if (language == "fr")
+            PlayerPrefs.SetString("language", "fr");
+        else if (language == "en")
+            PlayerPrefs.SetString("language", "en");
+    }
+
+    public static string GetLanguage()
+    {
+        return PlayerPrefs.GetString("language", "");
+    }
+
+    public static bool IsLanguageFr()
+    {
+        return PlayerPrefs.GetString("language", "") == "fr";
+    }
+
+    public static bool IsLanguageEn()
+    {
+        return PlayerPrefs.GetString("language", "") == "en";
+    }
+
+    // Ball Placement Help"
     public static void SetEnablePlacementHelp(bool isEnabled)
     {
         if (isEnabled)

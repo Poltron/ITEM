@@ -72,4 +72,9 @@ public class OptionsPanel : MonoBehaviour
     {
         Options.SetEnableHelpPopup(roundHelpPopup.isOn);
     }
+
+    public void SetLanguage(string language)
+    {
+        Options.SetLanguage(language);
+    }
 }
