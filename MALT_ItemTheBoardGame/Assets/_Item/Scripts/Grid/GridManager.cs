@@ -356,7 +356,7 @@ namespace AppAdvisory.Item {
                 else
                 {
                     nextTurnIsAI = false;
-                    Win(cell, justWon);
+                    EndGame(justWon);
                 }
             }
             else
@@ -382,7 +382,6 @@ namespace AppAdvisory.Item {
             else
             {
                 uiManager.SetPlayer1Turn(player.StartTurn);
-                
             }
         }
 
@@ -416,7 +415,11 @@ namespace AppAdvisory.Item {
             bool justWon = Utils.CheckWinIA(modelGrid, cellTo);
             if (justWon || isEqualityTurn)
             {
-                DOVirtual.DelayedCall(timeBeforeVictoryAnimation, PlayVictoryAnimation, true);
+                if (justWon)
+                {
+                    DOVirtual.DelayedCall(timeBeforeVictoryAnimation, PlayVictoryAnimation, true);
+                }
+
                 if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
                 {
                     nextTurnIsAI = false;
@@ -425,7 +428,7 @@ namespace AppAdvisory.Item {
                 else
                 {
                     nextTurnIsAI = false;
-                    Win(cellTo, justWon);
+                    EndGame(justWon);
                 }
             }
             else
@@ -457,7 +460,7 @@ namespace AppAdvisory.Item {
                     else
                     {
                         nextTurnIsAI = true;
-                        Win(cell, justWon);
+                        EndGame(justWon);
                     }
                 }
                 else
@@ -482,7 +485,11 @@ namespace AppAdvisory.Item {
                 bool justWon = Utils.CheckWin(modelGrid, cell, false);
                 if (justWon || isEqualityTurn)
                 {
-                    DOVirtual.DelayedCall(timeBeforeVictoryAnimation, PlayVictoryAnimation, true);
+                    if (justWon)
+                    {
+                        DOVirtual.DelayedCall(timeBeforeVictoryAnimation, PlayVictoryAnimation, true);
+                    }
+
                     if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
                     {
                         nextTurnIsAI = false;
@@ -491,7 +498,7 @@ namespace AppAdvisory.Item {
                     else
                     {
                         nextTurnIsAI = false;
-                        Win(cell, justWon);
+                        EndGame(justWon);
                     }
                 }
                 else
@@ -513,7 +520,11 @@ namespace AppAdvisory.Item {
                 bool justWon = Utils.CheckWin(modelGrid, cell, false);
                 if (justWon || isEqualityTurn)
                 {
-                    DOVirtual.DelayedCall(1.5f, PlayVictoryAnimation, true);
+                    if (justWon)
+                    {
+                        DOVirtual.DelayedCall(1.5f, PlayVictoryAnimation, true);
+                    }
+
                     if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
                     {
                         nextTurnIsAI = true;
@@ -522,7 +533,7 @@ namespace AppAdvisory.Item {
                     else
                     {
                         nextTurnIsAI = true;
-                        Win(cell, justWon);
+                        EndGame(justWon);
                     }
                 }
                 else
@@ -552,7 +563,7 @@ namespace AppAdvisory.Item {
                     else
                     {
                         nextTurnIsAI = false;
-                        Win(cell, justWon);
+                        EndGame(justWon);
                     }
                 }
                 else
@@ -562,30 +573,8 @@ namespace AppAdvisory.Item {
 			}
 		}
 
-		private void Win(Cell cell, bool justWon)
+		private void EndGame(bool justWon)
         {
-            /*List<WinningPattern> winningPatterns;
-            OptiGrid.GetWinningPatterns(out winningPatterns);
-
-            playerScore = 0;
-            otherPlayerScore = 0;
-
-            // if we have a winningPattern for the color, notify it
-            foreach(WinningPattern pattern in winningPatterns)
-            {
-                if (pattern.color == (CellColor)player.color)
-                {
-                    playerScore = GetWinningPatternScore(pattern);
-                }
-                else
-                {
-                    otherPlayerScore = GetWinningPatternScore(pattern);
-                }
-            }
-
-            totalPlayerScore += playerScore;
-            totalOtherPlayerScore += otherPlayerScore;
-            */
             isGameFinished = true;
             player.EndTurn();
 
@@ -619,7 +608,7 @@ namespace AppAdvisory.Item {
 
                 foreach(WinningPattern alreadyDonePattern in alreadyAnimatedPattern)
                 {
-                    if (pattern.IsSame(pattern))
+                    if (pattern.IsSame(alreadyDonePattern))
                     {
                         alreadyDone = true;
                         break;
@@ -684,7 +673,7 @@ namespace AppAdvisory.Item {
 
         public void playVictoryAnimationEnd(WinningPattern pattern)
         {
-            if (IsEqualityTurn)
+            if (IsEqualityTurn && numberOfTurnsPlayer1 != numberOfTurnsPlayer2)
             {
                 if (isPlayingVSIA)
                 {
@@ -855,13 +844,18 @@ namespace AppAdvisory.Item {
             bool justWon = Utils.CheckWin(modelGrid, cell, false);
             if (justWon || isEqualityTurn)
             {
+                if (justWon)
+                {
+                    DOVirtual.DelayedCall(timeBeforeVictoryAnimation, PlayVictoryAnimation, true);
+                }
+
                 if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
                 {
                     isEqualityTurn = true;
                 }
                 else
                 {
-                    Win(cell, justWon);
+                    EndGame(justWon);
                 }
             }
             else
@@ -885,13 +879,18 @@ namespace AppAdvisory.Item {
             bool justWon = Utils.CheckWin(modelGrid, cell, false);
             if (justWon || isEqualityTurn)
             {
+                if (justWon)
+                {
+                    DOVirtual.DelayedCall(timeBeforeVictoryAnimation, PlayVictoryAnimation, true);
+                }
+
                 if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
                 {
                     isEqualityTurn = true;
                 }
                 else
                 {
-                    Win(cell, justWon);
+                    EndGame(justWon);
                 }
             }
             else

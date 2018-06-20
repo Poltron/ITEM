@@ -70,12 +70,20 @@ namespace AppAdvisory.Item
 
         public bool IsSame(WinningPattern pattern)
         {
-            for (int i = 0; i < pattern.cells.Length; ++i)
+            if (pattern.color != color)
+                return false;
+
+            for (int i = 0; i < cells.Length; ++i)
             {
                 if (cells[i].x != pattern.cells[i].x || cells[i].y != pattern.cells[i].y)
                 {
                     return false;
                 }
+            }
+            
+            if (cells.Length == 0)
+            {
+                Debug.LogError("IsSame with cell 0");
             }
 
             return true;
@@ -302,6 +310,7 @@ namespace AppAdvisory.Item
             while (FindWinningPattern(patternData.horizontalLinePatterns, out winningPattern, winningPatterns))
             {
                 WinningPattern winny = new WinningPattern(winningPattern);
+                winny.type = PatternType.HorizontalLine;
                 winningPatterns.Add(winny);
                 isWinning = true;
             }
@@ -309,6 +318,7 @@ namespace AppAdvisory.Item
             while (FindWinningPattern(patternData.verticalLinePatterns, out winningPattern, winningPatterns))
             {
                 WinningPattern winny = new WinningPattern(winningPattern);
+                winny.type = PatternType.VerticalLine;
                 winningPatterns.Add(winny);
                 isWinning = true;
             }
@@ -316,6 +326,7 @@ namespace AppAdvisory.Item
             while (FindWinningPattern(patternData.diagonalLinePatterns, out winningPattern, winningPatterns))
             {
                 WinningPattern winny = new WinningPattern(winningPattern);
+                winny.type = PatternType.AscDiagonalLine;
                 winningPatterns.Add(winny);
                 isWinning = true;
             }
@@ -323,6 +334,7 @@ namespace AppAdvisory.Item
             while (FindWinningPattern(patternData.otherDiagonalLinePatterns, out winningPattern, winningPatterns))
             {
                 WinningPattern winny = new WinningPattern(winningPattern);
+                winny.type = PatternType.DescDiagonalLine;
                 winningPatterns.Add(winny);
                 isWinning = true;
             }
@@ -330,6 +342,7 @@ namespace AppAdvisory.Item
             while (FindWinningPattern(patternData.horizontalCrossPatterns, out winningPattern, winningPatterns))
             {
                 WinningPattern winny = new WinningPattern(winningPattern);
+                winny.type = PatternType.HorizontalCross;
                 winningPatterns.Add(winny);
                 isWinning = true;
             }
@@ -337,105 +350,13 @@ namespace AppAdvisory.Item
             while (FindWinningPattern(patternData.diagonalCrossPatterns, out winningPattern, winningPatterns))
             {
                 WinningPattern winny = new WinningPattern(winningPattern);
+                winny.type = PatternType.DiagonalCross;
                 winningPatterns.Add(winny);
                 isWinning = true;
             }
 
             return isWinning ;
         }
-
-        /*public bool GetWinningPattern(out List<Vector2> winningCells)
-        {
-            winningCells = new List<Vector2>();
-
-            bool isWinning = FindWinningPattern(patternData.horizontalLinePatterns, out winningCells);
-            if (isWinning)
-            {
-                return true;
-            }
-
-            isWinning = FindWinningPattern(patternData.verticalLinePatterns, out winningCells);
-            if (isWinning)
-            {
-                return true;
-            }
-
-            isWinning = FindWinningPattern(patternData.diagonalLinePatterns, out winningCells);
-            if (isWinning)
-            {
-                return true;
-            }
-
-            isWinning = FindWinningPattern(patternData.otherDiagonalLinePatterns, out winningCells);
-            if (isWinning)
-            {
-                return true;
-            }
-
-            isWinning = FindWinningPattern(patternData.horizontalCrossPatterns, out winningCells);
-            if (isWinning)
-            {
-                return true;
-            }
-
-            isWinning = FindWinningPattern(patternData.diagonalCrossPatterns, out winningCells);
-            if (isWinning)
-            {
-                return true;
-            }
-
-            return false;
-        }*/
-
-        /*public bool GetWinningPatternAndType(out List<Vector2> winningCells, out PatternType patternType)
-        {
-            winningCells = new List<Vector2>();
-            patternType = PatternType.AscDiagonalLine;
-
-            bool isWinning = FindWinningPattern(patternData.horizontalLinePatterns, out winningCells);
-            if (isWinning)
-            {
-                //patternType = PatternType.AALine;
-                return true;
-            }
-
-            isWinning = FindWinningPattern(patternData.verticalLinePatterns, out winningCells);
-            if (isWinning)
-            {
-                //patternType = PatternType.AALine;
-                return true;
-            }
-
-            isWinning = FindWinningPattern(patternData.diagonalLinePatterns, out winningCells);
-            if (isWinning)
-            {
-                //patternType = PatternType.DiagonalLine;
-                return true;
-            }
-
-            isWinning = FindWinningPattern(patternData.otherDiagonalLinePatterns, out winningCells);
-            if (isWinning)
-            {
-                //patternType = PatternType.DiagonalLine;
-                return true;
-            }
-
-            isWinning = FindWinningPattern(patternData.horizontalCrossPatterns, out winningCells);
-            if (isWinning)
-            {
-                //patternType = PatternType.AACross;
-                return true;
-            }
-
-            isWinning = FindWinningPattern(patternData.diagonalCrossPatterns, out winningCells);
-            if (isWinning)
-            {
-                //patternType = PatternType.DiagonalCross;
-                return true;
-            }
-
-            return false;
-        }*/
 
         private bool FindWinningPattern(EvaluationPattern[] patterns, out WinningPattern winningPattern, List<WinningPattern> toExclude = null)
         {
@@ -489,7 +410,6 @@ namespace AppAdvisory.Item
 
                     winningPattern.cells = cells;
                     winningPattern.color = (blackCount == 5) ? CellColor.Black : CellColor.White;
-                    
                     return true;
                 }
             }
