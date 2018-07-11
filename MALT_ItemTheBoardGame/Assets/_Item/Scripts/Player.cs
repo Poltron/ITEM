@@ -100,8 +100,6 @@ namespace AppAdvisory.Item {
 
 			Vector3 position = gesture.GetTouchToWorldPoint(gesture.pickedObject.transform.position);
 			gesture.pickedObject.transform.position = position - deltaPosition;
-
-
 		}
 
 		void On_DragStart(Gesture gesture) {
@@ -216,9 +214,13 @@ namespace AppAdvisory.Item {
         public void OnTouchUpPublic(Gesture gesture)
         {
             OnTouchUp(gesture);
+            Debug.Log("on touch up public");
         }
 
 		void OnTouchUp(Gesture gesture) {
+
+            Debug.Log("on touch up");
+
 			if (isTweening)
 				return;
 

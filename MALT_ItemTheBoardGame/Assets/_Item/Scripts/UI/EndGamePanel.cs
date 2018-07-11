@@ -4,8 +4,57 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EndGamePanel : MonoBehaviour
+public class EndGamePanel : UIPanel
 {
+    [Header("FR Settings")]
+    [SerializeField]
+    private string youWonTextFR;
+
+    [SerializeField]
+    private string youLostTextFR;
+
+    [SerializeField]
+    private string drawTextFR;
+
+    [SerializeField]
+    private string byForfeitTextFR;
+
+    [SerializeField]
+    private string playAgainTextFR;
+
+    [Header("EN Settings")]
+    [SerializeField]
+    private string youWonTextEN;
+
+    [SerializeField]
+    private string youLostTextEN;
+
+    [SerializeField]
+    private string drawTextEN;
+
+    [SerializeField]
+    private string byForfeitTextEN;
+
+    [SerializeField]
+    private string playAgainTextEN;
+
+    [Header("Localized Objects")]
+    [SerializeField]
+    private TextMeshProUGUI youWonText;
+
+    [SerializeField]
+    private TextMeshProUGUI youLostText;
+
+    [SerializeField]
+    private TextMeshProUGUI drawText;
+
+    [SerializeField]
+    private TextMeshProUGUI byForfeitText;
+
+    [SerializeField]
+    private TextMeshProUGUI playAgainText;
+
+    [Header("")]
     [SerializeField]
     private RectTransform youWon;
 
@@ -26,6 +75,24 @@ public class EndGamePanel : MonoBehaviour
 
     [SerializeField]
     private TextMeshProUGUI pointsText;
+
+    protected override void SetLanguageEN()
+    {
+        youWonText.text = youWonTextEN;
+        youLostText.text = youLostTextEN;
+        drawText.text = drawTextEN;
+        byForfeitText.text = byForfeitTextEN;
+        playAgainText.text = playAgainTextEN;
+    }
+
+    protected override void SetLanguageFR()
+    {
+        youWonText.text = youWonTextFR;
+        youLostText.text = youLostTextFR;
+        drawText.text = drawTextFR;
+        byForfeitText.text = byForfeitTextFR;
+        playAgainText.text = playAgainTextFR;
+    }
 
     public void HideAll()
     {

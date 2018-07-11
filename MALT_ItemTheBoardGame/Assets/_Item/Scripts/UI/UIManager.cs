@@ -28,16 +28,16 @@ namespace AppAdvisory.Item {
 		public PlayerPanel player1;
 		public PlayerPanel player2;
 
-		public GameObject waitingForPlayerPanel;
+		public WaitingForPlayerPanel waitingForPlayerPanel;
         public RoundPanel roundResultPanel;
         public EndGamePanel endGamePanel;
         public TurnSwitchPanel turnSwitchPanel;
         public OptionsPanel optionsPanel;
         public HelpPanel helpPanel;
         public TutorialPanel tutoPanel;
+        public InviteFriendPanel inviteFriendButton;
         public RectTransform overlayPanel;
         public Transform arrowFocus;
-        public GameObject inviteFriendButton;
 
         private bool isPlayer1Turn;
 
@@ -49,7 +49,14 @@ namespace AppAdvisory.Item {
 
         [SerializeField]
         private GameObject scoreParticle;
-        
+
+        private AudioManager audioManager;
+
+        void Awake()
+        {
+            optionsPanel.OnLanguageChange += LanguageChanged;
+        }
+
         IEnumerator waitFor(float t, Action toDo)
         {
             yield return new WaitForSeconds(t);
@@ -60,6 +67,8 @@ namespace AppAdvisory.Item {
         {
             roundScores = new List<RoundScore>();
             turnSwitchPanel.SetUIManager(this);
+
+            audioManager = FindObjectOfType<AudioManager>();
 		}
 
         public void ResetGame()
@@ -69,11 +78,10 @@ namespace AppAdvisory.Item {
         }
 
 		public void Init() {
-            //player1.HideAll();
-            //player2.HideAll();
-
 			DisplayWaitingForPlayerPanel (false);
-            
+
+            optionsPanel.OnLanguageChange += LanguageChanged;
+
             endGamePanel.HideAll();
             roundResultPanel.HideAll();
             turnSwitchPanel.HideAll();
@@ -81,7 +89,26 @@ namespace AppAdvisory.Item {
 
             tutoPanel.gameObject.SetActive(true);
             tutoPanel.PopAskForTuto(true);
+
+            LanguageChanged();
 		}
+
+        public void LanguageChanged()
+        {
+            string language = Options.GetLanguage();
+            optionsPanel.SetLanguage(language);
+            inviteFriendButton.SetLanguage(language);
+            waitingForPlayerPanel.SetLanguage(language);
+            roundResultPanel.SetLanguage(language);
+            endGamePanel.SetLanguage(language);
+            turnSwitchPanel.SetLanguage(language);
+            helpPanel.SetLanguage(language);
+            tutoPanel.SetLanguage(language);
+            player1.SetLanguage(language);
+            player2.SetLanguage(language);
+
+            //overlayPanel.SetLanguage(language);
+        }
 
         public void DisplayTurnSwitchPhase1(bool isShown)
         {
@@ -93,15 +120,18 @@ namespace AppAdvisory.Item {
             turnSwitchPanel.SetPhase2(isShown);
         }
 
-        public void DisplayWaitingForPlayerPanel(bool isShown) {
-			waitingForPlayerPanel.SetActive (isShown);
+        public void DisplayWaitingForPlayerPanel(bool isShown)
+        {
+			waitingForPlayerPanel.gameObject.SetActive (isShown);
 		}
 			
-		public void DisplayPlayer1(bool isShown) {
+		public void DisplayPlayer1(bool isShown)
+        {
 			player1.gameObject.SetActive (isShown);
 		}
 
-		public void DisplayPlayer2(bool isShown) {
+		public void DisplayPlayer2(bool isShown)
+        {
 			player2.gameObject.SetActive (isShown);
 		}
 
@@ -148,7 +178,7 @@ namespace AppAdvisory.Item {
 		}
 
 		public void DisplayInviteFriendButton(bool isShown) {
-			inviteFriendButton.SetActive (isShown);
+			inviteFriendButton.gameObject.SetActive (isShown);
 		}
 
 		public void InitPlayer1(BallColor color) {
@@ -256,6 +286,11 @@ namespace AppAdvisory.Item {
                 player1.StopPortraitAnimation();
                 player2.PlayPortraitAnimation();
             }
+
+            if (audioManager != null)
+            {
+                audioManager.PlayAudio(SoundID.SwitchTurn);
+            }
         }
 
         public void DisplayYourTurn(bool isShown)
@@ -291,7 +326,10 @@ namespace AppAdvisory.Item {
 
 		public void OnInviteFriendbutton()
         {
-			Debug.Log("invite friend");
+            if (audioManager != null)
+            {
+                audioManager.PlayAudio(SoundID.ClickUI);
+            }
 
 			if (InviteFriend != null)
 				InviteFriend ();
@@ -299,6 +337,11 @@ namespace AppAdvisory.Item {
 
         public void OnHelpButton()
         {
+            if (audioManager != null)
+            {
+                audioManager.PlayAudio(SoundID.ClickUI);
+            }
+
             optionsPanel.PopOut();
 
             if (helpPanel.IsFadingIn)
@@ -313,6 +356,11 @@ namespace AppAdvisory.Item {
 
         public void OnOptionsButton()
         {
+            if (audioManager != null)
+            {
+                audioManager.PlayAudio(SoundID.ClickUI);
+            }
+
             helpPanel.PopOut();
 
             if (optionsPanel.IsFadingIn)

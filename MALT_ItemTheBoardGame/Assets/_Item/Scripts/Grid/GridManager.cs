@@ -91,8 +91,6 @@ namespace AppAdvisory.Item {
         [SerializeField]
         private Sprite IASprite;
 
-        private bool lookingForGame = false;
-
         [SerializeField]
         private bool disableAI = false;
 
@@ -118,6 +116,8 @@ namespace AppAdvisory.Item {
 
         [HideInInspector]
         public WinningPattern actualWinningPattern;
+
+        private AudioManager audioManager;
 
         void Start ()
         {
@@ -154,6 +154,8 @@ namespace AppAdvisory.Item {
 
                 //fbManager.FacebookConnect += OnFacebookConnect;
             }
+
+            audioManager = FindObjectOfType<AudioManager>();
         }
 
         private void Update()
@@ -167,7 +169,6 @@ namespace AppAdvisory.Item {
         public void StartLookingForGame()
         {
             PhotonNetwork.JoinRandomRoom();
-            lookingForGame = true;
             DOVirtual.DelayedCall(timeToLaunchGameVSIA, StartGameVSIA, true);
         }
 
@@ -203,11 +204,18 @@ namespace AppAdvisory.Item {
             isPlayingTutorial = isPlaying;
         }
 
-        private string GetIAName() {
-            return "IA";
+        private string GetIAName()
+        {
+            if (Options.IsLanguageFr())
+            {
+                return "Charles (IA)";
+            }
+
+            return "Charles (AI)";
 		}
 
-        private Sprite GetIASprite() {
+        private Sprite GetIASprite()
+        {
             return IASprite;
         }
 
@@ -621,6 +629,11 @@ namespace AppAdvisory.Item {
                 alreadyAnimatedPattern.Add(pattern);
 
                 StartCoroutine(playVictoryAnimationPhase1(pattern));
+
+                if (audioManager != null)
+                {
+                    audioManager.PlayAudio(SoundID.Combo);
+                }
             }
         }
 

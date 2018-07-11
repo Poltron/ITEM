@@ -1,14 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
-public class HelpPanel : MonoBehaviour
+public class HelpPanel : UIPanel
 {
+    [Header("FR Settings")]
+    [SerializeField]
+    private string titleFR;
+
+    [Header("EN Settings")]
+    [SerializeField]
+    private string titleEN;
+
+    [Header("Localized Objects")]
+    [SerializeField]
+    private TextMeshProUGUI title;
+
     private Animator animator;
 
     private bool isFadingIn;
     public bool IsFadingOut { get { return !isFadingIn; } }
     public bool IsFadingIn { get { return isFadingIn; } }
+
+    private AudioManager audioManager;
 
     void Awake()
     {
@@ -19,6 +34,17 @@ public class HelpPanel : MonoBehaviour
     {
         isFadingIn = false;
         animator = GetComponent<Animator>();
+        audioManager = FindObjectOfType<AudioManager>();
+    }
+
+    protected override void SetLanguageEN()
+    {
+        title.text = titleEN;
+    }
+
+    protected override void SetLanguageFR()
+    {
+        title.text = titleFR;
     }
 
     public void PopIn()
@@ -34,6 +60,11 @@ public class HelpPanel : MonoBehaviour
         {
             animator.SetTrigger("HelpPanelPopIn");
             isFadingIn = true;
+
+            if (audioManager != null)
+            {
+                audioManager.PlayAudio(SoundID.OpenWindowHelp);
+            }
         }
     }
 
@@ -48,6 +79,11 @@ public class HelpPanel : MonoBehaviour
         {
             animator.SetTrigger("HelpPanelPopOut");
             isFadingIn = false;
+
+            if (audioManager != null)
+            {
+                audioManager.PlayAudio(SoundID.CloseWindowHelp);
+            }
         }
     }
 

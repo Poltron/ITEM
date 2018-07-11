@@ -3726,6 +3726,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9c086be86b8173458aa3b7e9681b9be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  youWonTextFR: VICTOIRE
+  youLostTextFR: DEFAITE
+  drawTextFR: EGALITE
+  byForfeitTextFR: Par Forfait
+  playAgainTextFR: Rejouer
+  youWonTextEN: VICTORY
+  youLostTextEN: DEFEAT
+  drawTextEN: DRAW
+  byForfeitTextEN: By Forfeit
+  playAgainTextEN: Play Again
+  youWonText: {fileID: 72592128}
+  youLostText: {fileID: 431789681}
+  drawText: {fileID: 507013537}
+  byForfeitText: {fileID: 413638782}
+  playAgainText: {fileID: 544892154}
   youWon: {fileID: 1520192290}
   youLost: {fileID: 2034195148}
   draw: {fileID: 1495688660}
@@ -3782,7 +3797,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 26, y: 165}
+  m_AnchoredPosition: {x: 26, y: 194}
   m_SizeDelta: {x: 270, y: 53}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &256676051
@@ -3931,7 +3946,7 @@ RectTransform:
   m_LocalScale: {x: 1.0000507, y: 1.0000507, z: 1.0000507}
   m_Children: []
   m_Father: {fileID: 903998895}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3957,8 +3972,8 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: "- Cliquer pour s\xE9lectionner une balle.\n\n- Cliquer sur une cellule
-    pour la poser."
+  m_text: "- Cliquez pour s\xE9lectionner un pion.\n\n- Puis, cliquez sur une case
+    libre pour le placer."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
@@ -4025,12 +4040,12 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 261805292}
-    characterCount: 80
+    characterCount: 88
     spriteCount: 0
-    spaceCount: 14
-    wordCount: 14
+    spaceCount: 16
+    wordCount: 16
     linkCount: 0
-    lineCount: 3
+    lineCount: 4
     pageCount: 1
     materialCount: 1
   m_havePropertiesChanged: 1
@@ -6147,6 +6162,7 @@ GameObject:
   - component: {fileID: 373322230}
   - component: {fileID: 373322232}
   - component: {fileID: 373322231}
+  - component: {fileID: 373322233}
   m_Layer: 5
   m_Name: WaitingForAnotherPlayerPanel
   m_TagString: Untagged
@@ -6210,6 +6226,20 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 373322229}
+--- !u!114 &373322233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 373322229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81b41af254e542e44a4e4359582be904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  labelFR: En attente d'un joueur...
+  labelEN: Waiting for another player...
+  label: {fileID: 690197475}
 --- !u!1 &384443803
 GameObject:
   m_ObjectHideFlags: 0
@@ -8649,7 +8679,7 @@ RectTransform:
   - {fileID: 903998895}
   - {fileID: 1205881758}
   m_Father: {fileID: 1527772469}
-  m_RootOrder: 10
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -8700,6 +8730,65 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 872f63896b1277244ad021464cbb33e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  askForTutoTextFR: Voulez-vous suivre un court tutoriel ?
+  yesButtonLabelFR: OUI
+  noButtonLabelFR: NON
+  tutoScreen1TitleFR: Une partie se joue en deux rounds.
+  tutoScreen1TextFR: "- Le joueur qui obtient le plus de points gagne la partie.\n\n-
+    Le joueur qui a commenc\xE9 en second a un tour d'\xE9galisation en fin de partie."
+  tutoScreen2TitleFR: 'Pour gagner un round, vous devez reproduire l''une de ces figures
+    :'
+  tutoScreen2TextFR: "Le score final est d\xE9termin\xE9 en additionant les chiffres
+    sur les pions de la figure gagnante"
+  phase1MovementHelpFR: Phase 1
+  phase1MovementHelpTitleFR: Placer les pions
+  phase1MovementHelpTextFR: "- Cliquez pour s\xE9lectionner un pion.\n\n- Puis, cliquez
+    sur une case libre pour le placer."
+  phase2MovementHelpFR: Phase 2
+  phase2MovementHelpTitleFR: "D\xE9placer les pions"
+  phase2MovementHelpTextFR: "- Cliquez sur un pion pour le s\xE9lectionner.\n\n- Cliquez
+    sur une des cases en surbrillance pour le d\xE9placer d'une case ou\n\n- Sautez
+    par dessus un pion ou plusieurs au besoin."
+  askForTutoTextEN: Would like to begin with a short tutorial ?
+  yesButtonLabelEN: YES
+  noButtonLabelEN: NO
+  tutoScreen1TitleEN: A game is played in two rounds.
+  tutoScreen1TextEN: '- The player with the most points wins the game.
+
+
+    - The player whose turn is second gets to have a bonus turn at the end.'
+  tutoScreen2TitleEN: 'In order to win a round, you have to reproduce one of these
+    patterns :'
+  tutoScreen2TextEN: The final score is equal to the sum of all the pattern's pawn's
+    numbers.
+  phase1MovementHelpEN: Phase 1
+  phase1MovementHelpTitleEN: Place the pawns
+  phase1MovementHelpTextEN: '- Click to select a pawn.
+
+
+    - Then, click on an empty cell to place it.'
+  phase2MovementHelpEN: Phase 2
+  phase2MovementHelpTitleEN: Move the pawns
+  phase2MovementHelpTextEN: '- Click on a pawn to select it.
+
+
+    - Click on one of the highlighted cells to move it one cell or
+
+
+    - Jump over one of the pawns one or multiple times'
+  askForTutoText: {fileID: 1869871014}
+  yesButtonLabel: {fileID: 1889909956}
+  noButtonLabel: {fileID: 1487351304}
+  tutoScreen1Title: {fileID: 687678354}
+  tutoScreen1Text: {fileID: 1075062013}
+  tutoScreen2Title: {fileID: 1747292981}
+  tutoScreen2Text: {fileID: 1300597815}
+  phase1MovementHelpPhase1Text: {fileID: 1914116273}
+  phase1MovementHelpTitle: {fileID: 1981074807}
+  phase1MovementHelpText: {fileID: 261805292}
+  phase2MovementHelpPhase2Text: {fileID: 412832018}
+  phase2MovementHelpTitle: {fileID: 1492020324}
+  phase2MovementHelpText: {fileID: 1783652068}
   animator: {fileID: 536182477}
   gridManager: {fileID: 323499139}
   uiManager: {fileID: 769470263}
@@ -8902,7 +8991,7 @@ RectTransform:
   - {fileID: 294302978}
   - {fileID: 1538220735}
   m_Father: {fileID: 1527772469}
-  m_RootOrder: 12
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -8970,6 +9059,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25772402d10da3642adab4ed4e97feb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  titleFR: Figures Gagnantes
+  titleEN: Winning Patterns
+  title: {fileID: 1538220736}
 --- !u!1 &544892152
 GameObject:
   m_ObjectHideFlags: 0
@@ -9918,7 +10010,7 @@ RectTransform:
   m_GameObject: {fileID: 657136342}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.9999625, y: 0.9999625, z: 0.9999625}
+  m_LocalScale: {x: 0.99996257, y: 0.99996257, z: 0.99996257}
   m_Children: []
   m_Father: {fileID: 1060689896}
   m_RootOrder: 5
@@ -9968,7 +10060,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 749733108}
-        m_MethodName: SetLanguage
+        m_MethodName: SetLocalization
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10530,7 +10622,7 @@ RectTransform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 690865270}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -10582,7 +10674,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 749733108}
-        m_MethodName: SetLanguage
+        m_MethodName: SetLocalization
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10827,7 +10919,7 @@ RectTransform:
   m_GameObject: {fileID: 702758883}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0000081, y: 1.0000081, z: 1.0000081}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1783118028}
   - {fileID: 1298712851}
@@ -11441,7 +11533,7 @@ RectTransform:
   m_Children:
   - {fileID: 1060689896}
   m_Father: {fileID: 1527772469}
-  m_RootOrder: 11
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -11492,8 +11584,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 395d69ecaa3fe204ba6f7088e521140c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ballPlacementHelpLabelFR: Activer l'aide au placement des pions
+  roundHelpPopupLabelFR: Activer les popup d'aide
+  ballPlacementHelpLabelEN: Enable ball placement help
+  roundHelpPopupLabelEN: Enable round help popup
   ballPlacementHelp: {fileID: 702758886}
+  ballPlacementHelpLabel: {fileID: 1933420241}
   roundHelpPopup: {fileID: 2048599358}
+  roundHelpPopupLabel: {fileID: 1765523363}
 --- !u!95 &749733109
 Animator:
   serializedVersion: 3
@@ -11754,16 +11852,16 @@ MonoBehaviour:
   boardOverlay: {fileID: 2023402313}
   player1: {fileID: 1290699625}
   player2: {fileID: 1341525722}
-  waitingForPlayerPanel: {fileID: 373322229}
+  waitingForPlayerPanel: {fileID: 373322233}
   roundResultPanel: {fileID: 1573008639}
   endGamePanel: {fileID: 255531731}
   turnSwitchPanel: {fileID: 1836222930}
   optionsPanel: {fileID: 749733108}
   helpPanel: {fileID: 543609715}
   tutoPanel: {fileID: 536182476}
+  inviteFriendButton: {fileID: 1262623656}
   overlayPanel: {fileID: 860627081}
   arrowFocus: {fileID: 1475931814}
-  inviteFriendButton: {fileID: 1262623651}
   Phase1Tuto_BallToMove: {fileID: 208480355}
   Phase1Tuto_CellToMoveTo: {fileID: 28348487}
   scoreParticle: {fileID: 1882923516753694, guid: fff1b68d64232b24b905539e90e927d9,
@@ -12481,7 +12579,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1527772469}
-  m_RootOrder: 6
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -13125,7 +13223,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1527772469}
-  m_RootOrder: 13
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -13664,10 +13762,10 @@ RectTransform:
   - {fileID: 1576732042}
   - {fileID: 1213490854}
   - {fileID: 2144052404}
-  - {fileID: 1981074806}
-  - {fileID: 1691435548}
   - {fileID: 1914116272}
+  - {fileID: 1981074806}
   - {fileID: 261805291}
+  - {fileID: 1691435548}
   m_Father: {fileID: 536182473}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -15518,7 +15616,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -20, y: 9}
+  m_AnchoredPosition: {x: 0, y: 9}
   m_SizeDelta: {x: 723, y: 524}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1060689897
@@ -16741,9 +16839,9 @@ RectTransform:
   - {fileID: 1291045165}
   - {fileID: 1143374075}
   - {fileID: 412832017}
-  - {fileID: 1576638553}
-  - {fileID: 1783652067}
   - {fileID: 1492020323}
+  - {fileID: 1783652067}
+  - {fileID: 1576638553}
   m_Father: {fileID: 536182473}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -17258,6 +17356,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1262623655}
   - component: {fileID: 1262623654}
+  - component: {fileID: 1262623656}
   - component: {fileID: 1262623653}
   - component: {fileID: 1262623652}
   m_Layer: 5
@@ -17376,6 +17475,20 @@ RectTransform:
   m_AnchoredPosition: {x: -24, y: -17}
   m_SizeDelta: {x: 369.6, y: 159.6}
   m_Pivot: {x: 1, y: 1}
+--- !u!114 &1262623656
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1262623651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 121581b36e8c9cf449f0cb5d876bbd2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  labelFR: Inviter un ami
+  labelEN: Invite friend
+  label: {fileID: 1713371832}
 --- !u!1 &1271882363
 GameObject:
   m_ObjectHideFlags: 0
@@ -17597,8 +17710,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdf7cf7e63195470ebad26ed63cd6114, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textCounter: {fileID: 1330187115}
+  playerNameFR: Vous
+  opponentNameFR: Adversaire
+  playerNameEN: You
+  opponentNameEN: Opponent
   playerName: {fileID: 1561596889}
+  playerId: 1
+  textCounter: {fileID: 1330187115}
   image: {fileID: 1796921073}
   whiteMarble: {fileID: 536786167}
   blackMarble: {fileID: 22720539}
@@ -17866,7 +17984,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: "Le score final est d\xE9termin\xE9 en additionant les chiffres sur les
-    balles du pattern gagnant."
+    pions de la figure gagnante"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
@@ -17933,10 +18051,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: -0.000042982156, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1300597815}
-    characterCount: 91
+    characterCount: 92
     spriteCount: 0
-    spaceCount: 14
-    wordCount: 15
+    spaceCount: 15
+    wordCount: 16
     linkCount: 0
     lineCount: 2
     pageCount: 1
@@ -18499,8 +18617,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdf7cf7e63195470ebad26ed63cd6114, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textCounter: {fileID: 1500864034}
+  playerNameFR: Vous
+  opponentNameFR: Adversaire
+  playerNameEN: You
+  opponentNameEN: Opponent
   playerName: {fileID: 1572111530}
+  playerId: 2
+  textCounter: {fileID: 1500864034}
   image: {fileID: 1426683515}
   whiteMarble: {fileID: 1005429383}
   blackMarble: {fileID: 1621697074}
@@ -20675,7 +20798,7 @@ RectTransform:
   m_LocalScale: {x: 1.0000507, y: 1.0000507, z: 1.0000507}
   m_Children: []
   m_Father: {fileID: 1205881758}
-  m_RootOrder: 6
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -20701,7 +20824,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: "D\xE9placez vos balles :\n"
+  m_text: "D\xE9placer les pions"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
@@ -20768,9 +20891,9 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1492020324}
-    characterCount: 22
+    characterCount: 18
     spriteCount: 0
-    spaceCount: 4
+    spaceCount: 2
     wordCount: 3
     linkCount: 0
     lineCount: 1
@@ -22207,14 +22330,14 @@ RectTransform:
   - {fileID: 2024991332}
   - {fileID: 373322230}
   - {fileID: 255531728}
-  - {fileID: 820099962}
-  - {fileID: 1595853836}
   - {fileID: 1836222927}
   - {fileID: 1573008636}
   - {fileID: 536182473}
   - {fileID: 749733105}
   - {fileID: 543609711}
   - {fileID: 860627081}
+  - {fileID: 820099962}
+  - {fileID: 1595853836}
   - {fileID: 1512413933}
   m_Father: {fileID: 0}
   m_RootOrder: 2
@@ -22621,11 +22744,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -22782,6 +22905,47 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1547376132}
+--- !u!1 &1549764208
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1549764209}
+  - component: {fileID: 1549764210}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1549764209
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1549764208}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.7596148, y: 0.43854296, z: -17.226562}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1549764210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1549764208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7e76c3209e410747a195a65bc897836, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds: {fileID: 11400000, guid: 4e8d0fc907a83ba41b87962cfdaa8fd5, type: 2}
 --- !u!23 &1554566540 stripped
 MeshRenderer:
   m_PrefabParentObject: {fileID: 23259942448361530, guid: f92513f0f5e5c4ba0b6489ddc5ad06d2,
@@ -23046,7 +23210,7 @@ RectTransform:
   - {fileID: 1458709626}
   - {fileID: 711215718}
   m_Father: {fileID: 1527772469}
-  m_RootOrder: 9
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -23097,8 +23261,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 068bee205e42e1244adea1cff646fb29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 1573008640}
+  roundLabelFR: ROUND 1
+  nextRoundLabelFR: Prochain Round
+  gameResultsLabelFR: Fin de Partie
+  roundLabelEN: ROUND 1
+  nextRoundLabelEN: Next Round
+  gameResultsLabelEN: Game Results
   roundText: {fileID: 2051955461}
+  nextRoundText: {fileID: 135901945}
+  gameResultsText: {fileID: 1496998233}
+  animator: {fileID: 1573008640}
   ptsText: {fileID: 326473253}
   nextRound: {fileID: 1458709627}
   gameResults: {fileID: 711215719}
@@ -23148,7 +23320,7 @@ RectTransform:
   m_LocalScale: {x: 1.0000507, y: 1.0000507, z: 1.0000507}
   m_Children: []
   m_Father: {fileID: 1205881758}
-  m_RootOrder: 4
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -23414,7 +23586,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1527772469}
-  m_RootOrder: 7
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -24249,7 +24421,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 903998895}
-  m_RootOrder: 4
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -25116,7 +25288,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: 'Pour gagner un round, vous devez reproduire l''un de ces patterns :
+  m_text: 'Pour gagner un round, vous devez reproduire l''une de ces figures :
 
 '
   m_isRightToLeft: 0
@@ -25739,8 +25911,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 27
+  m_fontSizeBase: 27
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -26074,9 +26246,9 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: "- Cliquer sur une bille pour la s\xE9lectionner.\n\n- Cliquer sur une des
-    cellules en surbrillance pour la d\xE9placer.\n\n- Sauter par dessus une bille
-    vous accorde la possibilit\xE9 de sauter par dessus une autre bille."
+  m_text: "- Cliquez sur un pion pour le s\xE9lectionner.\n\n- Cliquez sur une des
+    cases en surbrillance pour le d\xE9placer d'une case ou\n\n- Sautez par dessus
+    un pion ou plusieurs au besoin."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
@@ -26143,12 +26315,12 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1783652068}
-    characterCount: 208
+    characterCount: 172
     spriteCount: 0
-    spaceCount: 37
-    wordCount: 36
+    spaceCount: 33
+    wordCount: 32
     linkCount: 0
-    lineCount: 8
+    lineCount: 7
     pageCount: 1
     materialCount: 1
   m_havePropertiesChanged: 1
@@ -26846,7 +27018,7 @@ RectTransform:
   - {fileID: 1359097866}
   - {fileID: 865492918}
   m_Father: {fileID: 1527772469}
-  m_RootOrder: 8
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -26897,6 +27069,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1def9c3439ca52142b1b9b0b108703ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  phase1TextFR: Phase 1
+  phase2TextFR: Phase 2
+  yourTurnTextFR: Votre Tour
+  opponentTurnTextFR: Tour de l'adversaire
+  phase1TextEN: Phase 1
+  phase2TextEN: Phase 2
+  yourTurnTextEN: Your Turn
+  opponentTurnTextEN: Opponent's Turn
+  phase1Text: {fileID: 1944282966}
+  phase2Text: {fileID: 1023740580}
+  yourTurnText: {fileID: 834308065}
+  opponentTurnText: {fileID: 780421372}
   animator: {fileID: 1836222931}
   phase1: {fileID: 832632099}
   phase2: {fileID: 899780160}
@@ -27755,7 +27939,7 @@ RectTransform:
   m_LocalScale: {x: 1.0000507, y: 1.0000507, z: 1.0000507}
   m_Children: []
   m_Father: {fileID: 903998895}
-  m_RootOrder: 5
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -28035,7 +28219,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: Activer l'aide au placement des billes
+  m_text: Activer l'aide au placement des pions
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
@@ -28062,10 +28246,10 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 27.15
-  m_fontSizeBase: 36
+  m_fontSize: 27
+  m_fontSizeBase: 27
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
@@ -28102,7 +28286,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1933420241}
-    characterCount: 38
+    characterCount: 37
     spriteCount: 0
     spaceCount: 5
     wordCount: 6
@@ -28988,7 +29172,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 903998895}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -29014,7 +29198,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: 'Placer les balles :'
+  m_text: Placer les pions
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
@@ -29081,9 +29265,9 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1981074807}
-    characterCount: 19
+    characterCount: 16
     spriteCount: 0
-    spaceCount: 3
+    spaceCount: 2
     wordCount: 3
     linkCount: 0
     lineCount: 1

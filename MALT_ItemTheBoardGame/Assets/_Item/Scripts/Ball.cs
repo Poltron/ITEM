@@ -69,12 +69,14 @@ namespace AppAdvisory.Item
         public bool isPickedUp;
 
         private bool noFX;
+        private AudioManager audioManager;
 
         void Awake()
         {
             startPosition = transform.position;
             startScale = transform.localScale;
             _animator =  GetComponent<Animator>();
+            audioManager = FindObjectOfType<AudioManager>();
             noFX = false;
         }
 
@@ -97,6 +99,7 @@ namespace AppAdvisory.Item
         {
             ShowHighlight();
             _animator.SetTrigger("PickUp");
+            audioManager.PlayAudio(SoundID.PawnSelect);
             isPickedUp = true;
         }
 
@@ -157,6 +160,7 @@ namespace AppAdvisory.Item
             }
 
             GameObject.Instantiate(FXTouchBoard, transform.position, Quaternion.identity);
+            audioManager.PlayAudio(SoundID.PawnPlace);
         }
 
         private void OnBallTouchBoardVictory()

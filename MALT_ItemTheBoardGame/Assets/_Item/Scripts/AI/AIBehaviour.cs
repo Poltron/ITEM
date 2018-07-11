@@ -68,36 +68,36 @@ namespace AppAdvisory.Item
 
             yield return new WaitForEndOfFrame();
 
-            Debug.Log("BlackColor can win next turn ?");
+            //Debug.Log("BlackColor can win next turn ?");
             List<Vector2> canWinCells = new List<Vector2>();
             // if AI has a 4-0 pattern
             if (grid.CanColorWin(BallColor.Black, out canWinCells))
             {
-                Debug.Log("BlackColor can win");
+                //Debug.Log("BlackColor can win");
 
                 // if AI can move to win
                 if (grid.CanColorMoveToWin(BallColor.Black, canWinCells, out bestMove))
                 {
-                    Debug.Log("BlackColor can move to win");
+                    //Debug.Log("BlackColor can move to win");
                     done = true;
                 }
             }
 
-            Debug.Log("WhiteColor can win next turn ?");
+            //Debug.Log("WhiteColor can win next turn ?");
             // if Player can win next turn
             if (grid.CanColorWin(BallColor.White, out canWinCells) && !done)
             {
-                Debug.Log("Player can win next turn");
+                //Debug.Log("Player can win next turn");
 
                 // if player can move to win next turn
                 if (grid.CanColorMoveToWin(BallColor.White, canWinCells, out bestMove))
                 {
-                    Debug.Log("Player can move to win next turn");
+                    //Debug.Log("Player can move to win next turn");
 
                     // can AI def it ???
                     if (grid.CanColorMoveToWin(BallColor.Black, canWinCells, out bestMove))
                     {
-                        Debug.Log("AI can def next turn win");
+                        //Debug.Log("AI can def next turn win");
                         done = true;
                     }
                 }

@@ -7,14 +7,36 @@ using UnityEngine.UI;
 
 namespace AppAdvisory.Item {
 
-	public class PlayerPanel : MonoBehaviour
+	public class PlayerPanel : UIPanel
     {
+
+        [Header("FR Settings")]
+        [SerializeField]
+        private string playerNameFR;
+        [SerializeField]
+        private string opponentNameFR;
+
+        [Header("EN Settings")]
+        [SerializeField]
+        private string playerNameEN;
+        [SerializeField]
+        private string opponentNameEN;
+
+        [Header("Localized Objects")]
+        [SerializeField]
+        public Text playerName;
+
+        [Header("")]
+        [SerializeField]
+        private int playerId;
+
         private Image panel;
 
         public Text textCounter;
 
-        public Text playerName;
 		public Image image;
+
+        private bool isCustomName;
 
 		public Image whiteMarble;
 		public Image blackMarble;
@@ -38,8 +60,33 @@ namespace AppAdvisory.Item {
             panel.gameObject.SetActive(false);
         }
 
-		public void SetName(string name)
+        protected override void SetLanguageEN()
         {
+            if (playerId == 1 && !isCustomName)
+            {
+                playerName.text = playerNameEN;
+            }
+            else if (playerId == 2 && !isCustomName)
+            {
+                playerName.text = opponentNameEN;
+            }
+        }
+
+        protected override void SetLanguageFR()
+        {
+            if (playerId == 1 && !isCustomName)
+            {
+                playerName.text = playerNameFR;
+            }
+            else if (playerId == 2 && !isCustomName)
+            {
+                playerName.text = opponentNameFR;
+            }
+        }
+
+        public void SetName(string name)
+        {
+            isCustomName = true;
 			this.playerName.text = name;
 		}
 

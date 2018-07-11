@@ -501,8 +501,6 @@ namespace AppAdvisory.Item
                 return true;
             }
 
-            Debug.Log("No 4-0 pattern");
-
             return false;
         }
 
