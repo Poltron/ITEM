@@ -55,6 +55,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4390568993713064}
   - component: {fileID: 212152254492432998}
+  - component: {fileID: 210995959832766814}
   m_Layer: 8
   m_Name: BallSprite
   m_TagString: Untagged
@@ -264,6 +265,7 @@ MonoBehaviour:
     m_PreInfinity: 0
     m_PostInfinity: 0
     m_RotationOrder: 0
+  isPickedUp: 0
 --- !u!114 &114836107822811222
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -376,6 +378,16 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   m_maskType: 0
+--- !u!210 &210995959832766814
+SortingGroup:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1486644715556842}
+  m_Enabled: 1
+  m_SortingLayerID: 1299415873
+  m_SortingLayer: 2
+  m_SortingOrder: 0
 --- !u!212 &212152254492432998
 SpriteRenderer:
   m_ObjectHideFlags: 1

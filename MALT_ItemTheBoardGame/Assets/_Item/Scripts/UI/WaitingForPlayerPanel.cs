@@ -19,7 +19,7 @@ public class WaitingForPlayerPanel : UIPanel
 
     void Start()
     {
-		
+        SetLanguage(Options.GetLanguage());
 	}
 
     protected override void SetLanguageEN()

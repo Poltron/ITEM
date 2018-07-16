@@ -7,13 +7,16 @@ public class Connection : PunBehaviour {
 
 	public string UserId;
 	public string previousRoom;
+    public bool connected;
+
 	public void ApplyUserIdAndConnect()
 	{
 		string nickName = "DemoNick";
 		Debug.Log("Nickname: " + nickName + " userID: " + this.UserId,this);
 
+        connected = true;
 
-		if (PhotonNetwork.AuthValues == null)
+        if (PhotonNetwork.AuthValues == null)
 		{
 			PhotonNetwork.AuthValues = new AuthenticationValues();
 		}

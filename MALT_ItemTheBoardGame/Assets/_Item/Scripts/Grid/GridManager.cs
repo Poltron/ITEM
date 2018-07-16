@@ -129,9 +129,6 @@ namespace AppAdvisory.Item {
 
             aiBehaviour = new AIBehaviour(aiEvaluationData);
 
-			//DisplayMarbleContainer (false);
-
-            connection = GetComponent<Connection> ();
 
             uiManager.Init();
             uiManager.NextRound += OnNextRound;
@@ -139,20 +136,23 @@ namespace AppAdvisory.Item {
 			uiManager.InviteFriend += OnInviteFriend;
             uiManager.FinishTurn += OnFinishTurn;
 
-			connection.ApplyUserIdAndConnect ();
-
+            connection = GetComponent<Connection>();
+            connection.ApplyUserIdAndConnect ();
+            
 			fbManager = FindObjectOfType<FBManager> ();
             if (fbManager)
             {
                 Debug.Log("fbManager != null");
-
+                
                 playerName = fbManager.pName;
                 playerPicURL = fbManager.pUrlPic;
 
+                StartCoroutine(Utils.LoadSpriteFromURL(playerPicURL, (sprite) => {
+                    uiManager.SetPlayer1Pic(sprite);
+                }));
+
                 fbManager.NameLoaded += OnNameLoaded;
                 fbManager.PicURLLoaded += OnPicURLLoaded;
-
-                //fbManager.FacebookConnect += OnFacebookConnect;
             }
 
             audioManager = FindObjectOfType<AudioManager>();
@@ -230,12 +230,18 @@ namespace AppAdvisory.Item {
 		private void OnNameLoaded(string name) {
 			playerName = name;
             uiManager.DisplayPlayer1(true);
-			print ("onnameloaded " + name);
+            print("onnameloaded " + name);
 		}
 
 		private void OnPicURLLoaded(string url) {
 			playerPicURL = url;
+
+            StartCoroutine(Utils.LoadSpriteFromURL(playerPicURL, (sprite) => {
+                uiManager.SetPlayer1Pic(sprite);
+            }));
+
             uiManager.DisplayPlayer1(true);
+
             print ("onpicurlloaded" + url);
 		}
 
@@ -610,7 +616,10 @@ namespace AppAdvisory.Item {
             List<WinningPattern> winningPatterns = new List<WinningPattern>();
             optiGrid.GetWinningPatterns(out winningPatterns);
 
-            foreach(WinningPattern pattern in winningPatterns)
+            WinningPattern toKeep = new WinningPattern();
+            int bestScore = -1;
+
+            foreach (WinningPattern pattern in winningPatterns)
             {
                 bool alreadyDone = false;
 
@@ -628,27 +637,47 @@ namespace AppAdvisory.Item {
 
                 alreadyAnimatedPattern.Add(pattern);
 
-                StartCoroutine(playVictoryAnimationPhase1(pattern));
-
-                if (audioManager != null)
+                int patternScore = pattern.GetScore(modelGrid);
+                if (bestScore <= patternScore)
                 {
-                    audioManager.PlayAudio(SoundID.Combo);
+                    toKeep = pattern;
+                    bestScore = patternScore;
                 }
+            }
+
+            StartCoroutine(playVictoryAnimationPhase1(toKeep));
+
+            if (audioManager != null)
+            {
+                audioManager.PlayAudio(SoundID.Combo);
             }
         }
 
         IEnumerator playVictoryAnimationPhase1(WinningPattern pattern)
         {
-            modelGrid.GetCellFromModel((int)pattern.cells[0].y, (int)pattern.cells[0].x).ball.GetComponent<Animator>().SetTrigger("WinPhase1");
+            Ball ball = modelGrid.GetCellFromModel((int)pattern.cells[0].y, (int)pattern.cells[0].x).ball;
+            ball.FixSortingLayer(true);
+            ball.GetComponent<Animator>().SetTrigger("WinPhase1");
             yield return new WaitForSeconds(timeBetweenBallsPhase1AnimBegin);
-            modelGrid.GetCellFromModel((int)pattern.cells[1].y, (int)pattern.cells[1].x).ball.GetComponent<Animator>().SetTrigger("WinPhase1");
-            yield return new WaitForSeconds(timeBetweenBallsPhase1AnimBegin);
-            modelGrid.GetCellFromModel((int)pattern.cells[2].y, (int)pattern.cells[2].x).ball.GetComponent<Animator>().SetTrigger("WinPhase1");
-            yield return new WaitForSeconds(timeBetweenBallsPhase1AnimBegin);
-            modelGrid.GetCellFromModel((int)pattern.cells[3].y, (int)pattern.cells[3].x).ball.GetComponent<Animator>().SetTrigger("WinPhase1");
-            yield return new WaitForSeconds(timeBetweenBallsPhase1AnimBegin);
-            modelGrid.GetCellFromModel((int)pattern.cells[4].y, (int)pattern.cells[4].x).ball.GetComponent<Animator>().SetTrigger("WinPhase1");
 
+            ball = modelGrid.GetCellFromModel((int)pattern.cells[1].y, (int)pattern.cells[1].x).ball;
+            ball.FixSortingLayer(true);
+            ball.GetComponent<Animator>().SetTrigger("WinPhase1");
+            yield return new WaitForSeconds(timeBetweenBallsPhase1AnimBegin);
+
+            ball = modelGrid.GetCellFromModel((int)pattern.cells[2].y, (int)pattern.cells[2].x).ball;
+            ball.FixSortingLayer(true);
+            ball.GetComponent<Animator>().SetTrigger("WinPhase1");
+            yield return new WaitForSeconds(timeBetweenBallsPhase1AnimBegin);
+
+            ball = modelGrid.GetCellFromModel((int)pattern.cells[3].y, (int)pattern.cells[3].x).ball;
+            ball.FixSortingLayer(true);
+            ball.GetComponent<Animator>().SetTrigger("WinPhase1");
+            yield return new WaitForSeconds(timeBetweenBallsPhase1AnimBegin);
+
+            ball = modelGrid.GetCellFromModel((int)pattern.cells[4].y, (int)pattern.cells[4].x).ball;
+            ball.FixSortingLayer(true);
+            ball.GetComponent<Animator>().SetTrigger("WinPhase1");
             yield return new WaitForSeconds(timeBeforePhase2AnimBegin);
 
             StartCoroutine(playVictoryAnimationPhase2(pattern));
@@ -669,16 +698,29 @@ namespace AppAdvisory.Item {
 
         IEnumerator addVictoryPoints(WinningPattern pattern)
         {
-            modelGrid.GetCellFromModel((int)pattern.cells[0].y, (int)pattern.cells[0].x).ball.GetComponent<Animator>().SetTrigger("ScoreCounting");
+            Ball ball = modelGrid.GetCellFromModel((int)pattern.cells[0].y, (int)pattern.cells[0].x).ball;
+            ball.GetComponent<Animator>().SetTrigger("ScoreCounting");
+            ball.FixSortingLayer(false);
             yield return new WaitForSeconds(1.0f);
-            modelGrid.GetCellFromModel((int)pattern.cells[1].y, (int)pattern.cells[1].x).ball.GetComponent<Animator>().SetTrigger("ScoreCounting");
-            yield return new WaitForSeconds(1.0f);
-            modelGrid.GetCellFromModel((int)pattern.cells[2].y, (int)pattern.cells[2].x).ball.GetComponent<Animator>().SetTrigger("ScoreCounting");
-            yield return new WaitForSeconds(1.0f);
-            modelGrid.GetCellFromModel((int)pattern.cells[3].y, (int)pattern.cells[3].x).ball.GetComponent<Animator>().SetTrigger("ScoreCounting");
-            yield return new WaitForSeconds(1.0f);
-            modelGrid.GetCellFromModel((int)pattern.cells[4].y, (int)pattern.cells[4].x).ball.GetComponent<Animator>().SetTrigger("ScoreCounting");
 
+            ball = modelGrid.GetCellFromModel((int)pattern.cells[1].y, (int)pattern.cells[1].x).ball;
+            ball.GetComponent<Animator>().SetTrigger("ScoreCounting");
+            ball.FixSortingLayer(false);
+            yield return new WaitForSeconds(1.0f);
+
+            ball = modelGrid.GetCellFromModel((int)pattern.cells[2].y, (int)pattern.cells[2].x).ball;
+            ball.GetComponent<Animator>().SetTrigger("ScoreCounting");
+            ball.FixSortingLayer(false);
+            yield return new WaitForSeconds(1.0f);
+
+            ball = modelGrid.GetCellFromModel((int)pattern.cells[3].y, (int)pattern.cells[3].x).ball;
+            ball.GetComponent<Animator>().SetTrigger("ScoreCounting");
+            ball.FixSortingLayer(false);
+            yield return new WaitForSeconds(1.0f);
+
+            ball = modelGrid.GetCellFromModel((int)pattern.cells[4].y, (int)pattern.cells[4].x).ball;
+            ball.GetComponent<Animator>().SetTrigger("ScoreCounting");
+            ball.FixSortingLayer(false);
             yield return new WaitForSeconds(3.0f);
 
             playVictoryAnimationEnd(pattern);
@@ -908,11 +950,20 @@ namespace AppAdvisory.Item {
             }
             else
             {
-                uiManager.SetPlayer1Turn(player.StartTurn);
+                StartCoroutine(waitFor((movements.Length * 1.0f) - 1.0f, uiManager.SetPlayer1Turn, player.StartTurn));
+                //uiManager.SetPlayer1Turn(player.StartTurn);
             }
-		}
+        }
 
-		private void SendName(string name) {
+        IEnumerator waitFor(float t, System.Action<System.Action> callback, System.Action arg)
+        {
+            while ((t -= Time.deltaTime) > 0)
+                yield return new WaitForEndOfFrame();
+
+            callback(arg);
+        }
+
+        private void SendName(string name) {
 			PhotonView photonView = PhotonView.Get(this);
 			photonView.RPC("ReceiveName", PhotonTargets.Others, name);
 		}
@@ -979,10 +1030,6 @@ namespace AppAdvisory.Item {
                 uiManager.DisplayTurnSwitchPhase1(true);
 
                 uiManager.SetPlayer1Name (playerName);
-				StartCoroutine (Utils.LoadSpriteFromURL (playerPicURL, (sprite) => {
-					uiManager.SetPlayer1Pic(sprite);
-				}));
-
 
 				print ("2 players in the room, sending player name : " + playerName);
 				SendName (playerName);
@@ -994,9 +1041,6 @@ namespace AppAdvisory.Item {
 				uiManager.DisplayWaitingForPlayerPanel (true);
 				uiManager.InitPlayer1(BallColor.White);
 				uiManager.SetPlayer1Name (playerName);
-				StartCoroutine (Utils.LoadSpriteFromURL (playerPicURL, (sprite) => {
-					uiManager.SetPlayer1Pic(sprite);
-				}));
 
 				uiManager.DisplayYourTurn (false);
 			}
@@ -1045,8 +1089,15 @@ namespace AppAdvisory.Item {
 
 		public void OnRestart()
         {
-            PhotonNetwork.LoadLevel (1);
-		}
+            if (fbManager != null)
+            {
+                fbManager.NameLoaded -= OnNameLoaded;
+                fbManager.PicURLLoaded -= OnPicURLLoaded;
+            }
+
+            RestartConnection();
+            SceneManager.LoadScene(1);
+        }
 
         public void OnNextRound()
         {

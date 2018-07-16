@@ -52,6 +52,19 @@ public class OptionsPanel : UIPanel
         audioManager = FindObjectOfType<AudioManager>();
     }
 
+    void RefreshValues()
+    {
+        if (Options.GetEnablePlacementHelp())
+            ballPlacementHelp.isOn = true;
+        else
+            ballPlacementHelp.isOn = false;
+
+        if (Options.GetEnableHelpPopup())
+            roundHelpPopup.isOn = true;
+        else
+            roundHelpPopup.isOn = false;
+    }
+
     public void PopIn()
     {
         gameObject.SetActive(true);
@@ -63,6 +76,7 @@ public class OptionsPanel : UIPanel
 
         if (animator.gameObject.activeInHierarchy)
         {
+            RefreshValues();
             animator.SetTrigger("OptionsPanelPopIn");
             isFadingIn = true;
 

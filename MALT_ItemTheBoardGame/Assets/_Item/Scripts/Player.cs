@@ -88,7 +88,7 @@ namespace AppAdvisory.Item {
 //			}
 		}
 
-		void On_Drag(Gesture gesture) {
+		/*void On_Drag(Gesture gesture) {
 			if (fingerIndex != gesture.fingerIndex)
 				return;
 
@@ -204,7 +204,7 @@ namespace AppAdvisory.Item {
 			} else {
 				On_DragEndPhase2 (pickedCell);
 			}
-		}
+		}*/
         
         public void SetExclusivePickableObject(GameObject go)
         {
@@ -213,11 +213,18 @@ namespace AppAdvisory.Item {
 
         public void OnTouchUpPublic(Gesture gesture)
         {
-            OnTouchUp(gesture);
             Debug.Log("on touch up public");
+            OnTouchUp(gesture);
         }
 
-		void OnTouchUp(Gesture gesture) {
+        float lastInput = 0;
+		void OnTouchUp(Gesture gesture)
+        {
+            // mesure préventive pour le moment ou il y a un double input en pahse 1 qui bloque la bille sélectionnée ???
+            if (lastInput + 0.05f > Time.realtimeSinceStartup)
+                return;
+
+            lastInput = Time.realtimeSinceStartup;
 
             Debug.Log("on touch up");
 
@@ -227,11 +234,12 @@ namespace AppAdvisory.Item {
             if (!gesture.pickedObject)
 				return;
 
+            Debug.Log(gesture.pickedObject.name);
+
             if (exclusivePickableObject != null && gesture.pickedObject != exclusivePickableObject)
                 return;
 
 			Cell pickedCell = gesture.pickedObject.GetComponent<Cell> (); 
-
 			Ball pickedBall = gesture.pickedObject.GetComponent<Ball> ();
 
 			if (pickedBall)
@@ -243,7 +251,12 @@ namespace AppAdvisory.Item {
 				if (currentBall) {
 					if (!pickedCell)
                     {
-						if (pickedBall && pickedBall.Color == color) {
+                        if (pickedBall == currentBall)
+                        {
+                            currentBall.PutDownBall();
+                            currentBall = null;
+                        }
+						else if (pickedBall && pickedBall.Color == color) {
 							currentBall.PutDownBall();
 							currentBall = pickedBall;
 							currentBall.PickUpBall();
@@ -279,7 +292,11 @@ namespace AppAdvisory.Item {
 					if (pickedBall.Color != color)
 						return;
 
-					On_DragStartPhase1 (gesture, pickedBall);
+                    if (pickedBall.owner != null)
+                        return;
+
+                    RegisterBall(gesture, pickedBall);
+					//On_DragStartPhase1 (gesture, pickedBall);
 				
 				}
 				if (!pickedCell)
@@ -372,11 +389,14 @@ namespace AppAdvisory.Item {
 
             ball.isPickedUp = false;
 
+            ball.FixSortingLayer(true);
+
             ball.transform.DOMove (secondCell.transform.position, 1f).OnComplete (() => {
 				ball.transform.position = secondCell.transform.position;
 				//ball.SetStartPosition ();
 				isTweening = false;
-			});
+                ball.FixSortingLayer(false);
+            });
 		}
 
 		void SendTurnDataPhase1(Cell pickedCell) {
@@ -397,14 +417,17 @@ namespace AppAdvisory.Item {
 
 		public void MoveBall(Cell pickedCell) {
 			if (pickedCell == currentCell) {
-                currentBall.PutDownBall();
                 modelGrid.ResetCellsColor();
 
 				if (hasAlreadyJumpedOnce) {
 					currentBall.HideHighlight ();
 					EndTurn ();
 					SendTurnDataPhase2 ();
-				}														
+				}			
+                else
+                {
+                    currentBall.PutDownBall();
+                }
 
 				ResetCurrentCells ();
 				return;

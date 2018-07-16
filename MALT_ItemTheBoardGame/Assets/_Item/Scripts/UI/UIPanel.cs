@@ -4,15 +4,20 @@ using UnityEngine;
 
 public abstract class UIPanel : MonoBehaviour
 {
+    private void Start()
+    {
+        SetLanguage(Options.GetLanguage());
+    }
+
     public void SetLanguage(string language)
     {
-        if (language == "fr")
-        {
-            SetLanguageFR();
-        }
-        else if (language == "en")
+        if (language == "en")
         {
             SetLanguageEN();
+        }
+        else
+        {
+            SetLanguageFR();
         }
     }
 

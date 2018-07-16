@@ -8,13 +8,17 @@ public static class Options
     {
         if (PlayerPrefs.GetInt("prefInitialized", 0) == 0)
         {
-
-        }
-        else
-        {
             SetEnableHelpPopup(true);
             SetEnablePlacementHelp(true);
             SetAskForTuto(true);
+
+            PlayerPrefs.SetInt("prefInitialized", 1);
+
+            Debug.Log("not initialized");
+        }
+        else
+        {
+            Debug.Log("already initialized");
         }
     }
 

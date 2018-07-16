@@ -17,6 +17,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
+using UnityEngine.Rendering;
 
 namespace AppAdvisory.Item
 {
@@ -68,6 +69,8 @@ namespace AppAdvisory.Item
         private Animator _animator;
         public bool isPickedUp;
 
+        private bool isAboveUI;
+
         private bool noFX;
         private AudioManager audioManager;
 
@@ -97,6 +100,9 @@ namespace AppAdvisory.Item
 
         public void PickUpBall()
         {
+            if (!isAboveUI)
+                FixSortingLayer(true);
+
             ShowHighlight();
             _animator.SetTrigger("PickUp");
             audioManager.PlayAudio(SoundID.PawnSelect);
@@ -105,6 +111,7 @@ namespace AppAdvisory.Item
 
         public void PutDownBall()
         {
+            FixSortingLayer(false);
             HideHighlight();
             _animator.SetTrigger("PutDown");
             isPickedUp = false;
@@ -128,19 +135,38 @@ namespace AppAdvisory.Item
 
         public void PassAboveUI(bool enabled)
         {
+            isAboveUI = enabled;
+
             if (enabled)
             {
-                ballSprite.sortingLayerID = SortingLayer.NameToID("AboveUI");
+                ballSprite.GetComponent<SortingGroup>().sortingLayerID = SortingLayer.NameToID("AboveUI");
+                /*ballSprite.sortingLayerID = SortingLayer.NameToID("AboveUI");
                 ballNumberText.sortingLayerID = SortingLayer.NameToID("AboveUI");
                 ballShadow.sortingLayerID = SortingLayer.NameToID("AboveUI");
-                highlight.sortingLayerID = SortingLayer.NameToID("AboveUI");
+                highlight.sortingLayerID = SortingLayer.NameToID("AboveUI");*/
             }
             else
             {
-                ballSprite.sortingLayerID = SortingLayer.NameToID("Ball");
+                ballSprite.GetComponent<SortingGroup>().sortingLayerID = SortingLayer.NameToID("Ball");
+                /*ballSprite.sortingLayerID = SortingLayer.NameToID("Ball");
                 ballNumberText.sortingLayerID = SortingLayer.NameToID("BallNumber");
                 ballShadow.sortingLayerID = SortingLayer.NameToID("Default");
-                highlight.sortingLayerID = SortingLayer.NameToID("Highlight");
+                highlight.sortingLayerID = SortingLayer.NameToID("Highlight");*/
+            }
+        }
+
+        public void FixSortingLayer(bool enabled)
+        {
+            if (enabled)
+            {
+                ballSprite.GetComponent<SortingGroup>().sortingOrder = 1;
+                ballSprite.GetComponent<SortingGroup>().sortingOrder += (int)Camera.main.WorldToScreenPoint(transform.position).y;
+                ballShadow.GetComponent<SpriteRenderer>().sortingOrder = 1;
+            }
+            else
+            {
+                ballSprite.GetComponent<SortingGroup>().sortingOrder = 0;
+                ballShadow.GetComponent<SpriteRenderer>().sortingOrder = 0;
             }
         }
 

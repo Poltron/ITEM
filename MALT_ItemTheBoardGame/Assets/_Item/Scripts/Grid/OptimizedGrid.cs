@@ -88,6 +88,19 @@ namespace AppAdvisory.Item
 
             return true;
         }
+
+        public int GetScore(ModelGrid grid)
+        {
+            int score = 0;
+
+            score += grid.GetCellFromModel((int)cells[0].y, (int)cells[0].x).ball.Score;
+            score += grid.GetCellFromModel((int)cells[1].y, (int)cells[1].x).ball.Score;
+            score += grid.GetCellFromModel((int)cells[2].y, (int)cells[2].x).ball.Score;
+            score += grid.GetCellFromModel((int)cells[3].y, (int)cells[3].x).ball.Score;
+            score += grid.GetCellFromModel((int)cells[4].y, (int)cells[4].x).ball.Score;
+
+            return score;
+        }
     }
 
     public class OptimizedGrid

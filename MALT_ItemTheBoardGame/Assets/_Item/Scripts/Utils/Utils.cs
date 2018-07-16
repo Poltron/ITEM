@@ -1221,7 +1221,8 @@ namespace AppAdvisory.Item {
 		#endregion
 
 		public static void Place(this Ball ball, Cell pickedCell) {
-			pickedCell.ball = ball;
+
+            pickedCell.ball = ball;
 			ball.transform.position = pickedCell.transform.position;
 			ball.owner = pickedCell;
 			//ball.SetStartPosition ();
@@ -1245,11 +1246,13 @@ namespace AppAdvisory.Item {
                 ball.GetComponent<Animator>().SetTrigger("Move");
 
             ball.isPickedUp = false;
+            ball.FixSortingLayer(true);
 
             ball.transform.DOMove (pickedCell.transform.position, 1.0f).OnComplete (() =>  {
 				ball.transform.position = pickedCell.transform.position;
 				ball.owner = pickedCell;
-			});
+                ball.FixSortingLayer(false);
+            });
 		}
 
 		public static IEnumerator LoadSpriteFromURL(string url, Action<Sprite> callback)
