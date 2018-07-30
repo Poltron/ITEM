@@ -1155,9 +1155,9 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: dd3385ca91ec7244bafd173747463090, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 8d675505d5b7441479bd97916e074fcb, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.5
+  m_Volume: 0.1
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -23096,6 +23096,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sounds: {fileID: 11400000, guid: 4e8d0fc907a83ba41b87962cfdaa8fd5, type: 2}
+  music: {fileID: 82614217}
 --- !u!23 &1554566540 stripped
 MeshRenderer:
   m_PrefabParentObject: {fileID: 23259942448361530, guid: f92513f0f5e5c4ba0b6489ddc5ad06d2,
@@ -26629,7 +26630,7 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2086856990}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 363.652}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -30.7219}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0.0000009536743, y: 0.0000009536743}
@@ -28724,6 +28725,16 @@ Prefab:
     - target: {fileID: 114026230691909298, guid: f92513f0f5e5c4ba0b6489ddc5ad06d2,
         type: 2}
       propertyPath: ballId
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114450694929290980, guid: f92513f0f5e5c4ba0b6489ddc5ad06d2,
+        type: 2}
+      propertyPath: m_havePropertiesChanged
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114450694929290980, guid: f92513f0f5e5c4ba0b6489ddc5ad06d2,
+        type: 2}
+      propertyPath: m_isInputParsingRequired
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

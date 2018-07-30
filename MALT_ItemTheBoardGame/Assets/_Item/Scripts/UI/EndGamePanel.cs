@@ -76,6 +76,8 @@ public class EndGamePanel : UIPanel
     [SerializeField]
     private TextMeshProUGUI pointsText;
 
+    private AudioManager audioManager;
+
     protected override void SetLanguageEN()
     {
         youWonText.text = youWonTextEN;
@@ -110,6 +112,13 @@ public class EndGamePanel : UIPanel
         youWon.gameObject.SetActive(isShown);
         points.gameObject.SetActive(isShown);
         playAgain.gameObject.SetActive(isShown);
+
+        if (audioManager == null)
+        {
+            audioManager = FindObjectOfType<AudioManager>();
+        }
+
+        audioManager.PlayJingleAboveMusic(SoundID.JingleWin);
     }
 
     public void DisplayLooseScreen(bool isShown)
@@ -118,6 +127,13 @@ public class EndGamePanel : UIPanel
         youLost.gameObject.SetActive(isShown);
         points.gameObject.SetActive(isShown);
         playAgain.gameObject.SetActive(isShown);
+
+        if (audioManager == null)
+        {
+            audioManager = FindObjectOfType<AudioManager>();
+        }
+
+        audioManager.PlayJingleAboveMusic(SoundID.JingleLoose);
     }
 
     public void DisplayDrawScreen(bool isShown)
@@ -126,6 +142,13 @@ public class EndGamePanel : UIPanel
         draw.gameObject.SetActive(isShown);
         points.gameObject.SetActive(isShown);
         playAgain.gameObject.SetActive(isShown);
+
+        if (audioManager == null)
+        {
+            audioManager = FindObjectOfType<AudioManager>();
+        }
+
+        audioManager.PlayJingleAboveMusic(SoundID.JingleDraw);
     }
 
     public void DisplayWonByForfeit(bool isShown)

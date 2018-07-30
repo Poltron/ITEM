@@ -113,11 +113,21 @@ public class OptionsPanel : UIPanel
 
     public void ToggleEnableBallPlacementHelp(bool notUseful)
     {
+        if (ballPlacementHelp.isOn)
+            audioManager.PlayAudio(SoundID.CheckboxOn);
+        else
+            audioManager.PlayAudio(SoundID.CheckboxOff);
+
         Options.SetEnablePlacementHelp(ballPlacementHelp.isOn);
     }
 
     public void ToggleEnableHelpPopup(bool notUseful)
     {
+        if (roundHelpPopup.isOn)
+            audioManager.PlayAudio(SoundID.CheckboxOn);
+        else
+            audioManager.PlayAudio(SoundID.CheckboxOff);
+
         Options.SetEnableHelpPopup(roundHelpPopup.isOn);
     }
 

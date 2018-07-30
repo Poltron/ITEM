@@ -646,10 +646,11 @@ namespace AppAdvisory.Item {
             }
 
             StartCoroutine(playVictoryAnimationPhase1(toKeep));
-
+            
             if (audioManager != null)
             {
-                audioManager.PlayAudio(SoundID.Combo);
+                audioManager.PlayAudio(SoundID.ComboRumble);
+                audioManager.ResetVictoryAnimationSounds();
             }
         }
 

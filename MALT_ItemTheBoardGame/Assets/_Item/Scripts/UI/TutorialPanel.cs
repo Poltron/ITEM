@@ -223,6 +223,13 @@ public class TutorialPanel : UIPanel
             animator.SetTrigger("PopIn");
             askForTuto.gameObject.SetActive(isShown);
             askForTuto.SetTrigger("PopIn");
+
+            if (audioManager == null)
+            {
+                audioManager = FindObjectOfType<AudioManager>();
+            }
+
+            audioManager.PlayAudio(SoundID.OpenWindowTuto);
         }
         else
         {
@@ -369,6 +376,7 @@ public class TutorialPanel : UIPanel
             animator.SetTrigger("PopIn");
             phase2MovementsScreen.gameObject.SetActive(true);
             phase2MovementsScreen.SetTrigger("PopIn");
+            audioManager.PlayAudio(SoundID.OpenWindowTuto);
         }
         else
         {

@@ -185,7 +185,9 @@ namespace AppAdvisory.Item
                 return;
             }
 
-            GameObject.Instantiate(FXTouchBoard, transform.position, Quaternion.identity);
+            if (FXTouchBoard)
+                GameObject.Instantiate(FXTouchBoard, transform.position, Quaternion.identity);
+
             audioManager.PlayAudio(SoundID.PawnPlace);
         }
 
@@ -197,7 +199,8 @@ namespace AppAdvisory.Item
                 return;
             }
 
-            Camera.main.GetComponent<CameraShake>().Shake();    
+            Camera.main.GetComponent<CameraShake>().Shake();
+            audioManager.PlayComboImpact();
             GameObject.Instantiate(FXTouchBoardVictory, transform.position, Quaternion.identity);
         }
 
@@ -211,9 +214,14 @@ namespace AppAdvisory.Item
             if (transform.position == startPosition)
                 return;
 
-            transform.DOMove(startPosition, 1.0f);
+            transform.DOMove(startPosition, 1.0f).OnComplete(() => { audioManager.PlayAudio(SoundID.PawnPlace); });
             _animator.SetTrigger("Move");
             noFX = true;
+        }
+
+        public void PlayComboLiftUpSound()
+        {
+            audioManager.PlayNextBallPopSound();
         }
     }
 }

@@ -50,6 +50,8 @@ namespace AppAdvisory.Item {
         [SerializeField]
         private Animator scoreCounterAnimator;
 
+        private AudioManager audioManager;
+
         void Awake ()
         {
 			panel = GetComponent<Image> ();
@@ -146,6 +148,16 @@ namespace AppAdvisory.Item {
         public void SetScoreCounter(int nb)
         {
             textCounter.text = nb.ToString();
+        }
+
+        private void PlayPortraitRollSound()
+        {
+            if (audioManager == null)
+            {
+                audioManager = FindObjectOfType<AudioManager>();
+            }
+
+            audioManager.PlayAudio(SoundID.PortraitRoll);
         }
 	}
 

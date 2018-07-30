@@ -66,6 +66,7 @@ namespace AppAdvisory.Item
         
         private UIManager uiManager;
         private Action callBack;
+        private AudioManager audioManager;
 
         public void SetUIManager(UIManager ui)
         {
@@ -125,6 +126,13 @@ namespace AppAdvisory.Item
         {
             gameObject.SetActive(true);
             animator.SetTrigger("popIn");
+
+            if (audioManager == null)
+            {
+                audioManager = FindObjectOfType<AudioManager>();
+            }
+
+            audioManager.PlayAudio(SoundID.SwitchTurn);
         }
 
         private void CallbackTurnSwitchAnimation()

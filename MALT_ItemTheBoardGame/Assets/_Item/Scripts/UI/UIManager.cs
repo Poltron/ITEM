@@ -243,6 +243,7 @@ namespace AppAdvisory.Item {
         public void PopScoreParticle(Ball ball)
         {
             GameObject g = GameObject.Instantiate(scoreParticle, ball.transform.position, Quaternion.identity);
+            audioManager.PlayAudio(SoundID.ParticleMove);
 
             if (isPlayer1Turn)
             {
@@ -250,8 +251,13 @@ namespace AppAdvisory.Item {
                 {
                     if (ball.Score != 0)
                     {
+                        audioManager.PlayAudio(SoundID.ParticleOne);
                         player1.StartScoreAnim();
                         gridManager.AddPlayer1Score(ball.Score);
+                    }
+                    else
+                    {
+                        audioManager.PlayAudio(SoundID.ParticleZero);
                     }
 
                     Destroy(g);
@@ -263,8 +269,13 @@ namespace AppAdvisory.Item {
                 {
                     if (ball.Score != 0)
                     {
+                        audioManager.PlayAudio(SoundID.ParticleOne);
                         player2.StartScoreAnim();
                         gridManager.AddPlayer2Score(ball.Score);
+                    }
+                    else
+                    {
+                        audioManager.PlayAudio(SoundID.ParticleZero);
                     }
 
                     Destroy(g);
@@ -285,11 +296,6 @@ namespace AppAdvisory.Item {
             {
                 player1.StopPortraitAnimation();
                 player2.PlayPortraitAnimation();
-            }
-
-            if (audioManager != null)
-            {
-                audioManager.PlayAudio(SoundID.SwitchTurn);
             }
         }
 
