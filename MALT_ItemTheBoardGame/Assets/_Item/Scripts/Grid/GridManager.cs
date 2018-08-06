@@ -266,6 +266,8 @@ namespace AppAdvisory.Item {
 
             Ball[] balls = FindObjectsOfType<Ball>();
 
+            Ball.resetPlaySound = true;
+
             foreach(Ball b in balls)
             {
                 b.Reset();

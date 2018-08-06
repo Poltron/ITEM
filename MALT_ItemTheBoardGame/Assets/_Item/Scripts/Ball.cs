@@ -209,12 +209,22 @@ namespace AppAdvisory.Item
             FindObjectOfType<GridManager>().BallAddScore(this);
         }
 
+        static public bool resetPlaySound;
+
         public void MoveToResetPosition()
         {
             if (transform.position == startPosition)
                 return;
 
-            transform.DOMove(startPosition, 1.0f).OnComplete(() => { audioManager.PlayAudio(SoundID.PawnPlace); });
+            transform.DOMove(startPosition, 1.0f).OnComplete(() =>
+            {
+                if (resetPlaySound)
+                {
+                    audioManager.PlayAudio(SoundID.PawnPlace);
+                    resetPlaySound = false;
+                }
+            });
+
             _animator.SetTrigger("Move");
             noFX = true;
         }

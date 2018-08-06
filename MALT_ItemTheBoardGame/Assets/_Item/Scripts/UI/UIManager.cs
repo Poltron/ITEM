@@ -317,6 +317,9 @@ namespace AppAdvisory.Item {
 
 		public void OnNextRoundButton()
         {
+            if (audioManager != null)
+                audioManager.PlayAudio(SoundID.ClickUI);
+
             if (NextRound != null)
             {
                 NextRound();
@@ -326,6 +329,9 @@ namespace AppAdvisory.Item {
 
         public void OnRestartButton()
         {
+            if (audioManager != null)
+                audioManager.PlayAudio(SoundID.ClickUI);
+
             if (Restart != null)
                 Restart();
         }
@@ -381,6 +387,11 @@ namespace AppAdvisory.Item {
 
         public void OnGoToGameResults()
         {
+            if (audioManager != null)
+            {
+                audioManager.PlayAudio(SoundID.ClickUI);
+            }
+
             int playerScore = 0;
             int opponentScore = 0;
 
