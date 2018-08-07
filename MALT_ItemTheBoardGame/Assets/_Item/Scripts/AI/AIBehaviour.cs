@@ -55,6 +55,15 @@ namespace AppAdvisory.Item
             evaluationData = _data;
         }
 
+        public IEnumerator GetRandomMove(OptimizedGrid optiGrid, System.Action<Move> toDo)
+        {
+            yield return new WaitForEndOfFrame();
+            grid = optiGrid;
+
+            List<Move> newGameMoves = grid.GetAvailableMoves(CellColor.Black);
+            toDo(newGameMoves[Random.Range(0, newGameMoves.Count - 1)]);
+        }
+
         public IEnumerator GetBestMove(OptimizedGrid optiGrid, System.Action<Move> toDo)
         {
             grid = optiGrid;

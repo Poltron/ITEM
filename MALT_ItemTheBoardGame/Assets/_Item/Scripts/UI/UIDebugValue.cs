@@ -14,6 +14,11 @@ namespace AppAdvisory.Item
         OPTIGRID,
         PLAYER1NBTURN,
         PLAYER2NBTURN,
+        PLAYER1SCORE,
+        PLAYER2SCORE,
+        PLAYER1TOTALSCORE,
+        PLAYER2TOTALSCORE,
+        WHOSTURN,
         EQUALITYTURN
     };
 
@@ -70,6 +75,21 @@ namespace AppAdvisory.Item
                     break;
                 case DEBUG_VALUE.PLAYER2NBTURN:
                     _text.text = gridManager.Player2NbOfTurn.ToString();
+                    break;
+                case DEBUG_VALUE.PLAYER1SCORE:
+                    _text.text = gridManager.playerScore.ToString();
+                    break;
+                case DEBUG_VALUE.PLAYER2SCORE:
+                    _text.text = gridManager.otherPlayerScore.ToString();
+                    break;
+                case DEBUG_VALUE.PLAYER1TOTALSCORE:
+                    _text.text = gridManager.totalPlayerScore.ToString();
+                    break;
+                case DEBUG_VALUE.PLAYER2TOTALSCORE:
+                    _text.text = gridManager.totalOtherPlayerScore.ToString();
+                    break;
+                case DEBUG_VALUE.WHOSTURN:
+                    _text.text = FindObjectOfType<UIManager>().isPlayer1Turn ? "player1turn" : "player2turn";
                     break;
                 case DEBUG_VALUE.EQUALITYTURN:
                     _text.text = (gridManager.IsEqualityTurn) ? "true" : "false";

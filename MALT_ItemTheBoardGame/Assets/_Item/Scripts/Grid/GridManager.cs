@@ -70,11 +70,15 @@ namespace AppAdvisory.Item {
 
         private bool isGameFinished = false;
 
-        private int playerScore = 0;
-        private int otherPlayerScore = 0;
+        [HideInInspector]
+        public int playerScore = 0;
+        [HideInInspector]
+        public int otherPlayerScore = 0;
 
-        private int totalPlayerScore = 0;
-        private int totalOtherPlayerScore = 0;
+        [HideInInspector]
+        public int totalPlayerScore = 0;
+        [HideInInspector]
+        public int totalOtherPlayerScore = 0;
 
         private bool isEqualityTurn = false;
         private bool nextTurnIsAI = false;
@@ -93,6 +97,11 @@ namespace AppAdvisory.Item {
 
         [SerializeField]
         private bool disableAI = false;
+        [SerializeField]
+        private bool randomAI = false;
+
+        [SerializeField]
+        private Toggle randomAIToggle;
 
         [SerializeField]
         private int numberOfRound;
@@ -118,6 +127,11 @@ namespace AppAdvisory.Item {
         public WinningPattern actualWinningPattern;
 
         private AudioManager audioManager;
+
+        public void ChangeRandomCheckbox(bool value)
+        {
+            randomAI = randomAIToggle.isOn;
+        }
 
         void Start ()
         {
@@ -343,7 +357,10 @@ namespace AppAdvisory.Item {
 		public void PlayIAPhase1()
         {
             numberOfTurnsPlayer2++;
-            StartCoroutine(aiBehaviour.GetBestMove(optiGrid, PlayIAPhase1CalculusEnded));
+            if (randomAI)
+                StartCoroutine(aiBehaviour.GetRandomMove(optiGrid, PlayIAPhase1CalculusEnded));
+            else
+                StartCoroutine(aiBehaviour.GetBestMove(optiGrid, PlayIAPhase1CalculusEnded));
         }
 
         public void PlayIAPhase1CalculusEnded(Move move)
@@ -364,16 +381,18 @@ namespace AppAdvisory.Item {
                     DOVirtual.DelayedCall(1.5f, PlayVictoryAnimation, true);
                 }
 
-                if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
+                Debug.Log("numberOfTurnsPlayer1 : " + numberOfTurnsPlayer1 + " / numberOfTurnsPlayer2 : " + numberOfTurnsPlayer2);
+
+                /*if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
                 {
                     nextTurnIsAI = false;
                     isEqualityTurn = true;
                 }
                 else
-                {
-                    nextTurnIsAI = false;
-                    EndGame(justWon);
-                }
+                {*/
+                nextTurnIsAI = false;
+                EndGame(justWon);
+                //}
             }
             else
             {
@@ -412,7 +431,11 @@ namespace AppAdvisory.Item {
         public void PlayIAPhase2()
         {
             numberOfTurnsPlayer2++;
-            StartCoroutine(aiBehaviour.GetBestMove(optiGrid, PlayIAPhase2CalculusEnded));
+
+            if (randomAI)
+                StartCoroutine(aiBehaviour.GetRandomMove(optiGrid, PlayIAPhase2CalculusEnded));
+            else
+                StartCoroutine(aiBehaviour.GetBestMove(optiGrid, PlayIAPhase2CalculusEnded));
         }
 
         public void PlayIAPhase2CalculusEnded(Move move)
@@ -436,16 +459,17 @@ namespace AppAdvisory.Item {
                     DOVirtual.DelayedCall(timeBeforeVictoryAnimation, PlayVictoryAnimation, true);
                 }
 
-                if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
+                /*if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
                 {
                     nextTurnIsAI = false;
                     isEqualityTurn = true;
                 }
                 else
-                {
-                    nextTurnIsAI = false;
-                    EndGame(justWon);
-                }
+                {*/
+                Debug.Log("numberOfTurnsPlayer1 : " + numberOfTurnsPlayer1 + " / numberOfTurnsPlayer2 : " + numberOfTurnsPlayer2);
+                nextTurnIsAI = false;
+                EndGame(justWon);
+                //}
             }
             else
             {
@@ -458,7 +482,9 @@ namespace AppAdvisory.Item {
             uiManager.DisplayTurnSwitchPhase1(true);
             Cell cell = modelGrid.GetCellFromModel (pos);
 
-			if (isPlayingVSIA)
+            Debug.Log("numberOfTurnsPlayer1 : " + numberOfTurnsPlayer1 + " / numberOfTurnsPlayer2 : " + numberOfTurnsPlayer2);
+
+            if (isPlayingVSIA)
             {
                 bool justWon = Utils.CheckWin(modelGrid, cell, false);
                 if (justWon || isEqualityTurn)
@@ -531,7 +557,9 @@ namespace AppAdvisory.Item {
             Vector2[] movementArray = movements.ToArray ();
 			Cell cell = modelGrid.GetCellFromModel (movementArray [movementArray.Length - 1]);
 
-			if (isPlayingVSIA)
+            Debug.Log("numberOfTurnsPlayer1 : " + numberOfTurnsPlayer1 + " / numberOfTurnsPlayer2 : " + numberOfTurnsPlayer2);
+
+            if (isPlayingVSIA)
             {
                 bool justWon = Utils.CheckWin(modelGrid, cell, false);
                 if (justWon || isEqualityTurn)

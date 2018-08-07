@@ -39,7 +39,7 @@ namespace AppAdvisory.Item {
         public RectTransform overlayPanel;
         public Transform arrowFocus;
 
-        private bool isPlayer1Turn;
+        public bool isPlayer1Turn;
 
         private List<RoundScore> roundScores;
 
