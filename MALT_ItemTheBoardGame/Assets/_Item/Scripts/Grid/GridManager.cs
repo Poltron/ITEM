@@ -156,7 +156,7 @@ namespace AppAdvisory.Item {
 			fbManager = FindObjectOfType<FBManager> ();
             if (fbManager)
             {
-                Debug.Log("fbManager != null");
+                //Debug.Log("fbManager != null");
                 
                 playerName = fbManager.pName;
                 playerPicURL = fbManager.pUrlPic;
@@ -381,7 +381,7 @@ namespace AppAdvisory.Item {
                     DOVirtual.DelayedCall(1.5f, PlayVictoryAnimation, true);
                 }
 
-                Debug.Log("numberOfTurnsPlayer1 : " + numberOfTurnsPlayer1 + " / numberOfTurnsPlayer2 : " + numberOfTurnsPlayer2);
+                //Debug.Log("numberOfTurnsPlayer1 : " + numberOfTurnsPlayer1 + " / numberOfTurnsPlayer2 : " + numberOfTurnsPlayer2);
 
                 /*if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
                 {
@@ -410,7 +410,7 @@ namespace AppAdvisory.Item {
                 alreadyPassed = true;
 
                 if (isPlayingTutorial)
-                    uiManager.SetPlayer1Turn(uiManager.DisplayTutorialPhase2Movement);
+                    StartCoroutine(waitFor(1.5f, uiManager.DisplayTutorialPhase2Movement));
                 else
                     uiManager.SetPlayer1Turn(player.StartTurn);
             }
@@ -418,6 +418,14 @@ namespace AppAdvisory.Item {
             {
                 uiManager.SetPlayer1Turn(player.StartTurn);
             }
+        }
+
+        IEnumerator waitFor(float t, System.Action func)
+        {
+            while ((t -= Time.deltaTime) > 0)
+                yield return new WaitForEndOfFrame();
+
+            func();
         }
 
         IEnumerator waitFor(float t, Move move, System.Action<Move> func)
@@ -466,7 +474,7 @@ namespace AppAdvisory.Item {
                 }
                 else
                 {*/
-                Debug.Log("numberOfTurnsPlayer1 : " + numberOfTurnsPlayer1 + " / numberOfTurnsPlayer2 : " + numberOfTurnsPlayer2);
+                //Debug.Log("numberOfTurnsPlayer1 : " + numberOfTurnsPlayer1 + " / numberOfTurnsPlayer2 : " + numberOfTurnsPlayer2);
                 nextTurnIsAI = false;
                 EndGame(justWon);
                 //}
@@ -482,7 +490,7 @@ namespace AppAdvisory.Item {
             uiManager.DisplayTurnSwitchPhase1(true);
             Cell cell = modelGrid.GetCellFromModel (pos);
 
-            Debug.Log("numberOfTurnsPlayer1 : " + numberOfTurnsPlayer1 + " / numberOfTurnsPlayer2 : " + numberOfTurnsPlayer2);
+            //Debug.Log("numberOfTurnsPlayer1 : " + numberOfTurnsPlayer1 + " / numberOfTurnsPlayer2 : " + numberOfTurnsPlayer2);
 
             if (isPlayingVSIA)
             {
@@ -557,7 +565,7 @@ namespace AppAdvisory.Item {
             Vector2[] movementArray = movements.ToArray ();
 			Cell cell = modelGrid.GetCellFromModel (movementArray [movementArray.Length - 1]);
 
-            Debug.Log("numberOfTurnsPlayer1 : " + numberOfTurnsPlayer1 + " / numberOfTurnsPlayer2 : " + numberOfTurnsPlayer2);
+            //Debug.Log("numberOfTurnsPlayer1 : " + numberOfTurnsPlayer1 + " / numberOfTurnsPlayer2 : " + numberOfTurnsPlayer2);
 
             if (isPlayingVSIA)
             {
@@ -819,7 +827,7 @@ namespace AppAdvisory.Item {
             int score = 0;
             if (winningPattern.cells.Length == 0)
             {
-                Debug.Log("no winning pattern");
+                //Debug.Log("no winning pattern");
             }
             else
             {

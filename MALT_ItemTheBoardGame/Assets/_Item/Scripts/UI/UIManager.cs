@@ -225,6 +225,7 @@ namespace AppAdvisory.Item {
             DisplayYourTurn(true);
             isPlayer1Turn = true;
             turnSwitchPanel.StartTurnSwitchAnimation();
+            gridManager.numberOfTurnsPlayer1++;
         }
 
         public void SetPlayer2Turn(Action callBack)
@@ -438,7 +439,6 @@ namespace AppAdvisory.Item {
             gridManager.player.OnBallSelection += pickBallHack;
 
             EasyTouch.On_TouchUp += gridManager.player.OnTouchUpPublic;
-            FindObjectOfType<GridManager>().numberOfTurnsPlayer1++;
 
             arrowFocus.gameObject.SetActive(true);
             arrowFocus.position = Phase1Tuto_BallToMove.transform.position + new Vector3(0, 0.5f, 0);

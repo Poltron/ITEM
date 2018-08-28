@@ -14,11 +14,11 @@ public static class Options
 
             PlayerPrefs.SetInt("prefInitialized", 1);
 
-            Debug.Log("not initialized");
+            //Debug.Log("not initialized");
         }
         else
         {
-            Debug.Log("already initialized");
+            //Debug.Log("already initialized");
         }
     }
 

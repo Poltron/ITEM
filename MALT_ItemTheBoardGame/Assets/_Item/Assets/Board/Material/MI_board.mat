@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: MI_board
+  m_Name: MI_BOARD
   m_Shader: {fileID: 4800000, guid: 9f5a91d980690d844aa378ee2daf30cb, type: 3}
   m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
   m_LightmapFlags: 0
@@ -22,7 +22,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Lines:
-        m_Texture: {fileID: 2800000, guid: f4a93c4ea72f8ab43a143a608235cbe4, type: 3}
+        m_Texture: {fileID: 2800000, guid: ca1cf2d951e6116408064f0fe7be8c22, type: 3}
         m_Scale: {x: 0.5, y: 0.5}
         m_Offset: {x: 0, y: 0}
     - _MainTex:

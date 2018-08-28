@@ -124,7 +124,7 @@ namespace AppAdvisory.Item
             float newTime = Time.realtimeSinceStartup;
             timeSpent = newTime - actualTime;
 
-            Debug.Log(positionCount + " in " + timeSpent);
+            //Debug.Log(positionCount + " in " + timeSpent);
 
             toDo(bestMove);
         }

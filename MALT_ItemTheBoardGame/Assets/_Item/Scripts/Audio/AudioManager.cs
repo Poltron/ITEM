@@ -108,7 +108,7 @@ public class AudioManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        Debug.Log(music.volume);
+        //Debug.Log(music.volume);
         music.volume = reducedMusicVolume;
 
         GameObject jingle = GameObject.Instantiate(jinglePrefab, Vector3.zero, Quaternion.identity);
@@ -121,7 +121,7 @@ public class AudioManager : MonoBehaviour
             music.volume += (baseMusicVolume - reducedMusicVolume) * Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
-        Debug.Log(music.volume);
+        //Debug.Log(music.volume);
 
         music.volume = baseMusicVolume;
     }

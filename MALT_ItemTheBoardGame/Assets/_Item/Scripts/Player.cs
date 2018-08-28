@@ -57,10 +57,9 @@ namespace AppAdvisory.Item {
         }
 
 		public void StartTurn() {
-            Debug.Log("playerstartturn");
+            //Debug.Log("playerstartturn");
             
 			EasyTouch.On_TouchUp += OnTouchUp;
-            FindObjectOfType<GridManager>().numberOfTurnsPlayer1++;
 //			if (ballCount > 0) {
 //				EasyTouch.On_Drag += On_Drag;
 //				EasyTouch.On_DragStart += On_DragStart;
@@ -73,7 +72,7 @@ namespace AppAdvisory.Item {
 
         public void EndTurn()
         {
-            Debug.Log("playerendturn");
+            //Debug.Log("playerendturn");
 
             modelGrid.ResetCellsColor();
 
@@ -213,7 +212,7 @@ namespace AppAdvisory.Item {
 
         public void OnTouchUpPublic(Gesture gesture)
         {
-            Debug.Log("on touch up public");
+            //Debug.Log("on touch up public");
             OnTouchUp(gesture);
         }
 
@@ -221,12 +220,12 @@ namespace AppAdvisory.Item {
 		void OnTouchUp(Gesture gesture)
         {
             // mesure préventive pour le moment ou il y a un double input en pahse 1 qui bloque la bille sélectionnée ???
-            if (lastInput + 0.05f > Time.realtimeSinceStartup)
+            if (lastInput + 0.1f > Time.realtimeSinceStartup)
                 return;
 
             lastInput = Time.realtimeSinceStartup;
 
-            Debug.Log("on touch up");
+            //Debug.Log("on touch up");
 
 			if (isTweening)
 				return;
@@ -234,7 +233,7 @@ namespace AppAdvisory.Item {
             if (!gesture.pickedObject)
 				return;
 
-            Debug.Log(gesture.pickedObject.name);
+            //Debug.Log(gesture.pickedObject.name);
 
             if (exclusivePickableObject != null && gesture.pickedObject != exclusivePickableObject)
                 return;

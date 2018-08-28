@@ -83,7 +83,7 @@ namespace AppAdvisory.Item
             
             if (cells.Length == 0)
             {
-                Debug.LogError("IsSame with cell 0");
+                //Debug.LogError("IsSame with cell 0");
             }
 
             return true;
@@ -480,37 +480,37 @@ namespace AppAdvisory.Item
 
             if (FindCellPattern(patternData.horizontalLinePatterns, out cells, blackNeeded, whiteNeeded, CompareBalls))
             {
-                Debug.Log("horizontalline 4-0 pattern");
+                //Debug.Log("horizontalline 4-0 pattern");
                 return true;
             }
 
             if (FindCellPattern(patternData.verticalLinePatterns, out cells, blackNeeded, whiteNeeded, CompareBalls))
             {
-                Debug.Log("verticalLinePatterns 4-0 pattern");
+                //Debug.Log("verticalLinePatterns 4-0 pattern");
                 return true;
             }
 
             if (FindCellPattern(patternData.diagonalLinePatterns, out cells, blackNeeded, whiteNeeded, CompareBalls))
             {
-                Debug.Log("diagonalLinePatterns 4-0 pattern");
+                //Debug.Log("diagonalLinePatterns 4-0 pattern");
                 return true;
             }
 
             if (FindCellPattern(patternData.otherDiagonalLinePatterns, out cells, blackNeeded, whiteNeeded, CompareBalls))
             {
-                Debug.Log("otherDiagonalLinePatterns 4-0 pattern");
+                //Debug.Log("otherDiagonalLinePatterns 4-0 pattern");
                 return true;
             }
 
             if (FindCellPattern(patternData.horizontalCrossPatterns, out cells, blackNeeded, whiteNeeded, CompareBalls))
             {
-                Debug.Log("horizontalCrossPatterns 4-0 pattern");
+                //Debug.Log("horizontalCrossPatterns 4-0 pattern");
                 return true;
             }
 
             if (FindCellPattern(patternData.diagonalCrossPatterns, out cells, blackNeeded, whiteNeeded, CompareBalls))
             {
-                Debug.Log("diagonalCrossPatterns 4-0 pattern");
+                //Debug.Log("diagonalCrossPatterns 4-0 pattern");
                 return true;
             }
 

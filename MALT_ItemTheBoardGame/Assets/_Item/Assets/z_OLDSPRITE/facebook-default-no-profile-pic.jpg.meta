@@ -53,25 +53,25 @@ TextureImporter:
   - buildTarget: DefaultTexturePlatform
     maxTextureSize: 512
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 3
     compressionQuality: 50
-    crunchedCompression: 0
+    crunchedCompression: 1
     allowsAlphaSplitting: 0
     overridden: 0
   - buildTarget: Standalone
     maxTextureSize: 512
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 3
     compressionQuality: 50
-    crunchedCompression: 0
+    crunchedCompression: 1
     allowsAlphaSplitting: 0
     overridden: 0
   - buildTarget: iPhone
     maxTextureSize: 512
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 3
     compressionQuality: 50
-    crunchedCompression: 0
+    crunchedCompression: 1
     allowsAlphaSplitting: 0
     overridden: 0
   - buildTarget: tvOS
@@ -85,9 +85,9 @@ TextureImporter:
   - buildTarget: Android
     maxTextureSize: 512
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 3
     compressionQuality: 50
-    crunchedCompression: 0
+    crunchedCompression: 1
     allowsAlphaSplitting: 0
     overridden: 0
   - buildTarget: Tizen
@@ -101,9 +101,9 @@ TextureImporter:
   - buildTarget: WebGL
     maxTextureSize: 512
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 3
     compressionQuality: 50
-    crunchedCompression: 0
+    crunchedCompression: 1
     allowsAlphaSplitting: 0
     overridden: 0
   - buildTarget: Samsung TV
