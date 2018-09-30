@@ -1248,7 +1248,7 @@ namespace AppAdvisory.Item {
             ball.isPickedUp = false;
             ball.FixSortingLayer(true);
 
-            ball.transform.DOMove (pickedCell.transform.position, 1.0f).OnComplete (() =>  {
+            ball.transform.DOMove (pickedCell.transform.position, 0.75f).OnComplete (() =>  {
 				ball.transform.position = pickedCell.transform.position;
 				ball.owner = pickedCell;
                 ball.FixSortingLayer(false);

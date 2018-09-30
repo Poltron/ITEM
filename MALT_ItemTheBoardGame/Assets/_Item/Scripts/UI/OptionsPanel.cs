@@ -77,7 +77,7 @@ public class OptionsPanel : UIPanel
         if (animator.gameObject.activeInHierarchy)
         {
             RefreshValues();
-            animator.SetTrigger("OptionsPanelPopIn");
+            animator.SetBool("bPopIn", true);
             isFadingIn = true;
 
             if (audioManager != null)
@@ -96,7 +96,7 @@ public class OptionsPanel : UIPanel
 
         if (animator.gameObject.activeInHierarchy)
         {
-            animator.SetTrigger("OptionsPanelPopOut");
+            animator.SetBool("bPopIn", false);
             isFadingIn = false;
 
             if (audioManager != null)
@@ -108,6 +108,7 @@ public class OptionsPanel : UIPanel
 
     private void PopOutAnimationEndCallback()
     {
+        isFadingIn = false;
         gameObject.SetActive(false);
     }
 

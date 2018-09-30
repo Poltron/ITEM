@@ -36,8 +36,8 @@ namespace AppAdvisory.Item {
 		private List<Cell> currentCellsToJump;
 		private List<Vector2> movements;
 
-		private Vector3 deltaPosition;
-		private int fingerIndex;
+		//private Vector3 deltaPosition;
+		//private int fingerIndex;
 		private Ball currentBall;
 
         private GameObject exclusivePickableObject;
@@ -408,7 +408,7 @@ namespace AppAdvisory.Item {
 
 		void SendTurnDataPhase2() {
 			hasAlreadyJumpedOnce = false;
-			print("player phase 2 turn over");
+			//print("player phase 2 turn over");
 
 			if (OnPhase2TurnFinished != null)
 				OnPhase2TurnFinished (movements);
@@ -500,11 +500,11 @@ namespace AppAdvisory.Item {
             if (OnBallSelection != null)
                 OnBallSelection(ball);
 
-			fingerIndex = gesture.fingerIndex;
+			//fingerIndex = gesture.fingerIndex;
 
 			// the world coordinate from touch
-			Vector3 position = gesture.GetTouchToWorldPoint(gesture.pickedObject.transform.position);
-			deltaPosition = position - gesture.pickedObject.transform.position;
+			//Vector3 position = gesture.GetTouchToWorldPoint(gesture.pickedObject.transform.position);
+			//deltaPosition = position - gesture.pickedObject.transform.position;
 		}
 
 		public void SetGrid(ModelGrid modelGrid, OptimizedGrid optiGrid) {

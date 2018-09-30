@@ -58,7 +58,7 @@ public class HelpPanel : UIPanel
 
         if (animator.gameObject.activeInHierarchy)
         {
-            animator.SetTrigger("HelpPanelPopIn");
+            animator.SetBool("bPopIn", true);
             isFadingIn = true;
 
             if (audioManager != null)
@@ -77,7 +77,7 @@ public class HelpPanel : UIPanel
 
         if (animator.gameObject.activeInHierarchy)
         {
-            animator.SetTrigger("HelpPanelPopOut");
+            animator.SetBool("bPopIn", false);
             isFadingIn = false;
 
             if (audioManager != null)
@@ -91,6 +91,7 @@ public class HelpPanel : UIPanel
     {
         if (IsFadingOut)
         {
+            isFadingIn = false;
             gameObject.SetActive(false);
         }
     }

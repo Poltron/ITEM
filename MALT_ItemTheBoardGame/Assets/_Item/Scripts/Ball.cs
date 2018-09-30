@@ -216,7 +216,7 @@ namespace AppAdvisory.Item
             if (transform.position == startPosition)
                 return;
 
-            transform.DOMove(startPosition, 1.0f).OnComplete(() =>
+            transform.DOMove(startPosition, 0.75f).OnComplete(() =>
             {
                 if (resetPlaySound)
                 {

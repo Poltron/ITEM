@@ -242,7 +242,6 @@ public class TutorialPanel : UIPanel
         askForTuto.gameObject.SetActive(false);
     }
 
-    private bool alreadyPressed;
     public void OnAskForTutoButtonPress(bool value)
     {
         if (value)
@@ -257,8 +256,6 @@ public class TutorialPanel : UIPanel
             gridManager.StartLookingForGame();
             PopAskForTuto(false);
         }
-
-        alreadyPressed = true;
 
         if (audioManager != null)
         {
@@ -400,7 +397,8 @@ public class TutorialPanel : UIPanel
     public void OnPhase2MoveScreenNextButton()
     {
         PopPhase2MoveScreen(false);
-        uiManager.SetPlayer1Turn(gridManager.player.StartTurn);
+        uiManager.SetPlayer1Turn();
+        gridManager.player.StartTurn();
         animator.SetTrigger("PopOut");
     }
 }

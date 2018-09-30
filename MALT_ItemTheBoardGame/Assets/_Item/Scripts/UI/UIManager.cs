@@ -66,7 +66,7 @@ namespace AppAdvisory.Item {
 		void Start ()
         {
             roundScores = new List<RoundScore>();
-            turnSwitchPanel.SetUIManager(this);
+            //turnSwitchPanel.SetUIManager(this);
 
             audioManager = FindObjectOfType<AudioManager>();
 		}
@@ -74,7 +74,7 @@ namespace AppAdvisory.Item {
         public void ResetGame()
         {
             endGamePanel.HideAll();
-            turnSwitchPanel.SetPhase1(true);
+            //turnSwitchPanel.SetPhase1(true);
         }
 
 		public void Init() {
@@ -209,10 +209,11 @@ namespace AppAdvisory.Item {
 			player2.SetPic (sprite);
 		}
 
-		public void SetPlayer1Turn(Action callBack)
+		public void SetPlayer1Turn(/*Action callBack*/)
         {
-            turnSwitchPanel.SetCallbackAnimationEnd(callBack);
-            StartCoroutine(waitFor(timeBeforeNextTurn, SetPlayer1TurnReal));
+            //turnSwitchPanel.SetCallbackAnimationEnd(callBack);
+            SetPlayer1TurnReal();
+            //StartCoroutine(waitFor(timeBeforeNextTurn, SetPlayer1TurnReal));
 		}
 
         public void DisplayTutorialPhase2Movement()
@@ -222,23 +223,26 @@ namespace AppAdvisory.Item {
 
         private void SetPlayer1TurnReal()
         {
-            DisplayYourTurn(true);
+            //DisplayYourTurn(true);
+            //turnSwitchPanel.StartTurnSwitchAnimation();
             isPlayer1Turn = true;
-            turnSwitchPanel.StartTurnSwitchAnimation();
+            AnimateNextTurn();
             gridManager.numberOfTurnsPlayer1++;
         }
 
-        public void SetPlayer2Turn(Action callBack)
+        public void SetPlayer2Turn(/*Action callBack*/)
         {
-            turnSwitchPanel.SetCallbackAnimationEnd(callBack);
-            StartCoroutine(waitFor(timeBeforeNextTurn, SetPlayer2TurnReal));
+            //turnSwitchPanel.SetCallbackAnimationEnd(callBack);
+            SetPlayer2TurnReal();
+            //StartCoroutine(waitFor(timeBeforeNextTurn, SetPlayer2TurnReal));
         }
 
         private void SetPlayer2TurnReal()
         {
-            DisplayOpponentTurn(true);
+            //DisplayOpponentTurn(true);
             isPlayer1Turn = false;
-            turnSwitchPanel.StartTurnSwitchAnimation();
+            AnimateNextTurn();
+            //turnSwitchPanel.StartTurnSwitchAnimation();
         }
             
         public void PopScoreParticle(Ball ball)

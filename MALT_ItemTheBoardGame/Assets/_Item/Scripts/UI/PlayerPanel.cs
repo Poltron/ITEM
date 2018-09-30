@@ -26,9 +26,40 @@ namespace AppAdvisory.Item {
         [SerializeField]
         public Text playerName;
 
+        [Header("White/Blue Marble")]
+        [SerializeField]
+        private Image whiteMarble;
+
+        [SerializeField]
+        private Sprite blueBanner;
+        [SerializeField]
+        private Sprite blueScore;
+        [SerializeField]
+        private Sprite blueName;
+
+        [Header("Black/Red Marble")]
+        [SerializeField]
+        private Image blackMarble;
+
+        [SerializeField]
+        private Sprite redBanner;
+        [SerializeField]
+        private Sprite redScore;
+        [SerializeField]
+        private Sprite redName;
+
         [Header("")]
         [SerializeField]
         private int playerId;
+        
+        [SerializeField]
+        private Image bannerImage;
+
+        [SerializeField]
+        private Image scoreImage;
+
+        [SerializeField]
+        private Image nameImage;
 
         private Image panel;
 
@@ -38,14 +69,14 @@ namespace AppAdvisory.Item {
 
         private bool isCustomName;
 
-		public Image whiteMarble;
-		public Image blackMarble;
-
         [SerializeField]
         private Animation portraitRotationAnimation;
 
         [SerializeField]
-        private Animator portraitTurnAnimation;
+        private Animator portraitTurnAnimator;
+
+        [SerializeField]
+        private Animator portraitLightAnimator;
 
         [SerializeField]
         private Animator scoreCounterAnimator;
@@ -114,10 +145,18 @@ namespace AppAdvisory.Item {
 			if (color == BallColor.Black) {
 				whiteMarble.enabled = false;
 				blackMarble.enabled = true;
+
+                bannerImage.sprite = redBanner;
+                scoreImage.sprite = redScore;
+                nameImage.sprite = redName;
 			} else {
 				whiteMarble.enabled = true;
 				blackMarble.enabled = false;
-			}
+
+                bannerImage.sprite = blueBanner;
+                scoreImage.sprite = blueScore;
+                nameImage.sprite = blueName;
+            }
 		}
 
 		public void SetColor(Color color)
@@ -129,15 +168,25 @@ namespace AppAdvisory.Item {
         {
             portraitRotationAnimation.Play();
 
-            portraitTurnAnimation.gameObject.SetActive(true);
-            portraitTurnAnimation.SetTrigger("PopIn");
+            //portraitLightAnimator.gameObject.SetActive(true);
+            //portraitLightAnimator.SetTrigger("PopIn");
+
+            portraitTurnAnimator.gameObject.SetActive(true);
+            portraitTurnAnimator.SetTrigger("PopIn");
         }
 
         public void StopPortraitAnimation()
         {
-            AnimatorStateInfo stateInfo = portraitTurnAnimation.GetCurrentAnimatorStateInfo(0);
-            if (!stateInfo.IsName("Base.Empty"))
-                portraitTurnAnimation.SetTrigger("PopOut");
+            if (portraitTurnAnimator.gameObject.activeInHierarchy)
+            {
+                AnimatorStateInfo stateInfo = portraitTurnAnimator.GetCurrentAnimatorStateInfo(0);
+                if (!stateInfo.IsName("Base.Empty"))
+                    portraitTurnAnimator.SetTrigger("PopOut");
+            }
+
+            //stateInfo = portraitLightAnimator.GetCurrentAnimatorStateInfo(0);
+            //if (!stateInfo.IsName("Base.Empty"))
+            //    portraitLightAnimator.SetTrigger("PopOut");
         }
 
         public void StartScoreAnim()

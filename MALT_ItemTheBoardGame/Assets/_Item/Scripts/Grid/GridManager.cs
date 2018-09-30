@@ -208,9 +208,11 @@ namespace AppAdvisory.Item {
 
             uiManager.SetPlayer2Name(GetIAName());
             uiManager.SetPlayer2Pic(GetIASprite());
-            uiManager.DisplayTurnSwitchPhase1(true);
-            uiManager.DisplayYourTurn(true);
-            uiManager.SetPlayer1Turn(player.StartTurn);
+            //uiManager.DisplayTurnSwitchPhase1(true);
+            //uiManager.DisplayYourTurn(true);
+            //uiManager.SetPlayer1Turn(player.StartTurn);
+            uiManager.SetPlayer1Turn();
+            player.StartTurn();
 		}
 
         public void SetPlayingTuto(bool isPlaying)
@@ -313,13 +315,14 @@ namespace AppAdvisory.Item {
             // whites begin the game
             if (player.color == BallColor.White)
             {
-                uiManager.SetPlayer1Turn(player.StartTurn);
-                uiManager.DisplayYourTurn(true);
+                uiManager.SetPlayer1Turn();// player.StartTurn);
+                player.StartTurn();
+                //uiManager.DisplayYourTurn(true);
             }
             else
             {
-                uiManager.SetPlayer2Turn(null);
-                uiManager.DisplayOpponentTurn(true);
+                uiManager.SetPlayer2Turn();// null);
+                //uiManager.DisplayOpponentTurn(true);
             }
         }
 
@@ -405,18 +408,22 @@ namespace AppAdvisory.Item {
         {
             if (player.ballCount == 0 && !alreadyPassed)
             {
-                uiManager.DisplayTurnSwitchPhase1(false);
-                uiManager.DisplayTurnSwitchPhase2(true);
+                //uiManager.DisplayTurnSwitchPhase1(false);
+                //uiManager.DisplayTurnSwitchPhase2(true);
                 alreadyPassed = true;
 
                 if (isPlayingTutorial)
                     StartCoroutine(waitFor(1.5f, uiManager.DisplayTutorialPhase2Movement));
                 else
-                    uiManager.SetPlayer1Turn(player.StartTurn);
+                {
+                    uiManager.SetPlayer1Turn();
+                    player.StartTurn();
+                }
             }
             else
             {
-                uiManager.SetPlayer1Turn(player.StartTurn);
+                uiManager.SetPlayer1Turn();
+                player.StartTurn();
             }
         }
 
@@ -487,7 +494,7 @@ namespace AppAdvisory.Item {
         
 		public void Phase1TurnFinishedPlayer(Vector2 pos)
         {
-            uiManager.DisplayTurnSwitchPhase1(true);
+            //uiManager.DisplayTurnSwitchPhase1(true);
             Cell cell = modelGrid.GetCellFromModel (pos);
 
             //Debug.Log("numberOfTurnsPlayer1 : " + numberOfTurnsPlayer1 + " / numberOfTurnsPlayer2 : " + numberOfTurnsPlayer2);
@@ -518,11 +525,12 @@ namespace AppAdvisory.Item {
                     
                     if (disableAI) // debug feature to test without AI
                     {
-                        uiManager.SetPlayer1Turn(player.StartTurn);
+                        uiManager.SetPlayer1Turn();
+                        player.StartTurn();
                     }
                     else
                     {
-                        uiManager.SetPlayer2Turn(null);
+                        uiManager.SetPlayer2Turn(/*null*/);
                         PlayIAPhase1();
                     }
                 }
@@ -553,15 +561,15 @@ namespace AppAdvisory.Item {
                 }
                 else
                 {
-                    uiManager.SetPlayer2Turn(null);
+                    uiManager.SetPlayer2Turn(/*null*/);
 				}
             }
         }
 
 		public void Phase2TurnFinishedPlayer(List<Vector2> movements)
         {
-            uiManager.DisplayTurnSwitchPhase1(false);
-            uiManager.DisplayTurnSwitchPhase2(true);
+            //uiManager.DisplayTurnSwitchPhase1(false);
+            //uiManager.DisplayTurnSwitchPhase2(true);
             Vector2[] movementArray = movements.ToArray ();
 			Cell cell = modelGrid.GetCellFromModel (movementArray [movementArray.Length - 1]);
 
@@ -590,7 +598,7 @@ namespace AppAdvisory.Item {
                 }
                 else
                 {
-                    uiManager.SetPlayer2Turn(null);
+                    uiManager.SetPlayer2Turn(/*null*/);
                     PlayIAPhase2();
                 }
 			}
@@ -620,7 +628,7 @@ namespace AppAdvisory.Item {
                 }
                 else
                 {
-                    uiManager.SetPlayer2Turn(null);
+                    uiManager.SetPlayer2Turn(/*null*/);
 				}
 			}
 		}
@@ -773,7 +781,7 @@ namespace AppAdvisory.Item {
                 {
                     if (nextTurnIsAI)
                     {
-                        uiManager.SetPlayer2Turn(null);
+                        uiManager.SetPlayer2Turn(/*null*/);
                         if (optiGrid.BlackBallsLeft != 0)
                             PlayIAPhase1();
                         else
@@ -788,11 +796,12 @@ namespace AppAdvisory.Item {
                 {
                     if (player.color == BallColor.Black)
                     {
-                        uiManager.SetPlayer1Turn(player.StartTurn);
+                        uiManager.SetPlayer1Turn(/*player.StartTurn*/);
+                        player.StartTurn();
                     }
                     else
                     {
-                        uiManager.SetPlayer2Turn(null);
+                        uiManager.SetPlayer2Turn(/*null*/);
                     }
                 }
             }
@@ -909,12 +918,12 @@ namespace AppAdvisory.Item {
 		{
 			if (player.ballCount > 0)
             {
-                uiManager.DisplayTurnSwitchPhase1(true);
+                //uiManager.DisplayTurnSwitchPhase1(true);
             }
             else
             {
-                uiManager.DisplayTurnSwitchPhase1(false);
-                uiManager.DisplayTurnSwitchPhase2(true);
+                //uiManager.DisplayTurnSwitchPhase1(false);
+                //uiManager.DisplayTurnSwitchPhase2(true);
             }
 
             numberOfTurnsPlayer2++;
@@ -954,15 +963,16 @@ namespace AppAdvisory.Item {
             }
             else
             {
-                uiManager.SetPlayer1Turn(player.StartTurn);
+                uiManager.SetPlayer1Turn(/*player.StartTurn*/);
+                player.StartTurn();
             }
 		}
 			
 		[PunRPC]
 		void ReceiveMovementsPhase2(Vector2[] movements)
         {
-            uiManager.DisplayTurnSwitchPhase1(false);
-            uiManager.DisplayTurnSwitchPhase2(true);
+            //uiManager.DisplayTurnSwitchPhase1(false);
+            //uiManager.DisplayTurnSwitchPhase2(true);
 
             numberOfTurnsPlayer2++;
 
@@ -994,12 +1004,13 @@ namespace AppAdvisory.Item {
             }
         }
 
-        IEnumerator waitFor(float t, System.Action<System.Action> callback, System.Action arg)
+        IEnumerator waitFor(float t, System.Action callback, System.Action callback2)
         {
             while ((t -= Time.deltaTime) > 0)
                 yield return new WaitForEndOfFrame();
 
-            callback(arg);
+            callback();
+            callback2();
         }
 
         private void SendName(string name) {
@@ -1064,9 +1075,9 @@ namespace AppAdvisory.Item {
                 player = CreatePlayer (BallColor.Black);
 				uiManager.InitPlayer1(BallColor.Black);
 				uiManager.InitPlayer2(BallColor.White);
-				uiManager.SetPlayer2Turn(null);
+				uiManager.SetPlayer2Turn(/*null*/);
 
-                uiManager.DisplayTurnSwitchPhase1(true);
+                //uiManager.DisplayTurnSwitchPhase1(true);
 
                 uiManager.SetPlayer1Name (playerName);
 
@@ -1079,7 +1090,7 @@ namespace AppAdvisory.Item {
 				print ("alone in the room, name is : " + playerName);
 				uiManager.DisplayWaitingForPlayerPanel (true);
 				uiManager.InitPlayer1(BallColor.White);
-				uiManager.SetPlayer1Name (playerName);
+				uiManager.SetPlayer1Name (playerName); 
 
 				uiManager.DisplayYourTurn (false);
 			}
@@ -1100,10 +1111,12 @@ namespace AppAdvisory.Item {
                 player = CreatePlayer(BallColor.White);
                 uiManager.InitPlayer2(BallColor.Black);
 
-                uiManager.DisplayTurnSwitchPhase1(true);
-                uiManager.DisplayYourTurn(true);
-                uiManager.SetPlayer1Turn(player.StartTurn);
-				SendName (playerName);
+                //uiManager.DisplayTurnSwitchPhase1(true);
+                //uiManager.DisplayYourTurn(true);
+                uiManager.SetPlayer1Turn(/*player.StartTurn*/);
+                player.StartTurn();
+
+                SendName (playerName);
 				SendPicURL (playerPicURL);
 
 			} else 
