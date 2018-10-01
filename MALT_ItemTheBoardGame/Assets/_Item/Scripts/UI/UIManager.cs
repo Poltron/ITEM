@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using HedgehogTeam.EasyTouch;
 using DG.Tweening;
+using GS;
 
 namespace AppAdvisory.Item {
 
@@ -89,6 +90,13 @@ namespace AppAdvisory.Item {
 
             tutoPanel.gameObject.SetActive(true);
             tutoPanel.PopAskForTuto(true);
+
+
+            FBManager fbManager = FindObjectOfType<FBManager>();
+            if (!fbManager)
+            {
+                inviteFriendButton.gameObject.SetActive(false);
+            }
 
             LanguageChanged();
 		}
