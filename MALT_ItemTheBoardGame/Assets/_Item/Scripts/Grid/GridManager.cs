@@ -63,7 +63,7 @@ namespace AppAdvisory.Item {
 
         [HideInInspector]
         public Player player;
-        private string playerName;
+        public string playerName;
         private string playerPicURL;
 
         public float timeToLaunchGameVSIA = 4;
@@ -128,6 +128,8 @@ namespace AppAdvisory.Item {
 
         private AudioManager audioManager;
 
+        private bool isFBConnected;
+
         public void ChangeRandomCheckbox(bool value)
         {
             randomAI = randomAIToggle.isOn;
@@ -143,31 +145,35 @@ namespace AppAdvisory.Item {
 
             aiBehaviour = new AIBehaviour(aiEvaluationData);
 
-
-            uiManager.Init();
-            uiManager.NextRound += OnNextRound;
-			uiManager.Restart += OnRestart;
-			uiManager.InviteFriend += OnInviteFriend;
-            uiManager.FinishTurn += OnFinishTurn;
-
             connection = GetComponent<Connection>();
             connection.ApplyUserIdAndConnect ();
-            
-			fbManager = FindObjectOfType<FBManager> ();
+
+            isFBConnected = false;
+
+            fbManager = FindObjectOfType<FBManager> ();
             if (fbManager)
             {
-                //Debug.Log("fbManager != null");
-                
+                isFBConnected = true;
+
                 playerName = fbManager.pName;
                 playerPicURL = fbManager.pUrlPic;
 
-                StartCoroutine(Utils.LoadSpriteFromURL(playerPicURL, (sprite) => {
+                StartCoroutine(Utils.LoadSpriteFromURL(playerPicURL, (sprite) =>
+                {
                     uiManager.SetPlayer1Pic(sprite);
                 }));
 
                 fbManager.NameLoaded += OnNameLoaded;
                 fbManager.PicURLLoaded += OnPicURLLoaded;
+
+                uiManager.SetPlayer1Name(playerName);
             }
+            
+            uiManager.Init();
+            uiManager.NextRound += OnNextRound;
+			uiManager.Restart += OnRestart;
+			uiManager.InviteFriend += OnInviteFriend;
+            uiManager.FinishTurn += OnFinishTurn;
 
             audioManager = FindObjectOfType<AudioManager>();
         }

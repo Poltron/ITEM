@@ -117,15 +117,44 @@ namespace AppAdvisory.Item {
             }
         }
 
+        public bool IsDefaultName(string name)
+        {
+            if (name == playerNameEN ||name == playerNameFR)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public void SetName(string name)
         {
-            isCustomName = true;
-			this.playerName.text = name;
+            if (IsDefaultName(name))
+            {
+                if (Options.IsLanguageEn())
+                    SetLanguageEN();
+                else if (Options.IsLanguageFr())
+                    SetLanguageFR();
+            }
+            else
+            {
+                isCustomName = true;
+                playerName.text = name;
+            }
 		}
 
 		public void SetPic(Sprite sprite)
         {
-			this.image.sprite = sprite;
+            if (sprite.rect.width > sprite.rect.height)
+            {
+                image.rectTransform.localScale = new Vector3(sprite.rect.width / sprite.rect.height, 1, 1);
+            }
+            else
+            {
+                image.rectTransform.localScale = new Vector3(1, sprite.rect.height / sprite.rect.width, 1);
+            }
+
+            this.image.sprite = sprite;
 		}
 
         public BallColor GetColor()

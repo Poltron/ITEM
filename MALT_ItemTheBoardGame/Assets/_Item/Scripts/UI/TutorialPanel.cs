@@ -255,6 +255,7 @@ public class TutorialPanel : UIPanel
             animator.SetTrigger("PopOut");
             gridManager.StartLookingForGame();
             PopAskForTuto(false);
+            uiManager.DisplayWaitingForPlayerPanel(true);
         }
 
         if (audioManager != null)

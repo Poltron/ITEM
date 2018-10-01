@@ -24,6 +24,7 @@ public class HelpPanel : UIPanel
     public bool IsFadingIn { get { return isFadingIn; } }
 
     private AudioManager audioManager;
+    private ExitPanel exitPanel;
 
     void Awake()
     {
@@ -35,6 +36,7 @@ public class HelpPanel : UIPanel
         isFadingIn = false;
         animator = GetComponent<Animator>();
         audioManager = FindObjectOfType<AudioManager>();
+        exitPanel = GetComponent<ExitPanel>();
     }
 
     protected override void SetLanguageEN()
@@ -60,6 +62,7 @@ public class HelpPanel : UIPanel
         {
             animator.SetBool("bPopIn", true);
             isFadingIn = true;
+            exitPanel.enabled = true;
 
             if (audioManager != null)
             {
@@ -79,6 +82,7 @@ public class HelpPanel : UIPanel
         {
             animator.SetBool("bPopIn", false);
             isFadingIn = false;
+            exitPanel.enabled = false;
 
             if (audioManager != null)
             {

@@ -1263,9 +1263,9 @@ namespace AppAdvisory.Item {
 			WWW www = new WWW(url);
 			yield return www;
 
-			Texture2D tex = www.textureNonReadable;
-			Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero);
-
+			Texture2D tex = www.texture;
+            tex.filterMode = FilterMode.Trilinear;
+            Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero);
 			callback(sprite);
 		}
 

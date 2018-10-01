@@ -106,6 +106,7 @@ namespace AppAdvisory.Item {
             tutoPanel.SetLanguage(language);
             player1.SetLanguage(language);
             player2.SetLanguage(language);
+            gridManager.playerName = player1.playerName.text;
 
             //overlayPanel.SetLanguage(language);
         }
