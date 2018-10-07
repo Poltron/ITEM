@@ -38,7 +38,9 @@ namespace AppAdvisory.Item {
         public TutorialPanel tutoPanel;
         public InviteFriendPanel inviteFriendButton;
         public RectTransform overlayPanel;
-        public Transform arrowFocus;
+        
+        public GameObject arrowPrefab;
+        private Transform arrowFocus;
 
         public bool isPlayer1Turn;
 
@@ -88,10 +90,6 @@ namespace AppAdvisory.Item {
             turnSwitchPanel.HideAll();
             tutoPanel.HideAll();
 
-            tutoPanel.gameObject.SetActive(true);
-            tutoPanel.PopAskForTuto(true);
-
-
             FBManager fbManager = FindObjectOfType<FBManager>();
             if (!fbManager)
             {
@@ -117,6 +115,12 @@ namespace AppAdvisory.Item {
             gridManager.playerName = player1.playerName.text;
 
             //overlayPanel.SetLanguage(language);
+        }
+
+        public void PopTuto()
+        {
+            tutoPanel.gameObject.SetActive(true);
+            tutoPanel.PopAskForTuto(true);
         }
 
         public void DisplayTurnSwitchPhase1(bool isShown)
@@ -452,8 +456,7 @@ namespace AppAdvisory.Item {
             gridManager.player.OnBallSelection += pickBallHack;
 
             EasyTouch.On_TouchUp += gridManager.player.OnTouchUpPublic;
-
-            arrowFocus.gameObject.SetActive(true);
+            arrowFocus = Instantiate(arrowPrefab).transform;
             arrowFocus.position = Phase1Tuto_BallToMove.transform.position + new Vector3(0, 0.5f, 0);
         }
 
@@ -476,9 +479,16 @@ namespace AppAdvisory.Item {
         private void pickCellHack(Cell cell)
         {
             Phase1Tuto_BackToNormal(Phase1Tuto_CellToMoveTo);
+            BackToNormal();
             gridManager.player.OnCellSelection -= pickCellHack;
 
             EasyTouch.On_TouchUp -= gridManager.player.OnTouchUpPublic;
+        }
+
+        private void BackToNormal()
+        {
+            Phase1Tuto_BallToMove.PassAboveUI(false);
+            Phase1Tuto_CellToMoveTo.PassAboveUI(false);
         }
 
         public void Phase1Tuto_BackToNormal(Cell cell)
@@ -489,8 +499,6 @@ namespace AppAdvisory.Item {
             overlayColor.a = 0f;
             overlayImg.DOColor(overlayColor, 1.0f).OnComplete(() => {
                 overlayPanel.gameObject.SetActive(false);
-                Phase1Tuto_BallToMove.PassAboveUI(false);
-                Phase1Tuto_CellToMoveTo.PassAboveUI(false);
             });
             
             // fade out arrow

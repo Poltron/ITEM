@@ -12,12 +12,24 @@ public class OptionsPanel : UIPanel
     private string ballPlacementHelpLabelFR;
     [SerializeField]
     private string roundHelpPopupLabelFR;
+    [SerializeField]
+    private string askForTutoLabelFR;
+    [SerializeField]
+    private string muteMusicLabelFR;
+    [SerializeField]
+    private string muteSFXFR;
 
     [Header("EN Settings")]
     [SerializeField]
     private string ballPlacementHelpLabelEN;
     [SerializeField]
     private string roundHelpPopupLabelEN;
+    [SerializeField]
+    private string askForTutoLabelEN;
+    [SerializeField]
+    private string muteMusicLabelEN;
+    [SerializeField]
+    private string muteSFXEN;
 
     [Header("")]
     [SerializeField]
@@ -28,6 +40,18 @@ public class OptionsPanel : UIPanel
     private Toggle roundHelpPopup;
     [SerializeField]
     private TextMeshProUGUI roundHelpPopupLabel;
+    [SerializeField]
+    private Toggle askForTutoPopup;
+    [SerializeField]
+    private TextMeshProUGUI askForTutoLabel;
+    [SerializeField]
+    private Toggle muteMusicToggle;
+    [SerializeField]
+    private TextMeshProUGUI muteMusicLabel;
+    [SerializeField]
+    private Toggle muteSFXToggle;
+    [SerializeField]
+    private TextMeshProUGUI muteSFXLabel;
 
     [Header("")]
     private Animator animator;
@@ -63,6 +87,21 @@ public class OptionsPanel : UIPanel
             roundHelpPopup.isOn = true;
         else
             roundHelpPopup.isOn = false;
+
+        if (Options.GetAskForTuto())
+            askForTutoPopup.isOn = true;
+        else
+            askForTutoPopup.isOn = false;
+
+        if (Options.GetMuteMusic())
+            muteMusicToggle.isOn = true;
+        else
+            muteMusicToggle.isOn = false;
+
+        if (Options.GetMuteSFX())
+            muteSFXToggle.isOn = true;
+        else
+            muteSFXToggle.isOn = false;
     }
 
     public void PopIn()
@@ -132,6 +171,36 @@ public class OptionsPanel : UIPanel
         Options.SetEnableHelpPopup(roundHelpPopup.isOn);
     }
 
+    public void ToggleEnableAskForTuto(bool notUseful)
+    {
+        if (askForTutoPopup.isOn)
+            audioManager.PlayAudio(SoundID.CheckboxOn);
+        else
+            audioManager.PlayAudio(SoundID.CheckboxOff);
+
+        Options.SetAskForTuto(askForTutoPopup.isOn);
+    }
+
+    public void ToggleEnableMuteMusic(bool notUseful)
+    {
+        if (muteMusicToggle.isOn)
+            audioManager.PlayAudio(SoundID.CheckboxOn);
+        else
+            audioManager.PlayAudio(SoundID.CheckboxOff);
+
+        Options.SetMuteMusic(muteMusicToggle.isOn);
+    }
+
+    public void ToggleEnableMuteSFX(bool notUseful)
+    {
+        if (muteSFXToggle.isOn)
+            audioManager.PlayAudio(SoundID.CheckboxOn);
+        else
+            audioManager.PlayAudio(SoundID.CheckboxOff);
+
+        Options.SetMuteSFX(muteSFXToggle.isOn);
+    }
+
     public void SetLocalization(string language)
     {
         Options.SetLanguage(language);
@@ -144,11 +213,17 @@ public class OptionsPanel : UIPanel
     {
         roundHelpPopupLabel.text = roundHelpPopupLabelFR;
         ballPlacementHelpLabel.text = ballPlacementHelpLabelFR;
+        askForTutoLabel.text = askForTutoLabelFR;
+        muteMusicLabel.text = muteMusicLabelFR;
+        muteSFXLabel.text = muteSFXFR;
     }
 
     protected override void SetLanguageEN()
     {
         roundHelpPopupLabel.text = roundHelpPopupLabelEN;
         ballPlacementHelpLabel.text = ballPlacementHelpLabelEN;
+        askForTutoLabel.text = askForTutoLabelEN;
+        muteMusicLabel.text = muteMusicLabelEN;
+        muteSFXLabel.text = muteSFXEN;
     }
 }

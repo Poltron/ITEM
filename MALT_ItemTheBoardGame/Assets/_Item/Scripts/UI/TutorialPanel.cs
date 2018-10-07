@@ -27,7 +27,15 @@ public class TutorialPanel : UIPanel
     [SerializeField]
     private string tutoScreen2TitleFR;
     [SerializeField]
-    private string tutoScreen2TextFR;
+    private string tutoScreen2Text1FR;
+    [SerializeField]
+    private string tutoScreen2TextLigneFR;
+    [SerializeField]
+    private string tutoScreen2TextOuFR;
+    [SerializeField]
+    private string tutoScreen2TextCroixFR;
+    [SerializeField]
+    private string tutoScreen2Text2FR;
 
     // phase1 movement help
     [SerializeField]
@@ -67,7 +75,15 @@ public class TutorialPanel : UIPanel
     [SerializeField]
     private string tutoScreen2TitleEN;
     [SerializeField]
-    private string tutoScreen2TextEN;
+    private string tutoScreen2Text1EN;
+    [SerializeField]
+    private string tutoScreen2TextLigneEN;
+    [SerializeField]
+    private string tutoScreen2TextOuEN;
+    [SerializeField]
+    private string tutoScreen2TextCroixEN;
+    [SerializeField]
+    private string tutoScreen2Text2EN;
 
     // phase1 movement help
     [SerializeField]
@@ -106,7 +122,15 @@ public class TutorialPanel : UIPanel
     [SerializeField]
     private TextMeshProUGUI tutoScreen2Title;
     [SerializeField]
-    private TextMeshProUGUI tutoScreen2Text;
+    private TextMeshProUGUI tutoScreen2Text1;
+    [SerializeField]
+    private TextMeshProUGUI tutoScreen2TextLigne;
+    [SerializeField]
+    private TextMeshProUGUI tutoScreen2TextOu;
+    [SerializeField]
+    private TextMeshProUGUI tutoScreen2TextCroix;
+    [SerializeField]
+    private TextMeshProUGUI tutoScreen2Text2;
 
     // phase1 movement help
     [SerializeField]
@@ -180,8 +204,12 @@ public class TutorialPanel : UIPanel
         tutoScreen1Text.text = tutoScreen1TextEN;
         
         tutoScreen2Title.text = tutoScreen2TitleEN;
-        tutoScreen2Text.text = tutoScreen2TextEN;
-        
+        tutoScreen2Text1.text = tutoScreen2Text1EN;
+        tutoScreen2TextCroix.text = tutoScreen2TextCroixEN;
+        tutoScreen2TextOu.text = tutoScreen2TextOuEN;
+        tutoScreen2TextLigne.text = tutoScreen2TextLigneEN;
+        tutoScreen2Text2.text = tutoScreen2Text2EN;
+
         phase1MovementHelpPhase1Text.text = phase1MovementHelpEN;
         phase1MovementHelpTitle.text = phase1MovementHelpTitleEN;
         phase1MovementHelpText.text = phase1MovementHelpTextEN;
@@ -201,7 +229,11 @@ public class TutorialPanel : UIPanel
         tutoScreen1Text.text = tutoScreen1TextFR;
 
         tutoScreen2Title.text = tutoScreen2TitleFR;
-        tutoScreen2Text.text = tutoScreen2TextFR;
+        tutoScreen2Text1.text = tutoScreen2Text1FR;
+        tutoScreen2TextCroix.text = tutoScreen2TextCroixFR;
+        tutoScreen2TextOu.text = tutoScreen2TextOuFR;
+        tutoScreen2TextLigne.text = tutoScreen2TextLigneFR;
+        tutoScreen2Text2.text = tutoScreen2Text2FR;
 
         phase1MovementHelpPhase1Text.text = phase1MovementHelpFR;
         phase1MovementHelpTitle.text = phase1MovementHelpTitleFR;
@@ -362,7 +394,7 @@ public class TutorialPanel : UIPanel
         PopPhase1MoveScreen(false);
         animator.SetTrigger("PopOut");
         gridManager.StartGameVSIA();
-        uiManager.turnSwitchPanel.SetCallbackAnimationEnd(uiManager.Phase1Tuto_ShowBall);
+        uiManager.Phase1Tuto_ShowBall();
     }
 
     /*

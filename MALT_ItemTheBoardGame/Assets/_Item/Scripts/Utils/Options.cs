@@ -11,6 +11,8 @@ public static class Options
             SetEnableHelpPopup(true);
             SetEnablePlacementHelp(true);
             SetAskForTuto(true);
+            SetMuteMusic(false);
+            SetMuteSFX(false);
 
             PlayerPrefs.SetInt("prefInitialized", 1);
 
@@ -86,5 +88,33 @@ public static class Options
     public static bool GetAskForTuto()
     {
         return (PlayerPrefs.GetInt("askForTuto", 0) == 1);
+    }
+
+    // Mute Music
+    public static void SetMuteMusic(bool isEnabled)
+    {
+        if (isEnabled)
+            PlayerPrefs.SetInt("muteMusic", 1);
+        else
+            PlayerPrefs.SetInt("muteMusic", 0);
+    }
+
+    public static bool GetMuteMusic()
+    {
+        return (PlayerPrefs.GetInt("muteMusic", 0) == 1);
+    }
+
+    // Mute SFX
+    public static void SetMuteSFX(bool isEnabled)
+    {
+        if (isEnabled)
+            PlayerPrefs.SetInt("muteSFX", 1);
+        else
+            PlayerPrefs.SetInt("muteSFX", 0);
+    }
+
+    public static bool GetMuteSFX()
+    {
+        return (PlayerPrefs.GetInt("muteSFX", 0) == 1);
     }
 }

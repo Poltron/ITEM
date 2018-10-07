@@ -52,14 +52,31 @@ public class AudioManager : MonoBehaviour
     [Header("Audio Prefabs")]
     [SerializeField]
     private SoundListSO sounds;
-    [SerializeField]
+
     private AudioSource music;
 
     private int ballNumber;
     private bool isComboImpactPlayed;
 
+    private void Start()
+    {
+        if (music == null)
+        {
+            Debug.Log("AudioManager start");
+            Music musicGO = FindObjectOfType<Music>();
+            if (musicGO)
+                music = musicGO.GetComponent<AudioSource>();
+            if (music == null)
+                Debug.LogError("pas d'élément MUSIC :(");
+            Debug.Log("AudioManager start end");
+        }
+    }
+
     public void PlayAudio(SoundID id)
     {
+        if (Options.GetMuteSFX())
+            return;
+
         foreach (var sound in sounds.list)
         {
             if (sound.id == id)
@@ -78,6 +95,9 @@ public class AudioManager : MonoBehaviour
 
     public void PlayJingleAboveMusic(SoundID id)
     {
+        if (Options.GetMuteSFX())
+            return;
+
         GameObject jingle = null;
 
         foreach (var sound in sounds.list)

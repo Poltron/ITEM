@@ -135,6 +135,10 @@ namespace AppAdvisory.Item {
             randomAI = randomAIToggle.isOn;
         }
 
+        private void Awake()
+        {
+        }
+
         void Start ()
         {
             Options.Init();
@@ -168,12 +172,17 @@ namespace AppAdvisory.Item {
 
                 uiManager.SetPlayer1Name(playerName);
             }
-            
+
             uiManager.Init();
             uiManager.NextRound += OnNextRound;
 			uiManager.Restart += OnRestart;
 			uiManager.InviteFriend += OnInviteFriend;
             uiManager.FinishTurn += OnFinishTurn;
+
+            if (Options.GetAskForTuto())
+                uiManager.PopTuto();
+            else
+                StartLookingForGame();
 
             audioManager = FindObjectOfType<AudioManager>();
         }
