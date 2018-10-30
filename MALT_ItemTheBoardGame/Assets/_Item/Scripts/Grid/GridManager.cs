@@ -9,9 +9,6 @@ using DG.Tweening;
 using UnityEngine.UI;
 using GS;
 using Facebook.Unity;
-using AppAdvisory.Ads;
-
-namespace AppAdvisory.Item {
 
     public class RoundScore
     {
@@ -29,8 +26,8 @@ namespace AppAdvisory.Item {
 
     public class GridManager : PunBehaviour
     {
-        private Connection connection;
-        public FBManager fbManager;
+        static private GridManager instance;
+        static public GridManager Instance { get { return instance; } }
 
         private ModelGrid modelGrid;
         public ModelGrid ModelGrid { get { return modelGrid; } }
@@ -45,30 +42,11 @@ namespace AppAdvisory.Item {
         public AIBehaviour AIBehaviour { get { return aiBehaviour; } }
 
         [SerializeField]
-        public Player playerPrefab;
-        [SerializeField]
-        public Ball whiteBallPrefab;
-        [SerializeField]
-        public Ball blackBallPrefab;
-
-        [SerializeField]
         private Transform marbleContainer;
         [SerializeField]
         public List<Ball> blackBalls;
         [SerializeField]
         public List<Ball> whiteBalls;
-
-        [SerializeField]
-        private UIManager uiManager;
-
-        [HideInInspector]
-        public Player player;
-        public string playerName;
-        private string playerPicURL;
-
-        public float timeToLaunchGameVSIA = 4;
-
-        private bool isGameFinished = false;
 
         [HideInInspector]
         public int playerScore = 0;
@@ -83,8 +61,6 @@ namespace AppAdvisory.Item {
         private bool isEqualityTurn = false;
         private bool nextTurnIsAI = false;
         public bool IsEqualityTurn { get { return isEqualityTurn; } }
-        private bool isGameStarted = false;
-        private bool isPlayingVSIA = false;
 
         private bool isPlayingTutorial = false;
 
@@ -92,19 +68,7 @@ namespace AppAdvisory.Item {
         private bool playerGoesNextRound = false;
         private int roundNumber;
 
-        [SerializeField]
-        private Sprite IASprite;
-
-        [SerializeField]
-        private bool disableAI = false;
-        [SerializeField]
-        private bool randomAI = false;
-
-        [SerializeField]
-        private Toggle randomAIToggle;
-
-        [SerializeField]
-        private int numberOfRound;
+        private int numberOfRound = 2;
 
         [HideInInspector]
         public int numberOfTurnsPlayer1 = 0;
@@ -126,154 +90,43 @@ namespace AppAdvisory.Item {
         [HideInInspector]
         public WinningPattern actualWinningPattern;
 
-        private AudioManager audioManager;
-
-        private bool isFBConnected;
-
-        public void ChangeRandomCheckbox(bool value)
-        {
-            randomAI = randomAIToggle.isOn;
-        }
-
         private void Awake()
         {
+            if (instance == null)
+                instance = this;
+            else
+                Destroy(gameObject);
         }
 
         void Start ()
         {
-            Options.Init();
-
             numberOfTurnsPlayer1 = 0;
             numberOfTurnsPlayer2 = 0;
             roundNumber = 1;
 
             aiBehaviour = new AIBehaviour(aiEvaluationData);
 
-            connection = GetComponent<Connection>();
-            connection.ApplyUserIdAndConnect ();
-
-            isFBConnected = false;
-
-            fbManager = FindObjectOfType<FBManager> ();
-            if (fbManager)
-            {
-                isFBConnected = true;
-
-                playerName = fbManager.pName;
-                playerPicURL = fbManager.pUrlPic;
-
-                StartCoroutine(Utils.LoadSpriteFromURL(playerPicURL, (sprite) =>
-                {
-                    uiManager.SetPlayer1Pic(sprite);
-                }));
-
-                fbManager.NameLoaded += OnNameLoaded;
-                fbManager.PicURLLoaded += OnPicURLLoaded;
-
-                uiManager.SetPlayer1Name(playerName);
-            }
-
-            uiManager.Init();
-            uiManager.NextRound += OnNextRound;
-			uiManager.Restart += OnRestart;
-			uiManager.InviteFriend += OnInviteFriend;
-            uiManager.FinishTurn += OnFinishTurn;
-
-            if (Options.GetAskForTuto())
-                uiManager.PopTuto();
-            else
-                StartLookingForGame();
-
-            audioManager = FindObjectOfType<AudioManager>();
+            UIManager.Instance.Restart += OnRestart;
+            UIManager.Instance.NextRound += OnNextRound;
+            UIManager.Instance.InviteFriend += OnInviteFriend;
+            UIManager.Instance.FinishTurn += OnFinishTurn;
         }
-
-        private void Update()
+    
+        public void InitForGameStart()
         {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                StartGameVSIA();
-            }
-        }
-
-        public void StartLookingForGame()
-        {
-            PhotonNetwork.JoinRandomRoom();
-            DOVirtual.DelayedCall(timeToLaunchGameVSIA, StartGameVSIA, true);
-        }
-
-        public void StartGameVSIA() {
-			if (isGameStarted)
-				return;
-
-			connection.enabled = false;
-			PhotonNetwork.LeaveRoom ();
-			PhotonNetwork.Disconnect ();
-
-			uiManager.DisplayWaitingForPlayerPanel (false);
-			DisplayMarbleContainer (true);
-			CreateGrid ();
-
-			isGameStarted = true;
+            DisplayMarbleContainer(true);
+            CreateGrid();
             numberOfTurnsPlayer1 = 0;
             numberOfTurnsPlayer2 = 0;
-            isPlayingVSIA = true;
-
-            player = CreatePlayer(BallColor.White);
-			uiManager.InitPlayer2(BallColor.Black);
-
-            uiManager.SetPlayer2Name(GetIAName());
-            uiManager.SetPlayer2Pic(GetIASprite());
-            //uiManager.DisplayTurnSwitchPhase1(true);
-            //uiManager.DisplayYourTurn(true);
-            //uiManager.SetPlayer1Turn(player.StartTurn);
-            uiManager.SetPlayer1Turn();
-            player.StartTurn();
-		}
+        }
 
         public void SetPlayingTuto(bool isPlaying)
         {
             isPlayingTutorial = isPlaying;
         }
 
-        private string GetIAName()
-        {
-            if (Options.IsLanguageFr())
-            {
-                return "Charles (IA)";
-            }
-
-            return "Charles (AI)";
-		}
-
-        private Sprite GetIASprite()
-        {
-            return IASprite;
-        }
-
-		private void DisplayMarbleContainer(bool isShown) {
+		public void DisplayMarbleContainer(bool isShown) {
 			marbleContainer.gameObject.SetActive (isShown);
-		}
-
-		private void OnFacebookConnect() {
-			connection.ApplyUserIdAndConnect ();
-		}
-
-		private void OnNameLoaded(string name) {
-			playerName = name;
-            uiManager.DisplayPlayer1(true);
-            print("onnameloaded " + name);
-		}
-
-		private void OnPicURLLoaded(string url) {
-			playerPicURL = url;
-
-            StartCoroutine(Utils.LoadSpriteFromURL(playerPicURL, (sprite) => {
-                uiManager.SetPlayer1Pic(sprite);
-            }));
-
-            uiManager.DisplayPlayer1(true);
-
-            print ("onpicurlloaded" + url);
 		}
 
 		private void CreateGrid()
@@ -310,12 +163,12 @@ namespace AppAdvisory.Item {
 
                 b.MoveToResetPosition();
             }
-            
-            isGameFinished = false;
+
+            GameManager.Instance.isGameFinished = false;
             isEqualityTurn = false;
-            isGameStarted = true;
+            GameManager.Instance.isGameStarted = true;
             
-            player.Reset();
+            PlayerManager.Instance.Player1.Reset();
 
             playerScore = 0;
             otherPlayerScore = 0;
@@ -323,45 +176,31 @@ namespace AppAdvisory.Item {
             numberOfTurnsPlayer1 = 0;
             numberOfTurnsPlayer2 = 0;
 
-            uiManager.ResetGame();
+            UIManager.Instance.ResetGame();
 
             SwitchPlayersColor();
 
             // whites begin the game
-            if (player.color == BallColor.White)
+            if (PlayerManager.Instance.Player1.color == BallColor.White)
             {
-                uiManager.SetPlayer1Turn();// player.StartTurn);
-                player.StartTurn();
-                //uiManager.DisplayYourTurn(true);
+                UIManager.Instance.SetPlayer1Turn();
+                PlayerManager.Instance.Player1.StartTurn();
             }
             else
             {
-                uiManager.SetPlayer2Turn();// null);
-                //uiManager.DisplayOpponentTurn(true);
+                UIManager.Instance.SetPlayer2Turn();
             }
         }
 
-		private Player CreatePlayer(BallColor color)
-        {
-			Player player = Instantiate (playerPrefab);
-			player.ballPrefab = color == BallColor.White ? whiteBallPrefab : blackBallPrefab;
-			player.SetGrid (modelGrid, optiGrid);
-			player.OnPhase1TurnFinished += Phase1TurnFinishedPlayer;
-			player.OnPhase2TurnFinished += Phase2TurnFinishedPlayer;
-			return player;
-		}
-
         private void SwitchPlayersColor()
         {
-            if (player.color == BallColor.Black)
+            if (PlayerManager.Instance.Player1.color == BallColor.Black)
             {
-                player.ballPrefab = blackBallPrefab;
-                uiManager.InitPlayer2(BallColor.White);
+                PlayerManager.Instance.SetPlayerColor(BallColor.White, true);
             }
             else
             {
-                player.ballPrefab = whiteBallPrefab;
-                uiManager.InitPlayer2(BallColor.Black);
+                PlayerManager.Instance.SetPlayerColor(BallColor.Black);
             }
         }
 
@@ -375,7 +214,7 @@ namespace AppAdvisory.Item {
 		public void PlayIAPhase1()
         {
             numberOfTurnsPlayer2++;
-            if (randomAI)
+            if (PlayerManager.Instance.randomAI)
                 StartCoroutine(aiBehaviour.GetRandomMove(optiGrid, PlayIAPhase1CalculusEnded));
             else
                 StartCoroutine(aiBehaviour.GetBestMove(optiGrid, PlayIAPhase1CalculusEnded));
@@ -400,17 +239,8 @@ namespace AppAdvisory.Item {
                 }
 
                 //Debug.Log("numberOfTurnsPlayer1 : " + numberOfTurnsPlayer1 + " / numberOfTurnsPlayer2 : " + numberOfTurnsPlayer2);
-
-                /*if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
-                {
-                    nextTurnIsAI = false;
-                    isEqualityTurn = true;
-                }
-                else
-                {*/
                 nextTurnIsAI = false;
                 EndGame(justWon);
-                //}
             }
             else
             {
@@ -421,24 +251,22 @@ namespace AppAdvisory.Item {
         bool alreadyPassed = false;
         public void EndAIPhase()
         {
-            if (player.ballCount == 0 && !alreadyPassed)
+            if (PlayerManager.Instance.Player1.ballCount == 0 && !alreadyPassed)
             {
-                //uiManager.DisplayTurnSwitchPhase1(false);
-                //uiManager.DisplayTurnSwitchPhase2(true);
                 alreadyPassed = true;
 
                 if (isPlayingTutorial)
-                    StartCoroutine(waitFor(1.5f, uiManager.DisplayTutorialPhase2Movement));
+                    StartCoroutine(waitFor(1.5f, UIManager.Instance.DisplayTutorialPhase2Movement));
                 else
                 {
-                    uiManager.SetPlayer1Turn();
-                    player.StartTurn();
+                UIManager.Instance.SetPlayer1Turn();
+                    PlayerManager.Instance.Player1.StartTurn();
                 }
             }
             else
             {
-                uiManager.SetPlayer1Turn();
-                player.StartTurn();
+            UIManager.Instance.SetPlayer1Turn();
+                PlayerManager.Instance.Player1.StartTurn();
             }
         }
 
@@ -462,7 +290,7 @@ namespace AppAdvisory.Item {
         {
             numberOfTurnsPlayer2++;
 
-            if (randomAI)
+            if (PlayerManager.Instance.randomAI)
                 StartCoroutine(aiBehaviour.GetRandomMove(optiGrid, PlayIAPhase2CalculusEnded));
             else
                 StartCoroutine(aiBehaviour.GetBestMove(optiGrid, PlayIAPhase2CalculusEnded));
@@ -479,7 +307,7 @@ namespace AppAdvisory.Item {
             Cell cellTo = modelGrid.GetCellFromModel(move.toY, move.toX);
 
             OptiGrid.DoMove(move);
-            player.ChangeBallPosition(cellFrom, cellTo);
+            PlayerManager.Instance.Player1.ChangeBallPosition(cellFrom, cellTo);
 
             bool justWon = Utils.CheckWinIA(modelGrid, cellTo);
             if (justWon || isEqualityTurn)
@@ -489,17 +317,9 @@ namespace AppAdvisory.Item {
                     DOVirtual.DelayedCall(timeBeforeVictoryAnimation, PlayVictoryAnimation, true);
                 }
 
-                /*if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
-                {
-                    nextTurnIsAI = false;
-                    isEqualityTurn = true;
-                }
-                else
-                {*/
                 //Debug.Log("numberOfTurnsPlayer1 : " + numberOfTurnsPlayer1 + " / numberOfTurnsPlayer2 : " + numberOfTurnsPlayer2);
                 nextTurnIsAI = false;
                 EndGame(justWon);
-                //}
             }
             else
             {
@@ -509,12 +329,11 @@ namespace AppAdvisory.Item {
         
 		public void Phase1TurnFinishedPlayer(Vector2 pos)
         {
-            //uiManager.DisplayTurnSwitchPhase1(true);
             Cell cell = modelGrid.GetCellFromModel (pos);
 
             //Debug.Log("numberOfTurnsPlayer1 : " + numberOfTurnsPlayer1 + " / numberOfTurnsPlayer2 : " + numberOfTurnsPlayer2);
 
-            if (isPlayingVSIA)
+            if (GameManager.Instance.isPlayingVSIA)
             {
                 bool justWon = Utils.CheckWin(modelGrid, cell, false);
                 if (justWon || isEqualityTurn)
@@ -538,14 +357,14 @@ namespace AppAdvisory.Item {
                 else
                 {
                     
-                    if (disableAI) // debug feature to test without AI
+                    if (PlayerManager.Instance.disableAI) // debug feature to test without AI
                     {
-                        uiManager.SetPlayer1Turn();
-                        player.StartTurn();
+                        UIManager.Instance.SetPlayer1Turn();
+                        PlayerManager.Instance.Player1.StartTurn();
                     }
                     else
                     {
-                        uiManager.SetPlayer2Turn(/*null*/);
+                        UIManager.Instance.SetPlayer2Turn();
                         PlayIAPhase1();
                     }
                 }
@@ -576,21 +395,19 @@ namespace AppAdvisory.Item {
                 }
                 else
                 {
-                    uiManager.SetPlayer2Turn(/*null*/);
+                    UIManager.Instance.SetPlayer2Turn();
 				}
             }
         }
 
 		public void Phase2TurnFinishedPlayer(List<Vector2> movements)
         {
-            //uiManager.DisplayTurnSwitchPhase1(false);
-            //uiManager.DisplayTurnSwitchPhase2(true);
             Vector2[] movementArray = movements.ToArray ();
 			Cell cell = modelGrid.GetCellFromModel (movementArray [movementArray.Length - 1]);
 
             //Debug.Log("numberOfTurnsPlayer1 : " + numberOfTurnsPlayer1 + " / numberOfTurnsPlayer2 : " + numberOfTurnsPlayer2);
 
-            if (isPlayingVSIA)
+            if (GameManager.Instance.isPlayingVSIA)
             {
                 bool justWon = Utils.CheckWin(modelGrid, cell, false);
                 if (justWon || isEqualityTurn)
@@ -613,7 +430,7 @@ namespace AppAdvisory.Item {
                 }
                 else
                 {
-                    uiManager.SetPlayer2Turn(/*null*/);
+                    UIManager.Instance.SetPlayer2Turn();
                     PlayIAPhase2();
                 }
 			}
@@ -643,15 +460,15 @@ namespace AppAdvisory.Item {
                 }
                 else
                 {
-                    uiManager.SetPlayer2Turn(/*null*/);
+                    UIManager.Instance.SetPlayer2Turn();
 				}
 			}
 		}
 
 		private void EndGame(bool justWon)
         {
-            isGameFinished = true;
-            player.EndTurn();
+            GameManager.Instance.isGameFinished = true;
+            PlayerManager.Instance.Player1.EndTurn();
 
             if (!justWon)
                 DOVirtual.DelayedCall(1.5f, DisplayRoundResult, true);
@@ -659,15 +476,15 @@ namespace AppAdvisory.Item {
 
         private void DisplayRoundResult()
         {
-            uiManager.DisplayRoundResultPanel(true, roundNumber, playerScore, otherPlayerScore);
+            UIManager.Instance.DisplayRoundResultPanel(true, roundNumber, playerScore, otherPlayerScore);
 
             if (roundNumber == numberOfRound)
             {
-                uiManager.roundResultPanel.ActivateGameResultsButton(true);
+                UIManager.Instance.roundResultPanel.ActivateGameResultsButton(true);
             }
             else
             {
-                uiManager.roundResultPanel.ActivateNextRoundButton(true);
+                UIManager.Instance.roundResultPanel.ActivateNextRoundButton(true);
             }
         }
 
@@ -708,11 +525,8 @@ namespace AppAdvisory.Item {
 
             StartCoroutine(playVictoryAnimationPhase1(toKeep));
             
-            if (audioManager != null)
-            {
-                audioManager.PlayAudio(SoundID.ComboRumble);
-                audioManager.ResetVictoryAnimationSounds();
-            }
+            AudioManager.Instance.PlayAudio(SoundID.ComboRumble);
+            AudioManager.Instance.ResetVictoryAnimationSounds();
         }
 
         IEnumerator playVictoryAnimationPhase1(WinningPattern pattern)
@@ -792,11 +606,11 @@ namespace AppAdvisory.Item {
         {
             if (IsEqualityTurn && numberOfTurnsPlayer1 != numberOfTurnsPlayer2)
             {
-                if (isPlayingVSIA)
+                if (GameManager.Instance.isPlayingVSIA)
                 {
                     if (nextTurnIsAI)
                     {
-                        uiManager.SetPlayer2Turn(/*null*/);
+                        UIManager.Instance.SetPlayer2Turn();
                         if (optiGrid.BlackBallsLeft != 0)
                             PlayIAPhase1();
                         else
@@ -809,14 +623,14 @@ namespace AppAdvisory.Item {
                 }
                 else
                 {
-                    if (player.color == BallColor.Black)
+                    if (PlayerManager.Instance.Player1.color == BallColor.Black)
                     {
-                        uiManager.SetPlayer1Turn(/*player.StartTurn*/);
-                        player.StartTurn();
+                        UIManager.Instance.SetPlayer1Turn();
+                        PlayerManager.Instance.Player1.StartTurn();
                     }
                     else
                     {
-                        uiManager.SetPlayer2Turn(/*null*/);
+                        UIManager.Instance.SetPlayer2Turn();
                     }
                 }
             }
@@ -834,7 +648,7 @@ namespace AppAdvisory.Item {
             modelGrid.ResetCellsColor();
 
             List<Move> moves = new List<Move>();
-            if (player.hasAlreadyJumpedOnce)
+            if (PlayerManager.Instance.Player1.hasAlreadyJumpedOnce)
                 moves = optiGrid.GetAvailableMoves(cell, true);
             else
                 moves = optiGrid.GetAvailableMoves(cell);
@@ -869,84 +683,32 @@ namespace AppAdvisory.Item {
 
         public void BallAddScore(Ball ball)
         {
-            uiManager.PopScoreParticle(ball);
+            UIManager.Instance.PopScoreParticle(ball);
         }
 
         public void AddPlayer1Score(int nb)
         {
             playerScore += nb;
             totalPlayerScore += nb;
-            uiManager.player1.SetScoreCounter(totalPlayerScore);
+            UIManager.Instance.player1.SetScoreCounter(totalPlayerScore);
         }
 
         public void AddPlayer2Score(int nb)
         {
             otherPlayerScore += nb;
             totalOtherPlayerScore += nb;
-            uiManager.player2.SetScoreCounter(totalOtherPlayerScore);
+            UIManager.Instance.player2.SetScoreCounter(totalOtherPlayerScore);
         }
-
-        public void ShowAds()
-		{
-			int count = PlayerPrefs.GetInt("GAMEOVER_COUNT",0);
-			count++;
-
-			#if APPADVISORY_ADS
-			/*if(count > numberOfPlayToShowInterstitial)
-			{
-
-				if(AdsManager.instance.IsReadyInterstitial())
-				{
-					PlayerPrefs.SetInt("GAMEOVER_COUNT",0);
-					AdsManager.instance.ShowInterstitial();
-				}
-			}
-			else
-			{
-				PlayerPrefs.SetInt("GAMEOVER_COUNT", count);
-			}
-			PlayerPrefs.Save();*/
-			#else
-			if(count >= numberOfPlayToShowInterstitial)
-			{
-			Debug.LogWarning("To show ads, please have a look at Very Simple Ad on the Asset Store, or go to this link: " + VerySimpleAdsURL);
-			PlayerPrefs.SetInt("GAMEOVER_COUNT",0);
-			}
-			else
-			{
-			PlayerPrefs.SetInt("GAMEOVER_COUNT", count);
-			}
-			PlayerPrefs.Save();
-			#endif
-		}
-
-		void RestartConnection() {
-			connection.enabled = false;
-			player.EndTurn ();
-
-			PhotonNetwork.LeaveRoom ();
-			PhotonNetwork.Disconnect ();
-		}
 
 		[PunRPC]
 		void ReceiveMovementsPhase1(Vector2 pos, int ballIndex)
 		{
-			if (player.ballCount > 0)
-            {
-                //uiManager.DisplayTurnSwitchPhase1(true);
-            }
-            else
-            {
-                //uiManager.DisplayTurnSwitchPhase1(false);
-                //uiManager.DisplayTurnSwitchPhase2(true);
-            }
-
             numberOfTurnsPlayer2++;
 
             Cell cell = modelGrid.GetCellFromModel (pos);
 			Ball ball;
 
-			if (player.color == BallColor.White)
+			if (PlayerManager.Instance.Player1.color == BallColor.White)
             {
                 ball = blackBalls.Find(x => x.ballId == ballIndex);
                 blackBalls.Remove(ball);
@@ -978,17 +740,14 @@ namespace AppAdvisory.Item {
             }
             else
             {
-                uiManager.SetPlayer1Turn(/*player.StartTurn*/);
-                player.StartTurn();
+                UIManager.Instance.SetPlayer1Turn();
+                PlayerManager.Instance.Player1.StartTurn();
             }
 		}
 			
 		[PunRPC]
 		void ReceiveMovementsPhase2(Vector2[] movements)
         {
-            //uiManager.DisplayTurnSwitchPhase1(false);
-            //uiManager.DisplayTurnSwitchPhase2(true);
-
             numberOfTurnsPlayer2++;
 
             StartCoroutine(MoveCoroutine (movements));
@@ -1014,8 +773,7 @@ namespace AppAdvisory.Item {
             }
             else
             {
-                StartCoroutine(waitFor((movements.Length * 1.0f) - 1.0f, uiManager.SetPlayer1Turn, player.StartTurn));
-                //uiManager.SetPlayer1Turn(player.StartTurn);
+                StartCoroutine(waitFor((movements.Length * 1.0f) - 1.0f, UIManager.Instance.SetPlayer1Turn, PlayerManager.Instance.Player1.StartTurn));
             }
         }
 
@@ -1027,34 +785,6 @@ namespace AppAdvisory.Item {
             callback();
             callback2();
         }
-
-        private void SendName(string name) {
-			PhotonView photonView = PhotonView.Get(this);
-			photonView.RPC("ReceiveName", PhotonTargets.Others, name);
-		}
-
-		private void SendPicURL(string picURL) {
-			PhotonView photonView = PhotonView.Get(this);
-			photonView.RPC("ReceivePicURL", PhotonTargets.Others, picURL);
-		}
-
-		[PunRPC]
-		private void ReceiveName(string name) {
-			uiManager.SetPlayer2Name (name);
-			return;
-		}
-
-		[PunRPC] 
-		private void ReceivePicURL(string picURL) {
-			StartCoroutine (Utils.LoadSpriteFromURL (picURL, (sprite) => {
-				uiManager.SetPlayer2Pic(sprite);
-			}));
-		}
-
-		override public void OnLeftRoom()
-		{
-			print ("leftRoom");
-		}
 
 
 //		void MovePhase2(Vector2[] movements) {
@@ -1070,99 +800,14 @@ namespace AppAdvisory.Item {
         {
 			for (int i = 0; i < movements.Length-1; i++) {
 
-				player.ChangeBallPosition (modelGrid.GetCellFromModel (movements [i]), modelGrid.GetCellFromModel (movements [i+1]));
+                PlayerManager.Instance.Player1.ChangeBallPosition (modelGrid.GetCellFromModel (movements [i]), modelGrid.GetCellFromModel (movements [i+1]));
 				yield return new WaitForSeconds (1f);
 			}
         }
-			
-		public override void OnJoinedRoom()
-		{
-
-			if (PhotonNetwork.room.PlayerCount == 2)
-			{
-				uiManager.DisplayWaitingForPlayerPanel (false);
-				DisplayMarbleContainer (true);
-				CreateGrid ();
-				isGameStarted = true;
-                numberOfTurnsPlayer1 = 0;
-                numberOfTurnsPlayer2 = 0;
-
-                player = CreatePlayer (BallColor.Black);
-				uiManager.InitPlayer1(BallColor.Black);
-				uiManager.InitPlayer2(BallColor.White);
-				uiManager.SetPlayer2Turn(/*null*/);
-
-                //uiManager.DisplayTurnSwitchPhase1(true);
-
-                uiManager.SetPlayer1Name (playerName);
-
-				print ("2 players in the room, sending player name : " + playerName);
-				SendName (playerName);
-				SendPicURL (playerPicURL);
-			}
-			else
-			{
-				print ("alone in the room, name is : " + playerName);
-				uiManager.DisplayWaitingForPlayerPanel (true);
-				uiManager.InitPlayer1(BallColor.White);
-				uiManager.SetPlayer1Name (playerName); 
-
-				uiManager.DisplayYourTurn (false);
-			}
-		}
-
-		public override void OnPhotonPlayerConnected(PhotonPlayer newPlayer)
-		{
-			if (PhotonNetwork.room.PlayerCount == 2)
-			{
-				uiManager.DisplayWaitingForPlayerPanel (false);
-				DisplayMarbleContainer (true);
-				Debug.Log("Other player arrived");
-				CreateGrid ();
-				isGameStarted = true;
-                numberOfTurnsPlayer1 = 0;
-                numberOfTurnsPlayer2 = 0;
-
-                player = CreatePlayer(BallColor.White);
-                uiManager.InitPlayer2(BallColor.Black);
-
-                //uiManager.DisplayTurnSwitchPhase1(true);
-                //uiManager.DisplayYourTurn(true);
-                uiManager.SetPlayer1Turn(/*player.StartTurn*/);
-                player.StartTurn();
-
-                SendName (playerName);
-				SendPicURL (playerPicURL);
-
-			} else 
-			{
-				print("alone");
-				uiManager.DisplayWaitingForPlayerPanel (true);
-			}
-		}
-			
-		public override void OnPhotonPlayerDisconnected(PhotonPlayer otherPlayer)
-		{
-			Debug.Log ("Other player disconnected! isInactive: " + otherPlayer.IsInactive);
-			if (isGameFinished)
-				return;
-
-			connection.enabled = false;
-			PhotonNetwork.LeaveRoom ();
-			PhotonNetwork.Disconnect ();
-            
-			uiManager.DisplayForfeit(true);
-		}
 
 		public void OnRestart()
         {
-            if (fbManager != null)
-            {
-                fbManager.NameLoaded -= OnNameLoaded;
-                fbManager.PicURLLoaded -= OnPicURLLoaded;
-            }
-
-            RestartConnection();
+            GameManager.Instance.RestartConnection();
             SceneManager.LoadScene(1);
         }
 
@@ -1177,7 +822,7 @@ namespace AppAdvisory.Item {
             if (PhotonNetwork.connectedAndReady)
                 photonView.RPC("SendNextRound", PhotonTargets.Others);
 
-            if (opponentGoesNextRound || isPlayingVSIA)
+            if (opponentGoesNextRound || GameManager.Instance.isPlayingVSIA)
             {
                 playerGoesNextRound = opponentGoesNextRound = false;
                 GoToNextRound();
@@ -1208,5 +853,3 @@ namespace AppAdvisory.Item {
 		}
 
 	}
-
-}

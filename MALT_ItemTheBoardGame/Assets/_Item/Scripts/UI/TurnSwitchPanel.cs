@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-namespace AppAdvisory.Item
-{
     public class TurnSwitchPanel : UIPanel
     {
 
@@ -149,4 +147,3 @@ namespace AppAdvisory.Item
             callBack = _callBack;
         }
     }
-}

@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AppAdvisory.Item
-{
-
     public struct Move
     {
         public CellColor color;
@@ -45,6 +42,9 @@ namespace AppAdvisory.Item
 
         public bool canOnlyJump;
 
+        private int playerScore;
+        private int aiScore;
+
         public AIBehaviour(AIEvaluationData _evaluationData)
         {
             evaluationData = _evaluationData;
@@ -53,6 +53,12 @@ namespace AppAdvisory.Item
         public void SetAIEvaluationData(AIEvaluationData _data)
         {
             evaluationData = _data;
+        }
+
+        public void SetScores(int _playerScore, int _aiScore)
+        {
+            playerScore = _playerScore;
+            aiScore = _aiScore;
         }
 
         public IEnumerator GetRandomMove(OptimizedGrid optiGrid, System.Action<Move> toDo)
@@ -77,36 +83,26 @@ namespace AppAdvisory.Item
 
             yield return new WaitForEndOfFrame();
 
-            //Debug.Log("BlackColor can win next turn ?");
             List<Vector2> canWinCells = new List<Vector2>();
             // if AI has a 4-0 pattern
             if (grid.CanColorWin(BallColor.Black, out canWinCells))
             {
-                //Debug.Log("BlackColor can win");
-
                 // if AI can move to win
                 if (grid.CanColorMoveToWin(BallColor.Black, canWinCells, out bestMove))
                 {
-                    //Debug.Log("BlackColor can move to win");
                     done = true;
                 }
             }
 
-            //Debug.Log("WhiteColor can win next turn ?");
             // if Player can win next turn
             if (grid.CanColorWin(BallColor.White, out canWinCells) && !done)
             {
-                //Debug.Log("Player can win next turn");
-
                 // if player can move to win next turn
                 if (grid.CanColorMoveToWin(BallColor.White, canWinCells, out bestMove))
                 {
-                    //Debug.Log("Player can move to win next turn");
-
                     // can AI def it ???
                     if (grid.CanColorMoveToWin(BallColor.Black, canWinCells, out bestMove))
                     {
-                        //Debug.Log("AI can def next turn win");
                         done = true;
                     }
                 }
@@ -115,9 +111,6 @@ namespace AppAdvisory.Item
             if (!done)
             {
                 int depth = 3;
-                //if (optiGrid.BlackBallsLeft > 0 || optiGrid.WhiteBallsLeft > 0)
-                 //   depth = 3;
-
                 bestMove = MiniMaxRoot(depth, true);
             }
 
@@ -317,6 +310,7 @@ namespace AppAdvisory.Item
                         value += 50000;
                 }
             }
+
             return value;
         }
 
@@ -397,5 +391,3 @@ namespace AppAdvisory.Item
             return false;
         }
     }
-
-}

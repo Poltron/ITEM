@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AppAdvisory.Item
-{
-
     public enum CellColor : byte
     {
         None = 0,
@@ -789,4 +786,3 @@ namespace AppAdvisory.Item
             return false;
         }
     }
-}

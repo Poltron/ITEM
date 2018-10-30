@@ -5,515 +5,368 @@ using HedgehogTeam.EasyTouch;
 using System;
 using DG.Tweening;
 
-namespace AppAdvisory.Item {
+public class Player
+{
+	public string playerName;
+	public string picURL;
 
-	public class Player : MonoBehaviour {
-		public string playerName;
-		public string picURL;
+    public event Action<Ball> OnBallSelection;
+    public event Action<Cell> OnCellSelection;
 
-        public event Action<Ball> OnBallSelection;
-        public event Action<Cell> OnCellSelection;
+    public BallColor color { get { return ballPrefab.Color; } }
+	public Ball ballPrefab;
 
-        private ModelGrid modelGrid;
-        private OptimizedGrid optiGrid;
+	public uint ballCount = 10;
+	private bool isTweening = false;
 
-        public BallColor color {
-			get {
-				return ballPrefab.Color;
-			}
-		}
-		public Ball ballPrefab;
+	public event Action<Vector2> OnPhase1TurnFinished;
+	public event Action<List<Vector2>> OnPhase2TurnFinished;
 
-		public uint ballCount = 10;
-		private bool isTweening = false;
+	public bool hasAlreadyJumpedOnce = false;
+	private Cell currentCell;
+	private List<Cell> currentCellsToMove;
+	private List<Cell> currentCellsToJump;
+	private List<Vector2> movements;
 
-		public event Action<Vector2> OnPhase1TurnFinished;
-		public event Action<List<Vector2>> OnPhase2TurnFinished;
+	private Ball currentBall;
 
-		public bool hasAlreadyJumpedOnce = false;
-		private Cell currentCell;
-		private List<Cell> currentCellsToMove;
-		private List<Cell> currentCellsToJump;
-		private List<Vector2> movements;
+    private GameObject exclusivePickableObject;
 
-		//private Vector3 deltaPosition;
-		//private int fingerIndex;
-		private Ball currentBall;
+	public bool showHelp = false;
 
-        private GameObject exclusivePickableObject;
+    private float lastInput = 0;
 
-		public bool showHelp = false;
+    public void Reset()
+    {
+        ballCount = 10;
+        isTweening = false;
+        hasAlreadyJumpedOnce = false;
+        currentCell = null;
+        currentBall = null;
+        currentCellsToMove = new List<Cell>();
+        currentCellsToJump = new List<Cell>();
+        movements = new List<Vector2>();
+    }
 
-        public void Reset()
+	public void StartTurn()
+    {
+        //Debug.Log("playerstartturn");
+           
+		EasyTouch.On_TouchUp += OnTouchUp;
+	}
+
+
+    public void EndTurn()
+    {
+        //Debug.Log("playerendturn");
+
+        GridManager.Instance.ModelGrid.ResetCellsColor();
+
+        EasyTouch.On_TouchUp -= OnTouchUp;
+	}
+       
+    public void SetExclusivePickableObject(GameObject go)
+    {
+        exclusivePickableObject = go;
+    }
+
+    public void OnTouchUpPublic(Gesture gesture)
+    {
+        //Debug.Log("on touch up public");
+        OnTouchUp(gesture);
+    }
+
+	void OnTouchUp(Gesture gesture)
+    {
+        // mesure préventive pour le moment ou il y a un double input en pahse 1 qui bloque la bille sélectionnée ???
+        if (lastInput + 0.1f > Time.realtimeSinceStartup)
+            return;
+
+        lastInput = Time.realtimeSinceStartup;
+
+        //Debug.Log("on touch up");
+
+        if (isTweening)
+		    return;
+
+        if (!gesture.pickedObject)
+		    return;
+
+        //Debug.Log(gesture.pickedObject.name);
+
+        if (exclusivePickableObject != null && gesture.pickedObject != exclusivePickableObject)
+            return;
+
+		Cell pickedCell = gesture.pickedObject.GetComponent<Cell> (); 
+		Ball pickedBall = gesture.pickedObject.GetComponent<Ball> ();
+
+		if (pickedBall)
+			if (pickedBall.owner)
+				pickedCell = pickedBall.owner;
+
+		if (ballCount > 0)
         {
-            ballCount = 10;
-            isTweening = false;
-            hasAlreadyJumpedOnce = false;
-            currentCell = null;
-            currentBall = null;
-            currentCellsToMove = new List<Cell>();
-            currentCellsToJump = new List<Cell>();
-            movements = new List<Vector2>();
-        }
+			if (currentBall)
+            {
+				if (!pickedCell)
+                   {
+                       if (pickedBall == currentBall)
+                       {
+                           currentBall.PutDownBall();
+                           currentBall = null;
+                       }
+					else if (pickedBall && pickedBall.Color == color) {
+						currentBall.PutDownBall();
+						currentBall = pickedBall;
+						currentBall.PickUpBall();
 
-		public void StartTurn() {
-            //Debug.Log("playerstartturn");
-            
-			EasyTouch.On_TouchUp += OnTouchUp;
-//			if (ballCount > 0) {
-//				EasyTouch.On_Drag += On_Drag;
-//				EasyTouch.On_DragStart += On_DragStart;
-//				EasyTouch.On_DragEnd += On_DragEnd;
-//			} else {
-//				EasyTouch.On_TouchUp += OnTouchUp;
-//			}
-		}
+                           if (OnBallSelection != null)
+                               OnBallSelection(currentBall);
+					}
+					return;
+				}
+
+				if (pickedCell.HasBall ()) {
+					currentBall.ResetPosition ();
+					return;
+				}
 
 
-        public void EndTurn()
-        {
-            //Debug.Log("playerendturn");
+				EndTurn ();
+				ballCount--;
+				currentBall.DOPlace (pickedCell);
+				currentBall.HideHighlight ();
+				currentBall = null;
 
-            modelGrid.ResetCellsColor();
+                   if (OnCellSelection != null)
+                       OnCellSelection(pickedCell);
 
-            EasyTouch.On_TouchUp -= OnTouchUp;
+				SendTurnDataPhase1 (pickedCell);
 
-//			if (ballCount > 0) {
-//				EasyTouch.On_Drag -= On_Drag;
-//				EasyTouch.On_DragStart -= On_DragStart;
-//				EasyTouch.On_DragEnd -= On_DragEnd;
-//			} else {
-//				EasyTouch.On_TouchUp -= OnTouchUp;
-//			}
-		}
 
-		/*void On_Drag(Gesture gesture) {
-			if (fingerIndex != gesture.fingerIndex)
-				return;
-
-			if (!currentBall)
-				return;
-
-			if (currentBall.gameObject != gesture.pickedObject)
-				return;
-
-			Vector3 position = gesture.GetTouchToWorldPoint(gesture.pickedObject.transform.position);
-			gesture.pickedObject.transform.position = position - deltaPosition;
-		}
-
-		void On_DragStart(Gesture gesture) {
-			if (!gesture.pickedObject)
-				return;
-
-			Ball ball = gesture.pickedObject.GetComponent<Ball> ();
-
-			if (!ball)
-				return;
-
-			if (ball.Color != color)
-				return;
-
-			if (ballCount > 0) {
-				On_DragStartPhase1 (gesture, ball);
-			} else {
-				On_DragStartPhase2 (gesture, ball);
 			}
-		}
+            else
+            {
+				if (!pickedBall)
+					return;
 
+				if (pickedBall.Color != color)
+					return;
 
-		void On_DragStartPhase1(Gesture gesture, Ball ball) {
-			if (ball.owner != null)
-				return;
+                   if (pickedBall.owner != null)
+                       return;
 
-			RegisterBall (gesture, ball);
-		}
-
-		void On_DragStartPhase2(Gesture gesture, Ball ball) {
-			if (!ball.owner)
-				return;
-
-			RegisterBall (gesture, ball);
-			SelectBall (ball.owner);
-		}
-
-		void On_DragEndPhase1(Cell pickedCell) {
-			if (pickedCell.HasBall ()) {
-				currentBall.ResetPosition ();
-				return;
+                   RegisterBall(gesture, pickedBall);
+				//On_DragStartPhase1 (gesture, pickedBall);
 			}
+
+			if (!pickedCell)
+				return;
+
+			if (pickedCell.HasBall ())
+				return;
 
 			EndTurn ();
 			ballCount--;
-			currentBall.DOPlace (pickedCell);
-			currentBall = null;
-
 			SendTurnDataPhase1 (pickedCell);
+
 		}
+        else
+        {
+			if (!pickedCell)
+				return;
 
-		void On_DragEndPhase2(Cell pickedCell) {
-			//MoveBall (pickedCell);
-
-
-			//return;
-            
-			if (!currentCell) {
+			if (!currentCell)
+            {
 				if(!pickedCell.HasBall(color))
 					return;
 
 				SelectBall (pickedCell);
 			} 
-			else {
+			else
+            {
 				MoveBall (pickedCell);
 			}
 		}
+	}
 
-		void On_DragEnd(Gesture gesture) {
-			if (fingerIndex != gesture.fingerIndex)
-				return;
+	public void SelectBall(Cell pickedCell)
+    {
+		Cell destinationCell;
 
-			if (!currentBall)
-				return;
+		List<Cell> neighbours = GridManager.Instance.ModelGrid.GetCellNeighbours (pickedCell);
+		currentCellsToMove = new List<Cell> ();
+		currentCellsToJump = new List<Cell> ();
+		currentCell = pickedCell;
 
-			if (currentBall.gameObject != gesture.pickedObject)
-				return;
-
-			RaycastHit2D hit = Physics2D.CircleCast (gesture.pickedObject.transform.position, 0.25f, Vector2.zero, 1f, 1 << 9);
-
-			if (!hit) {
-				currentBall.ResetPosition ();
-				return;
-			}
-
-			if (!hit.collider) {
-				currentBall.ResetPosition ();
-				return;
-			}
-
-			Cell pickedCell = hit.collider.GetComponent<Cell> ();
-
-
-			if (!pickedCell) {
-				currentBall.ResetPosition ();
-				return;
-			}
-				
-
-			if (ballCount > 0) {
-				On_DragEndPhase1 (pickedCell);
+		foreach (Cell cell in neighbours) {
+			if (!cell.HasBall()) {
+				if(!hasAlreadyJumpedOnce)
+					currentCellsToMove.Add (cell);
 			} else {
-				On_DragEndPhase2 (pickedCell);
-			}
-		}*/
-        
-        public void SetExclusivePickableObject(GameObject go)
-        {
-            exclusivePickableObject = go;
-        }
-
-        public void OnTouchUpPublic(Gesture gesture)
-        {
-            //Debug.Log("on touch up public");
-            OnTouchUp(gesture);
-        }
-
-        float lastInput = 0;
-		void OnTouchUp(Gesture gesture)
-        {
-            // mesure préventive pour le moment ou il y a un double input en pahse 1 qui bloque la bille sélectionnée ???
-            if (lastInput + 0.1f > Time.realtimeSinceStartup)
-                return;
-
-            lastInput = Time.realtimeSinceStartup;
-
-            //Debug.Log("on touch up");
-
-			if (isTweening)
-				return;
-
-            if (!gesture.pickedObject)
-				return;
-
-            //Debug.Log(gesture.pickedObject.name);
-
-            if (exclusivePickableObject != null && gesture.pickedObject != exclusivePickableObject)
-                return;
-
-			Cell pickedCell = gesture.pickedObject.GetComponent<Cell> (); 
-			Ball pickedBall = gesture.pickedObject.GetComponent<Ball> ();
-
-			if (pickedBall)
-				if (pickedBall.owner)
-					pickedCell = pickedBall.owner;
-
-			if (ballCount > 0) {
-
-				if (currentBall) {
-					if (!pickedCell)
-                    {
-                        if (pickedBall == currentBall)
-                        {
-                            currentBall.PutDownBall();
-                            currentBall = null;
-                        }
-						else if (pickedBall && pickedBall.Color == color) {
-							currentBall.PutDownBall();
-							currentBall = pickedBall;
-							currentBall.PickUpBall();
-
-                            if (OnBallSelection != null)
-                                OnBallSelection(currentBall);
-						}
-						return;
-					}
-
-					if (pickedCell.HasBall ()) {
-						currentBall.ResetPosition ();
-						return;
-					}
-
-
-					EndTurn ();
-					ballCount--;
-					currentBall.DOPlace (pickedCell);
-					currentBall.HideHighlight ();
-					currentBall = null;
-
-                    if (OnCellSelection != null)
-                        OnCellSelection(pickedCell);
-
-					SendTurnDataPhase1 (pickedCell);
-
-
-				} else {
-					if (!pickedBall)
-						return;
-
-					if (pickedBall.Color != color)
-						return;
-
-                    if (pickedBall.owner != null)
-                        return;
-
-                    RegisterBall(gesture, pickedBall);
-					//On_DragStartPhase1 (gesture, pickedBall);
-				
+				destinationCell = GridManager.Instance.ModelGrid.GetCellFromDirection (pickedCell, cell);
+				if (destinationCell) {
+					if (!destinationCell.HasBall ())
+						currentCellsToJump.Add (destinationCell);
 				}
-				if (!pickedCell)
-					return;
 
-				if (pickedCell.HasBall ())
-					return;
+			}
+		}
 
+		currentBall = currentCell.ball;
+		currentBall.PickUpBall();
 
+           if (OnBallSelection != null)
+               OnBallSelection(currentBall);
+	}
+
+	void ResetCurrentCells() {
+		currentCell = null;
+		currentCellsToJump = null;
+		currentCellsToMove = null;
+	}
+
+	public void ChangeBallPosition(Cell firstCell, Cell secondCell) {
+
+           Ball ball = firstCell.ball;
+
+		secondCell.ball = ball;
+		firstCell.ball = null;
+
+		ball.owner = secondCell;
+           
+           Move move = new Move();
+           move.fromX = firstCell.y;
+           move.fromY = firstCell.x;
+           move.toX = secondCell.y;
+           move.toY = secondCell.x;
+           move.color = (CellColor)ball.Color;
+
+        GridManager.Instance.OptiGrid.DoMove(move);
+
+		isTweening = true;
+
+           if (ball.isPickedUp)
+               ball.GetComponent<Animator>().SetTrigger("PlaceBall");
+           else
+               ball.GetComponent<Animator>().SetTrigger("Move");
+
+           ball.isPickedUp = false;
+
+           ball.FixSortingLayer(true);
+
+           ball.transform.DOMove (secondCell.transform.position, 1f).OnComplete (() => {
+			ball.transform.position = secondCell.transform.position;
+			//ball.SetStartPosition ();
+			isTweening = false;
+               ball.FixSortingLayer(false);
+           });
+	}
+
+	void SendTurnDataPhase1(Cell pickedCell) {
+		List<Vector2> movements = new List<Vector2> ();
+		movements.Add (new Vector2(pickedCell.x, pickedCell.y));
+
+		if (OnPhase1TurnFinished != null)
+			OnPhase1TurnFinished (new Vector2 (pickedCell.x, pickedCell.y));
+	}
+
+	void SendTurnDataPhase2() {
+		hasAlreadyJumpedOnce = false;
+		//print("player phase 2 turn over");
+
+		if (OnPhase2TurnFinished != null)
+			OnPhase2TurnFinished (movements);
+	}
+
+	public void MoveBall(Cell pickedCell) {
+		if (pickedCell == currentCell) {
+            GridManager.Instance.ModelGrid.ResetCellsColor();
+
+			if (hasAlreadyJumpedOnce) {
+				currentBall.HideHighlight ();
 				EndTurn ();
-				ballCount--;
-				SendTurnDataPhase1 (pickedCell);
+				SendTurnDataPhase2 ();
+			}			
+               else
+               {
+                   currentBall.PutDownBall();
+               }
 
-			} else {
-				if (!pickedCell)
-					return;
-
-				if (!currentCell) {
-					if(!pickedCell.HasBall(color))
-						return;
-
-					SelectBall (pickedCell);
-				} 
-				else {
-					MoveBall (pickedCell);
-				}
-			}
+			ResetCurrentCells ();
+			return;
 		}
 
-		public void SelectBall(Cell pickedCell) {
 
-			Cell destinationCell;
-
-			List<Cell> neighbours = modelGrid.GetCellNeighbours (pickedCell);
-			currentCellsToMove = new List<Cell> ();
-			currentCellsToJump = new List<Cell> ();
-			currentCell = pickedCell;
-
-			foreach (Cell cell in neighbours) {
-				if (!cell.HasBall()) {
-					if(!hasAlreadyJumpedOnce)
-						currentCellsToMove.Add (cell);
-				} else {
-					destinationCell = modelGrid.GetCellFromDirection (pickedCell, cell);
-					if (destinationCell) {
-						if (!destinationCell.HasBall ())
-							currentCellsToJump.Add (destinationCell);
-					}
-
-				}
-			}
-
-			currentBall = currentCell.ball;
-			currentBall.PickUpBall();
-
-            if (OnBallSelection != null)
-                OnBallSelection(currentBall);
+		if (pickedCell.HasBall ()) {
+			currentBall.ResetPosition ();
+			return;
 		}
 
-		void ResetCurrentCells() {
-			currentCell = null;
-			currentCellsToJump = null;
-			currentCellsToMove = null;
-		}
+		if (currentCellsToMove.Contains (pickedCell)) {
+			movements = new List<Vector2> ();
+			movements.Add (new Vector2 (currentCell.x, currentCell.y));
+			movements.Add (new Vector2 (pickedCell.x, pickedCell.y));
 
-		public void ChangeBallPosition(Cell firstCell, Cell secondCell) {
+            GridManager.Instance.ModelGrid.ResetCellsColor();
+               ChangeBallPosition (currentCell, pickedCell);
+			currentBall.HideHighlight ();
+			ResetCurrentCells ();
+			EndTurn ();
+			SendTurnDataPhase2 ();
 
-            Ball ball = firstCell.ball;
-
-			secondCell.ball = ball;
-			firstCell.ball = null;
-
-			ball.owner = secondCell;
-            
-            Move move = new Move();
-            move.fromX = firstCell.y;
-            move.fromY = firstCell.x;
-            move.toX = secondCell.y;
-            move.toY = secondCell.x;
-            move.color = (CellColor)ball.Color;
-
-            optiGrid.DoMove(move);
-
-			isTweening = true;
-
-            if (ball.isPickedUp)
-                ball.GetComponent<Animator>().SetTrigger("PlaceBall");
-            else
-                ball.GetComponent<Animator>().SetTrigger("Move");
-
-            ball.isPickedUp = false;
-
-            ball.FixSortingLayer(true);
-
-            ball.transform.DOMove (secondCell.transform.position, 1f).OnComplete (() => {
-				ball.transform.position = secondCell.transform.position;
-				//ball.SetStartPosition ();
-				isTweening = false;
-                ball.FixSortingLayer(false);
-            });
-		}
-
-		void SendTurnDataPhase1(Cell pickedCell) {
-			List<Vector2> movements = new List<Vector2> ();
-			movements.Add (new Vector2(pickedCell.x, pickedCell.y));
-
-			if (OnPhase1TurnFinished != null)
-				OnPhase1TurnFinished (new Vector2 (pickedCell.x, pickedCell.y));
-		}
-
-		void SendTurnDataPhase2() {
-			hasAlreadyJumpedOnce = false;
-			//print("player phase 2 turn over");
-
-			if (OnPhase2TurnFinished != null)
-				OnPhase2TurnFinished (movements);
-		}
-
-		public void MoveBall(Cell pickedCell) {
-			if (pickedCell == currentCell) {
-                modelGrid.ResetCellsColor();
-
-				if (hasAlreadyJumpedOnce) {
-					currentBall.HideHighlight ();
-					EndTurn ();
-					SendTurnDataPhase2 ();
-				}			
-                else
-                {
-                    currentBall.PutDownBall();
-                }
-
-				ResetCurrentCells ();
-				return;
-			}
-
-
-			if (pickedCell.HasBall ()) {
-				currentBall.ResetPosition ();
-				return;
-			}
-
-			if (currentCellsToMove.Contains (pickedCell)) {
+		} else if (currentCellsToJump.Contains (pickedCell)) {
+			if (hasAlreadyJumpedOnce)
+				movements.Add (new Vector2 (pickedCell.x, pickedCell.y));
+			else {
 				movements = new List<Vector2> ();
 				movements.Add (new Vector2 (currentCell.x, currentCell.y));
 				movements.Add (new Vector2 (pickedCell.x, pickedCell.y));
+			}
 
-                modelGrid.ResetCellsColor();
-                ChangeBallPosition (currentCell, pickedCell);
-				currentBall.HideHighlight ();
-				ResetCurrentCells ();
-				EndTurn ();
-				SendTurnDataPhase2 ();
+            GridManager.Instance.ModelGrid.ResetCellsColor();
+			ChangeBallPosition (currentCell, pickedCell);
+			ResetCurrentCells ();
+			hasAlreadyJumpedOnce = true;
+			SelectBall (pickedCell);
+		} else {
+			currentBall.ResetPosition ();
+			//Utils.ResetCellsColor (grid);
+			return;
+           }
 
-			} else if (currentCellsToJump.Contains (pickedCell)) {
-				if (hasAlreadyJumpedOnce)
-					movements.Add (new Vector2 (pickedCell.x, pickedCell.y));
-				else {
-					movements = new List<Vector2> ();
-					movements.Add (new Vector2 (currentCell.x, currentCell.y));
-					movements.Add (new Vector2 (pickedCell.x, pickedCell.y));
-				}
+           if (OnCellSelection != null)
+               OnCellSelection(pickedCell);
 
-                modelGrid.ResetCellsColor();
-				ChangeBallPosition (currentCell, pickedCell);
-				ResetCurrentCells ();
-				hasAlreadyJumpedOnce = true;
-				SelectBall (pickedCell);
-			} else {
-				currentBall.ResetPosition ();
-				//Utils.ResetCellsColor (grid);
-				return;
-            }
+           Utils.CheckWin (GridManager.Instance.ModelGrid, pickedCell);
+	}
 
-            if (OnCellSelection != null)
-                OnCellSelection(pickedCell);
+       public void PickBall(Ball ball)
+       {
+           currentBall = ball;
+           currentBall.PickUpBall();
 
-            Utils.CheckWin (modelGrid, pickedCell);
-		}
+           if (OnBallSelection != null)
+               OnBallSelection(ball);
+       }
 
-        public void PickBall(Ball ball)
-        {
-            currentBall = ball;
-            currentBall.PickUpBall();
+       public void PickCell(Cell cell)
+       {
+           currentCell = cell;
 
-            if (OnBallSelection != null)
-                OnBallSelection(ball);
-        }
+           if (OnCellSelection != null)
+               OnCellSelection(cell);
+       }
 
-        public void PickCell(Cell cell)
-        {
-            currentCell = cell;
+       void RegisterBall(Gesture gesture, Ball ball)  {
+		currentBall = ball;
+		currentBall.PickUpBall();
 
-            if (OnCellSelection != null)
-                OnCellSelection(cell);
-        }
+           if (OnBallSelection != null)
+               OnBallSelection(ball);
+	}
 
-        void RegisterBall(Gesture gesture, Ball ball)  {
-			currentBall = ball;
-			currentBall.PickUpBall();
-
-            if (OnBallSelection != null)
-                OnBallSelection(ball);
-
-			//fingerIndex = gesture.fingerIndex;
-
-			// the world coordinate from touch
-			//Vector3 position = gesture.GetTouchToWorldPoint(gesture.pickedObject.transform.position);
-			//deltaPosition = position - gesture.pickedObject.transform.position;
-		}
-
-		public void SetGrid(ModelGrid modelGrid, OptimizedGrid optiGrid) {
-			this.modelGrid = modelGrid;
-            this.optiGrid = optiGrid;
-		}
-
-		void OnDestroy(){
-			EndTurn ();
-		}
+	void OnDestroy(){
+		EndTurn ();
 	}
 }

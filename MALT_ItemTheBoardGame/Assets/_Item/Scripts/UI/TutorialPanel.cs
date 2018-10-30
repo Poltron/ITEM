@@ -153,12 +153,6 @@ public class TutorialPanel : UIPanel
     private Animator animator;
 
     [SerializeField]
-    private GridManager gridManager;
-
-    [SerializeField]
-    private UIManager uiManager;
-
-    [SerializeField]
     private Animator askForTuto;
 
     [SerializeField]
@@ -174,13 +168,6 @@ public class TutorialPanel : UIPanel
     private Animator phase2MovementsScreen;
 
     private bool toClose;
-
-    private AudioManager audioManager;
-
-    private void Start()
-    {
-        audioManager = FindObjectOfType<AudioManager>();
-    }
 
     public void HideAll()
     {
@@ -256,12 +243,7 @@ public class TutorialPanel : UIPanel
             askForTuto.gameObject.SetActive(isShown);
             askForTuto.SetTrigger("PopIn");
 
-            if (audioManager == null)
-            {
-                audioManager = FindObjectOfType<AudioManager>();
-            }
-
-            audioManager.PlayAudio(SoundID.OpenWindowTuto);
+            AudioManager.Instance.PlayAudio(SoundID.OpenWindowTuto);
         }
         else
         {
@@ -280,20 +262,17 @@ public class TutorialPanel : UIPanel
         {
             PopAskForTuto(false);
             PopTutoScreen1(true);
-            gridManager.SetPlayingTuto(true);
+            GridManager.Instance.SetPlayingTuto(true);
         }
         else
         {
             animator.SetTrigger("PopOut");
-            gridManager.StartLookingForGame();
+            GameManager.Instance.StartLookingForGame();
             PopAskForTuto(false);
-            uiManager.DisplayWaitingForPlayerPanel(true);
+            UIManager.Instance.DisplayWaitingForPlayerPanel(true);
         }
 
-        if (audioManager != null)
-        {
-            audioManager.PlayAudio(SoundID.CloseWindowTuto);
-        }
+        AudioManager.Instance.PlayAudio(SoundID.CloseWindowTuto);
     }
 
     /*
@@ -310,11 +289,7 @@ public class TutorialPanel : UIPanel
         else
         {
             tutoScreen1.SetTrigger("PopOut");
-
-            if (audioManager != null)
-            {
-                audioManager.PlayAudio(SoundID.CloseWindowTuto);
-            }
+            AudioManager.Instance.PlayAudio(SoundID.CloseWindowTuto);
         }
     }
 
@@ -343,11 +318,7 @@ public class TutorialPanel : UIPanel
         else
         {
             tutoScreen2.SetTrigger("PopOut");
-
-            if (audioManager != null)
-            {
-                audioManager.PlayAudio(SoundID.CloseWindowTuto);
-            }
+            AudioManager.Instance.PlayAudio(SoundID.CloseWindowTuto);
         }
     }
 
@@ -376,11 +347,7 @@ public class TutorialPanel : UIPanel
         else
         {
             phase1MovementsScreen.SetTrigger("PopOut");
-
-            if (audioManager != null)
-            {
-                audioManager.PlayAudio(SoundID.CloseWindowTuto);
-            }
+            AudioManager.Instance.PlayAudio(SoundID.CloseWindowTuto);
         }
     }
 
@@ -393,8 +360,8 @@ public class TutorialPanel : UIPanel
     {
         PopPhase1MoveScreen(false);
         animator.SetTrigger("PopOut");
-        gridManager.StartGameVSIA();
-        uiManager.Phase1Tuto_ShowBall();
+        GameManager.Instance.StartGameVSIA();
+        UIManager.Instance.Phase1Tuto_ShowBall();
     }
 
     /*
@@ -409,16 +376,12 @@ public class TutorialPanel : UIPanel
             animator.SetTrigger("PopIn");
             phase2MovementsScreen.gameObject.SetActive(true);
             phase2MovementsScreen.SetTrigger("PopIn");
-            audioManager.PlayAudio(SoundID.OpenWindowTuto);
+            AudioManager.Instance.PlayAudio(SoundID.OpenWindowTuto);
         }
         else
         {
             phase2MovementsScreen.SetTrigger("PopOut");
-
-            if (audioManager != null)
-            {
-                audioManager.PlayAudio(SoundID.CloseWindowTuto);
-            }
+            AudioManager.Instance.PlayAudio(SoundID.CloseWindowTuto);
         }
     }
 
@@ -430,8 +393,8 @@ public class TutorialPanel : UIPanel
     public void OnPhase2MoveScreenNextButton()
     {
         PopPhase2MoveScreen(false);
-        uiManager.SetPlayer1Turn();
-        gridManager.player.StartTurn();
+        UIManager.Instance.SetPlayer1Turn();
+        PlayerManager.Instance.Player1.StartTurn();
         animator.SetTrigger("PopOut");
     }
 }

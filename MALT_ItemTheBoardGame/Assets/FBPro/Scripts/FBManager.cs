@@ -15,6 +15,8 @@ namespace GS
 	// Main Class Responsible for Every Facebook Method and Work
 	public class FBManager : MonoBehaviour
 	{
+        [SerializeField]
+        private MainMenu menu;
 
 		public Action FacebookConnect;
 		public Action<String> NameLoaded;
@@ -710,8 +712,9 @@ namespace GS
 				LoadPlayerName();
 				LoadPlayerPic(false);
 				//LoadInvitableFriends ();
-				SceneManager.LoadScene (1);
-			}
+				//SceneManager.LoadScene (1);
+                menu.ShowMenu();
+            }
 			else
 			{
 				loginBtnPanel.SetActive (true);
@@ -751,11 +754,12 @@ namespace GS
 				//				if (FacebookConnect != null)
 				//					FacebookConnect ();
 
-				SceneManager.LoadScene (1);
+				//SceneManager.LoadScene (1);
+                menu.ShowMenu();
 
-				//				Invoke("LoadPlayerName",0.1f);
-				//				Invoke("LoadPlayerPic",1f);
-			}
+                //				Invoke("LoadPlayerName",0.1f);
+                //				Invoke("LoadPlayerPic",1f);
+            }
 			else
 			{
 				print("User cancelled login");

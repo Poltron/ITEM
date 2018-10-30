@@ -8,12 +8,10 @@ using HedgehogTeam.EasyTouch;
 using DG.Tweening;
 using GS;
 
-namespace AppAdvisory.Item {
-
-	public class UIManager : MonoBehaviour {
-
-        [SerializeField]
-        private GridManager gridManager;
+	public class UIManager : MonoBehaviour
+{
+        static private UIManager instance;
+        static public UIManager Instance { get { return instance; } }
 
         public event Action Restart;
         public event Action NextRound;
@@ -57,6 +55,11 @@ namespace AppAdvisory.Item {
 
         void Awake()
         {
+            if (instance == null)
+                instance = this;
+            else
+                Destroy(gameObject);
+
             optionsPanel.OnLanguageChange += LanguageChanged;
         }
 
@@ -112,7 +115,7 @@ namespace AppAdvisory.Item {
             tutoPanel.SetLanguage(language);
             player1.SetLanguage(language);
             player2.SetLanguage(language);
-            gridManager.playerName = player1.playerName.text;
+            PlayerManager.Instance.Player1.playerName = player1.playerName.text;
 
             //overlayPanel.SetLanguage(language);
         }
@@ -240,7 +243,7 @@ namespace AppAdvisory.Item {
             //turnSwitchPanel.StartTurnSwitchAnimation();
             isPlayer1Turn = true;
             AnimateNextTurn();
-            gridManager.numberOfTurnsPlayer1++;
+            GridManager.Instance.numberOfTurnsPlayer1++;
         }
 
         public void SetPlayer2Turn(/*Action callBack*/)
@@ -271,7 +274,7 @@ namespace AppAdvisory.Item {
                     {
                         audioManager.PlayAudio(SoundID.ParticleOne);
                         player1.StartScoreAnim();
-                        gridManager.AddPlayer1Score(ball.Score);
+                        GridManager.Instance.AddPlayer1Score(ball.Score);
                     }
                     else
                     {
@@ -289,7 +292,7 @@ namespace AppAdvisory.Item {
                     {
                         audioManager.PlayAudio(SoundID.ParticleOne);
                         player2.StartScoreAnim();
-                        gridManager.AddPlayer2Score(ball.Score);
+                        GridManager.Instance.AddPlayer2Score(ball.Score);
                     }
                     else
                     {
@@ -452,10 +455,10 @@ namespace AppAdvisory.Item {
             Phase1Tuto_BallToMove.PassAboveUI(true);
 
             EasyTouch.SetEnableUIDetection(false);
-            gridManager.player.SetExclusivePickableObject(Phase1Tuto_BallToMove.gameObject);
-            gridManager.player.OnBallSelection += pickBallHack;
+            PlayerManager.Instance.Player1.SetExclusivePickableObject(Phase1Tuto_BallToMove.gameObject);
+            PlayerManager.Instance.Player1.OnBallSelection += pickBallHack;
 
-            EasyTouch.On_TouchUp += gridManager.player.OnTouchUpPublic;
+            EasyTouch.On_TouchUp += PlayerManager.Instance.Player1.OnTouchUpPublic;
             arrowFocus = Instantiate(arrowPrefab).transform;
             arrowFocus.position = Phase1Tuto_BallToMove.transform.position + new Vector3(0, 0.5f, 0);
         }
@@ -463,15 +466,15 @@ namespace AppAdvisory.Item {
         private void pickBallHack(Ball ball)
         {
             Phase1Tuto_BallSelected(Phase1Tuto_BallToMove);
-            gridManager.player.OnBallSelection -= pickBallHack;
+            PlayerManager.Instance.Player1.OnBallSelection -= pickBallHack;
         }
         
         public void Phase1Tuto_BallSelected(Ball ball)
         {
             Phase1Tuto_CellToMoveTo.PassAboveUI(true);
 
-            gridManager.player.SetExclusivePickableObject(Phase1Tuto_CellToMoveTo.gameObject);
-            gridManager.player.OnCellSelection += pickCellHack;
+            PlayerManager.Instance.Player1.SetExclusivePickableObject(Phase1Tuto_CellToMoveTo.gameObject);
+            PlayerManager.Instance.Player1.OnCellSelection += pickCellHack;
 
             arrowFocus.DOMove(Phase1Tuto_CellToMoveTo.transform.position + new Vector3(0, 1, 0), 1.0f);
         }
@@ -480,9 +483,9 @@ namespace AppAdvisory.Item {
         {
             Phase1Tuto_BackToNormal(Phase1Tuto_CellToMoveTo);
             BackToNormal();
-            gridManager.player.OnCellSelection -= pickCellHack;
+            PlayerManager.Instance.Player1.OnCellSelection -= pickCellHack;
 
-            EasyTouch.On_TouchUp -= gridManager.player.OnTouchUpPublic;
+            EasyTouch.On_TouchUp -= PlayerManager.Instance.Player1.OnTouchUpPublic;
         }
 
         private void BackToNormal()
@@ -507,9 +510,8 @@ namespace AppAdvisory.Item {
             newcol.a = 0f;
             spriteRenderer.DOColor(newcol, 1.0f).OnComplete(() => { arrowFocus.gameObject.SetActive(false); });
 
-            // setup input detection back to normal
-            gridManager.player.SetExclusivePickableObject(null);
+        // setup input detection back to normal
+            PlayerManager.Instance.Player1.SetExclusivePickableObject(null);
             EasyTouch.SetEnableUIDetection(true);
         }
     }
-}

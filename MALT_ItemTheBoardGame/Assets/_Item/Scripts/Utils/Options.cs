@@ -15,12 +15,6 @@ public static class Options
             SetMuteSFX(false);
 
             PlayerPrefs.SetInt("prefInitialized", 1);
-
-            //Debug.Log("not initialized");
-        }
-        else
-        {
-            //Debug.Log("already initialized");
         }
     }
 

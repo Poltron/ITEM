@@ -5,8 +5,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace AppAdvisory.Item {
-
 	public class PlayerPanel : UIPanel
     {
 
@@ -238,5 +236,3 @@ namespace AppAdvisory.Item {
             audioManager.PlayAudio(SoundID.PortraitRoll);
         }
 	}
-
-}

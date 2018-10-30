@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-namespace AppAdvisory.Item
-{
     public class RoundPanel : UIPanel
     {
         private RectTransform panel;
@@ -106,4 +104,3 @@ namespace AppAdvisory.Item
             animator.SetTrigger("popIn");
         }
     }
-}

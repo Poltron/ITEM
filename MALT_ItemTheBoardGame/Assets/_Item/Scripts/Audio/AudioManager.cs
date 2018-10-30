@@ -49,6 +49,9 @@ public struct Sound
 [System.Serializable]
 public class AudioManager : MonoBehaviour
 {
+    static private AudioManager instance;
+    static public AudioManager Instance { get { return instance; } }
+
     [Header("Audio Prefabs")]
     [SerializeField]
     private SoundListSO sounds;
@@ -58,16 +61,27 @@ public class AudioManager : MonoBehaviour
     private int ballNumber;
     private bool isComboImpactPlayed;
 
+    private void Awake()
+    {
+        if (instance == null)
+            instance = this;
+        else
+            Destroy(gameObject);
+    }
+
     private void Start()
     {
         if (music == null)
         {
             Debug.Log("AudioManager start");
+
             Music musicGO = FindObjectOfType<Music>();
             if (musicGO)
                 music = musicGO.GetComponent<AudioSource>();
+
             if (music == null)
                 Debug.LogError("pas d'élément MUSIC :(");
+
             Debug.Log("AudioManager start end");
         }
     }

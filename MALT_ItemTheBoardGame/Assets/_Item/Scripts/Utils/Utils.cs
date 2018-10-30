@@ -5,8 +5,6 @@ using DG.Tweening;
 using System.IO;
 using System;
 
-namespace AppAdvisory.Item {
-
 	public static class Utils {
 
 		#region WIN
@@ -1280,4 +1278,3 @@ namespace AppAdvisory.Item {
 			}
 		}
 	}
-}
