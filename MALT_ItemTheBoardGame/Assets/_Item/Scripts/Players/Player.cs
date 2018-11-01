@@ -18,15 +18,15 @@ abstract public class Player
 
 	public uint ballCount = 10;
 
-	public event Action<List<Vector2>> OnTurnFinished;
+	public event Action<List<Vector2>, int> OnTurnFinished;
 
     protected bool hasAlreadyJumpedOnce = false;
+
     public bool HasAlreadyJumpedOnce { get { return hasAlreadyJumpedOnce; } }
 	protected Cell currentCell;
     protected List<Cell> currentCellsToMove;
     protected List<Cell> currentCellsToJump;
     protected List<Vector2> movements;
-
     protected Ball currentBall;
 
     protected int nbOfTurn;
@@ -60,10 +60,19 @@ abstract public class Player
     public virtual void StartTurn()
     {
         nbOfTurn++;
+        Debug.Log(Color + " turn started");
     }
 
     public virtual void EndTurn()
     {
+        Debug.Log(Color + " turn ended");
+        if (currentBall == null)
+        {
+            Debug.Log("currentBall is null");
+        }
+
+        CallOnTurnFinished(movements, currentBall.ballId);
+        Debug.Log("after call on turn finished");
     }
 
     protected void CallOnBallSelection(Ball ball)
@@ -78,9 +87,9 @@ abstract public class Player
             OnCellSelection(cell);
     }
     
-    protected void CallOnTurnFinished(List<Vector2> vecList)
+    protected void CallOnTurnFinished(List<Vector2> vecList, int ballId)
     {
         if (OnTurnFinished != null)
-            OnTurnFinished(vecList);
+            OnTurnFinished(vecList, ballId);
     }
 }

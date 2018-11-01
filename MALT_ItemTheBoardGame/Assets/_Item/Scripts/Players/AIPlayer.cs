@@ -43,13 +43,13 @@ public class AIPlayer : Player
     public void PlayAIMovePhase1(Move move)
     {
         Cell cell = GridManager.Instance.ModelGrid.GetCellFromModel(move.toY, move.toX);
-        GridManager.Instance.PlaceBallIA(cell);
+        currentBall = GridManager.Instance.PlaceBallIA(cell);
         ballCount--;
 
         List<Vector2> movements = new List<Vector2>();
         movements.Add(new Vector2(move.toY, move.toX));
 
-        CallOnTurnFinished(movements);
+        CallOnTurnFinished(movements, currentBall.ballId);
         EndTurn();
     }
 
@@ -74,12 +74,11 @@ public class AIPlayer : Player
         Cell cellTo = GridManager.Instance.ModelGrid.GetCellFromModel(move.toY, move.toX);
 
         GridManager.Instance.OptiGrid.DoMove(move);
-        GridManager.Instance.ChangeBallPosition(cellFrom, cellTo);
+        currentBall = GridManager.Instance.ChangeBallPosition(cellFrom, cellTo);
 
         List<Vector2> movements = new List<Vector2>();
         movements.Add(new Vector2(move.toY, move.toX));
 
-        CallOnTurnFinished(movements);
         EndTurn();
     }
 

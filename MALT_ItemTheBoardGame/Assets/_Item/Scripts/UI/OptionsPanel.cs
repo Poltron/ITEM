@@ -62,8 +62,6 @@ public class OptionsPanel : UIPanel
 
     public event Action OnLanguageChange;
 
-    private AudioManager audioManager;
-
     void Awake()
     {
         Init();
@@ -73,7 +71,6 @@ public class OptionsPanel : UIPanel
     {
         isFadingIn = false;
         animator = GetComponent<Animator>();
-        audioManager = FindObjectOfType<AudioManager>();
     }
 
     void RefreshValues()
@@ -119,10 +116,7 @@ public class OptionsPanel : UIPanel
             animator.SetBool("bPopIn", true);
             isFadingIn = true;
 
-            if (audioManager != null)
-            {
-                audioManager.PlayAudio(SoundID.OpenWindowOptions);
-            }
+            AudioManager.Instance.PlayAudio(SoundID.OpenWindowOptions);
         }
     }
 
@@ -138,10 +132,7 @@ public class OptionsPanel : UIPanel
             animator.SetBool("bPopIn", false);
             isFadingIn = false;
 
-            if (audioManager != null)
-            {
-                audioManager.PlayAudio(SoundID.CloseWindowOptions);
-            }
+            AudioManager.Instance.PlayAudio(SoundID.CloseWindowOptions);
         }
     }
 
@@ -154,9 +145,9 @@ public class OptionsPanel : UIPanel
     public void ToggleEnableBallPlacementHelp(bool notUseful)
     {
         if (ballPlacementHelp.isOn)
-            audioManager.PlayAudio(SoundID.CheckboxOn);
+            AudioManager.Instance.PlayAudio(SoundID.CheckboxOn);
         else
-            audioManager.PlayAudio(SoundID.CheckboxOff);
+            AudioManager.Instance.PlayAudio(SoundID.CheckboxOff);
 
         Options.SetEnablePlacementHelp(ballPlacementHelp.isOn);
     }
@@ -164,9 +155,9 @@ public class OptionsPanel : UIPanel
     public void ToggleEnableHelpPopup(bool notUseful)
     {
         if (roundHelpPopup.isOn)
-            audioManager.PlayAudio(SoundID.CheckboxOn);
+            AudioManager.Instance.PlayAudio(SoundID.CheckboxOn);
         else
-            audioManager.PlayAudio(SoundID.CheckboxOff);
+            AudioManager.Instance.PlayAudio(SoundID.CheckboxOff);
 
         Options.SetEnableHelpPopup(roundHelpPopup.isOn);
     }
@@ -174,9 +165,9 @@ public class OptionsPanel : UIPanel
     public void ToggleEnableAskForTuto(bool notUseful)
     {
         if (askForTutoPopup.isOn)
-            audioManager.PlayAudio(SoundID.CheckboxOn);
+            AudioManager.Instance.PlayAudio(SoundID.CheckboxOn);
         else
-            audioManager.PlayAudio(SoundID.CheckboxOff);
+            AudioManager.Instance.PlayAudio(SoundID.CheckboxOff);
 
         Options.SetAskForTuto(askForTutoPopup.isOn);
     }
@@ -184,9 +175,9 @@ public class OptionsPanel : UIPanel
     public void ToggleEnableMuteMusic(bool notUseful)
     {
         if (muteMusicToggle.isOn)
-            audioManager.PlayAudio(SoundID.CheckboxOn);
+            AudioManager.Instance.PlayAudio(SoundID.CheckboxOn);
         else
-            audioManager.PlayAudio(SoundID.CheckboxOff);
+            AudioManager.Instance.PlayAudio(SoundID.CheckboxOff);
 
         Options.SetMuteMusic(muteMusicToggle.isOn);
     }
@@ -194,9 +185,9 @@ public class OptionsPanel : UIPanel
     public void ToggleEnableMuteSFX(bool notUseful)
     {
         if (muteSFXToggle.isOn)
-            audioManager.PlayAudio(SoundID.CheckboxOn);
+            AudioManager.Instance.PlayAudio(SoundID.CheckboxOn);
         else
-            audioManager.PlayAudio(SoundID.CheckboxOff);
+            AudioManager.Instance.PlayAudio(SoundID.CheckboxOff);
 
         Options.SetMuteSFX(muteSFXToggle.isOn);
     }

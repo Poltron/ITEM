@@ -28,25 +28,17 @@ MonoBehaviour:
   RunInBackground: 1
   RpcList:
   - Chat
-  - ColorRpc
   - DestroyRpc
-  - DoJump
-  - Flash
   - InstantiateRpc
   - OnAwakeRPC
   - PickupItemInit
   - PunPickup
   - PunPickupSimple
   - PunRespawn
+  - ReceiveName
+  - ReceivePicURL
   - RequestForPickupItems
   - RequestForPickupTimes
-  - ChatMessage
-  - ReceiveMovements
-  - ReceiveMovementsPhase1
-  - ReceiveMovementsPhase2
-  - ReceiveWin
-  - ReceiveImage
-  - ReceivePicURL
-  - ReceiveName
+  - SendLastTurnDataRPC
   - SendNextRound
   DisableAutoOpenWizard: 1

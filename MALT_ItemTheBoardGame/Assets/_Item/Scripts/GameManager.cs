@@ -57,7 +57,7 @@ public class GameManager : PunBehaviour
 
     private void Start()
     {
-        UIManager.Instance.EndGame += EndGame;
+        UIManager.Instance.EndGame += EndGameplay;
     }
 
     public void StartGame ()
@@ -65,6 +65,7 @@ public class GameManager : PunBehaviour
         // load fb data
         if (FB.IsLoggedIn)
         {
+            Debug.Log("Logged in Facebook");
             PlayerManager.Instance.Player1.playerName = fbManager.pName;
             PlayerManager.Instance.Player1.picURL = fbManager.pUrlPic;
 
@@ -78,22 +79,39 @@ public class GameManager : PunBehaviour
 
             UIManager.Instance.SetPlayer1Name(PlayerManager.Instance.Player1.playerName);
         }
+        else
+        {
+            Debug.Log("Not logged in Facebook");
+        }
 
         // init UI
         UIManager.Instance.Init();
 
         // start with tutorial or not
-        if (Options.GetAskForTuto())
+        if (Options.GetAskForTuto() && GameMode != GameMode.Remote)
+        {
             UIManager.Instance.PopTuto();
+        }
         else
+        {
             GridManager.Instance.StartTurns();
-            
+        }
 
         gameState = GameState.Gameplay;
     }
     
-    public void EndGame()
+    public void GameEnded()
     {
+        gameState = GameState.GameResults;
+
+        if (gameMode == GameMode.Remote)
+            Disconnect();
+    }
+
+    public void EndGameplay()
+    {
+        gameState = GameState.MainMenu;
+
         GridManager.Instance.ResetGame();
         UIManager.Instance.ShowGameplayCanvas(false);
         UIManager.Instance.ShowMenuCanvas(true);
@@ -218,9 +236,6 @@ public class GameManager : PunBehaviour
             PlayerManager.Instance.CreateLocalPlayer(BallColor.Black, PlayerID.Player1);
             PlayerManager.Instance.CreateRemotePlayer(BallColor.White, PlayerID.Player2);
 
-            UIManager.Instance.SetPlayer2Turn();
-            UIManager.Instance.SetPlayer1Name(PlayerManager.Instance.Player1.playerName);
-
             print("OnJoinedRoom : 2 players in the room, sending player name > " + PlayerManager.Instance.Player1.playerName);
             SendName(PlayerManager.Instance.Player1.playerName);
             SendPicURL(PlayerManager.Instance.Player1.picURL);
@@ -247,9 +262,6 @@ public class GameManager : PunBehaviour
 
             PlayerManager.Instance.CreateLocalPlayer(BallColor.White, PlayerID.Player1);
             PlayerManager.Instance.CreateRemotePlayer(BallColor.Black, PlayerID.Player2);
-
-            UIManager.Instance.SetPlayer1Turn();
-            PlayerManager.Instance.Player1.StartTurn();
 
             SendName(PlayerManager.Instance.Player1.playerName);
             SendPicURL(PlayerManager.Instance.Player1.picURL);

@@ -40,6 +40,7 @@ public class UIManager : MonoBehaviour
     public RoundPanel roundResultPanel;
     public EndGamePanel endGamePanel;
     public TurnSwitchPanel turnSwitchPanel;
+    public BackToMainMenuPanel backToMainMenuPanel;
     public OptionsPanel optionsPanel;
     public HelpPanel helpPanel;
     public TutorialPanel tutoPanel;
@@ -392,6 +393,20 @@ public class UIManager : MonoBehaviour
         else
         {
             optionsPanel.PopIn();
+        }
+    }
+
+    public void OnBackToMainMenuButton()
+    {
+        AudioManager.Instance.PlayAudio(SoundID.ClickUI);
+        
+        if (backToMainMenuPanel.IsFadingIn)
+        {
+            backToMainMenuPanel.PopOut();
+        }
+        else
+        {
+            backToMainMenuPanel.PopIn();
         }
     }
 

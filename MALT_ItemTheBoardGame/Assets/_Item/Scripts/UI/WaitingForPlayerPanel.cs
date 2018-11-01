@@ -60,10 +60,8 @@ public class WaitingForPlayerPanel : UIPanel
     void Update()
     {
         timer += Time.deltaTime;
-        Debug.Log(timer);
         if (timer > timeBeforeCancelButtonPops && !cancelButton.gameObject.activeInHierarchy)
         {
-            Debug.Log("yeyeyeyeye");
             cancelButton.gameObject.SetActive(true);
         }
     }

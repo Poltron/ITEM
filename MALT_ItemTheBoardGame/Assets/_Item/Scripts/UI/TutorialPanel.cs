@@ -395,8 +395,7 @@ public class TutorialPanel : UIPanel
     public void OnPhase2MoveScreenNextButton()
     {
         PopPhase2MoveScreen(false);
-        UIManager.Instance.SetPlayer1Turn();
-        PlayerManager.Instance.Player1.StartTurn();
+        GridManager.Instance.NextTurn();
         animator.SetTrigger("PopOut");
     }
 }

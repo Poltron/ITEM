@@ -10,17 +10,15 @@ using UnityEngine.UI;
 using GS;
 using Facebook.Unity;
 
-public class RoundScore
+public struct TurnData
 {
-    public int playerScore;
-    public int otherPlayerScore;
-    public int result;
+    public List<Vector2> movements;
+    public int ballId;
 
-    public RoundScore(int _playerScore, int _opponentScore, int _result)
+    public TurnData(List<Vector2> _movements, int _ballId)
     {
-        playerScore = _playerScore;
-        otherPlayerScore = _opponentScore;
-        result = _result;
+        movements = _movements;
+        ballId = _ballId;
     }
 }
 
@@ -54,6 +52,10 @@ public class GridManager : PunBehaviour
 
     private int roundNumber;
     private int numberOfRound = 2;
+
+    private List<Vector2> lastTurnMoves;
+    private int lastTurnBallId;
+    public bool AlreadySentLastTurnData = false;
 
     private BallColor actualTurn;
     public BallColor ActualTurn { get { return actualTurn; } }
@@ -159,6 +161,7 @@ public class GridManager : PunBehaviour
         }
 
         isEqualityTurn = false;
+        AlreadySentLastTurnData = false;
 
         PlayerManager.Instance.Player1.Reset();
         PlayerManager.Instance.Player2.Reset();
@@ -175,17 +178,7 @@ public class GridManager : PunBehaviour
         if (GameManager.Instance.GameMode != GameMode.AI)
             SwitchPlayersColor();
 
-        // whites begin the game
-        if (PlayerManager.Instance.Player1.Color == BallColor.White)
-        {
-            UIManager.Instance.SetPlayer1Turn();
-            PlayerManager.Instance.Player1.StartTurn();
-        }
-        else
-        {
-            UIManager.Instance.SetPlayer2Turn();
-            PlayerManager.Instance.Player2.StartTurn();
-        }
+        StartTurns();
     }
 
     private void SwitchPlayersColor()
@@ -202,7 +195,29 @@ public class GridManager : PunBehaviour
         }
     }
 
-    public void ChangeBallPosition(Cell firstCell, Cell secondCell)
+    public Ball GetBall(BallColor color, int id)
+    {
+        if (color == BallColor.White)
+        {
+            foreach(Ball ball in whiteBalls)
+            {
+                if (ball.ballId == id)
+                    return ball;
+            }
+        }
+        else
+        {
+            foreach (Ball ball in blackBalls)
+            {
+                if (ball.ballId == id)
+                    return ball;
+            }
+        }
+
+        return null;
+    }
+
+    public Ball ChangeBallPosition(Cell firstCell, Cell secondCell)
     {
         Ball ball = firstCell.ball;
 
@@ -233,21 +248,16 @@ public class GridManager : PunBehaviour
             ball.transform.position = secondCell.transform.position;
             ball.FixSortingLayer(false);
         });
+
+        return ball;
     }
 
-    public void PlaceBallIA(Cell cell)
+    public Ball PlaceBallIA(Cell cell)
     {
         Ball ball = blackBalls.First();
         blackBalls.RemoveAt(0);
         ball.DOPlace(cell);
-    }
-
-    IEnumerator waitFor(float t, System.Action func)
-    {
-        while ((t -= Time.deltaTime) > 0)
-            yield return new WaitForEndOfFrame();
-
-        func();
+        return ball;
     }
 
     public void NextTurn()
@@ -265,10 +275,12 @@ public class GridManager : PunBehaviour
             actualTurn = PlayerManager.Instance.Player1.Color;
         }
     }
-
-    /*
-    public void Player1TurnEnded(List<Vector2> movements)
+    
+    public void PlayerTurnEnded(List<Vector2> movements, int ballId)
     {
+        lastTurnMoves = movements;
+        lastTurnBallId = ballId;
+
         Cell cell = modelGrid.GetCellFromModel((int)movements[movements.Count - 1].x, (int)movements[movements.Count - 1].y);
 
         bool justWon = Utils.CheckWin(modelGrid, cell, false);
@@ -276,38 +288,9 @@ public class GridManager : PunBehaviour
         {
             if (justWon)
             {
-                DOVirtual.DelayedCall(timeBeforeVictoryAnimation, PlayVictoryAnimation, true);
-                Debug.Log("win animation");
-            }
-
-            if (!isEqualityTurn && (PlayerManager.Instance.Player1.NbOfTurn != PlayerManager.Instance.Player2.NbOfTurn))
-            {
-                isEqualityTurn = true;
-                Debug.Log("player1 equalityturn");
-            }
-            else
-            {
-                Debug.Log("player1 endgame");
-                EndGame(justWon);
-            }
-        }
-        else
-        {
-            NextTurn();
-        }
-    }
-    */
-
-    public void PlayerTurnEnded(List<Vector2> movements)
-    {
-        Cell cell = modelGrid.GetCellFromModel((int)movements[movements.Count - 1].x, (int)movements[movements.Count - 1].y);
-
-        bool justWon = Utils.CheckWin(modelGrid, cell, false);
-        if (justWon || isEqualityTurn)
-        {
-            if (justWon)
-            {
-                DOVirtual.DelayedCall(timeBeforeVictoryAnimation, PlayVictoryAnimation, true);
+                DOVirtual.DelayedCall(timeBeforeVictoryAnimation, PlayVictoryAnimation);
+                SendLastTurnData();
+                AlreadySentLastTurnData = true;
                 Debug.Log("win animation");
             }
 
@@ -316,10 +299,10 @@ public class GridManager : PunBehaviour
                 isEqualityTurn = true;
                 Debug.Log("player2 equalityturn");
             }
-            else
+            else if (!justWon)
             {
                 Debug.Log("player2 endgame");
-                EndGame(justWon);
+                EndGame();
                 return;
             }
         }
@@ -327,8 +310,9 @@ public class GridManager : PunBehaviour
         if (PlayerManager.Instance.GetPlayer(BallColor.Black).ballCount == 0 && isPlayingTutorial)
         {
             isPlayingTutorial = false;
-            StartCoroutine(waitFor(1.5f, UIManager.Instance.DisplayTutorialPhase2Movement));
+            DOVirtual.DelayedCall(1.5f, UIManager.Instance.DisplayTutorialPhase2Movement);
             Debug.Log("player2 display tutorial");
+            return;
         }
 
         if (!justWon && !isEqualityTurn)
@@ -338,173 +322,9 @@ public class GridManager : PunBehaviour
         }
     }
 
-    /*
-    bool alreadyPassed = false;
-    public void EndAIPhase()
+    public void EndGame()
     {
-        if (PlayerManager.Instance.Player1.ballCount == 0 && !alreadyPassed)
-        {
-            alreadyPassed = true;
-
-            if (isPlayingTutorial)
-                StartCoroutine(waitFor(1.5f, UIManager.Instance.DisplayTutorialPhase2Movement));
-            else
-            {
-                UIManager.Instance.SetPlayer1Turn();
-                PlayerManager.Instance.Player1.StartTurn();
-            }
-        }
-        else
-        {
-            UIManager.Instance.SetPlayer1Turn();
-            PlayerManager.Instance.Player1.StartTurn();
-        }
-    }
-    
-    public void Phase1TurnFinishedPlayer(Vector2 pos)
-    {
-        Cell cell = modelGrid.GetCellFromModel(pos);
-
-        //Debug.Log("numberOfTurnsPlayer1 : " + numberOfTurnsPlayer1 + " / numberOfTurnsPlayer2 : " + numberOfTurnsPlayer2);
-
-        if (GameManager.Instance.GameMode == GameMode.AI)
-        {
-            bool justWon = Utils.CheckWin(modelGrid, cell, false);
-            if (justWon || isEqualityTurn)
-            {
-                if (justWon)
-                {
-                    DOVirtual.DelayedCall(timeBeforeVictoryAnimation, PlayVictoryAnimation, true);
-                }
-
-                if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
-                {
-                    nextTurnIsAI = true;
-                    isEqualityTurn = true;
-                }
-                else
-                {
-                    nextTurnIsAI = true;
-                    EndGame(justWon);
-                }
-            }
-            else
-            {
-
-                if (PlayerManager.Instance.disableAI) // debug feature to test without AI
-                {
-                    UIManager.Instance.SetPlayer1Turn();
-                    PlayerManager.Instance.Player1.StartTurn();
-                }
-                else
-                {
-                    UIManager.Instance.SetPlayer2Turn();
-                    PlayIAPhase1();
-                }
-            }
-        }
-        else
-        {
-            PhotonView photonView = PhotonView.Get(this);
-            photonView.RPC("ReceiveMovementsPhase1", PhotonTargets.Others, pos, cell.ball.ballId);
-
-            bool justWon = Utils.CheckWin(modelGrid, cell, false);
-            if (justWon || isEqualityTurn)
-            {
-                if (justWon)
-                {
-                    DOVirtual.DelayedCall(timeBeforeVictoryAnimation, PlayVictoryAnimation, true);
-                }
-
-                if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
-                {
-                    nextTurnIsAI = false;
-                    isEqualityTurn = true;
-                }
-                else
-                {
-                    nextTurnIsAI = false;
-                    EndGame(justWon);
-                }
-            }
-            else
-            {
-                UIManager.Instance.SetPlayer2Turn();
-            }
-        }
-    }
-
-    public void Phase2TurnFinishedPlayer(List<Vector2> movements)
-    {
-        Vector2[] movementArray = movements.ToArray();
-        Cell cell = modelGrid.GetCellFromModel(movementArray[movementArray.Length - 1]);
-
-        //Debug.Log("numberOfTurnsPlayer1 : " + numberOfTurnsPlayer1 + " / numberOfTurnsPlayer2 : " + numberOfTurnsPlayer2);
-
-        if (GameManager.Instance.GameMode == GameMode.AI)
-        {
-            bool justWon = Utils.CheckWin(modelGrid, cell, false);
-            if (justWon || isEqualityTurn)
-            {
-                if (justWon)
-                {
-                    DOVirtual.DelayedCall(1.5f, PlayVictoryAnimation, true);
-                }
-
-                if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
-                {
-                    nextTurnIsAI = true;
-                    isEqualityTurn = true;
-                }
-                else
-                {
-                    nextTurnIsAI = true;
-                    EndGame(justWon);
-                }
-            }
-            else
-            {
-                UIManager.Instance.SetPlayer2Turn();
-                PlayIAPhase2();
-            }
-        }
-        else
-        {
-            PhotonView photonView = PhotonView.Get(this);
-            photonView.RPC("ReceiveMovementsPhase2", PhotonTargets.Others, movementArray);
-
-            bool justWon = Utils.CheckWin(modelGrid, cell, false);
-            if (justWon || isEqualityTurn)
-            {
-                if (justWon)
-                {
-                    DOVirtual.DelayedCall(timeBeforeVictoryAnimation, PlayVictoryAnimation, true);
-                }
-
-                if (!isEqualityTurn && (numberOfTurnsPlayer1 != numberOfTurnsPlayer2))
-                {
-                    nextTurnIsAI = false;
-                    isEqualityTurn = true;
-                }
-                else
-                {
-                    nextTurnIsAI = false;
-                    EndGame(justWon);
-                }
-            }
-            else
-            {
-                UIManager.Instance.SetPlayer2Turn();
-            }
-        }
-    }*/
-
-    public void EndGame(bool justWon)
-    {
-        PlayerManager.Instance.Player1.EndTurn();
-        
-        if (!justWon)
-            DOVirtual.DelayedCall(1.5f, DisplayRoundResult, true);
+        DOVirtual.DelayedCall(1.5f, DisplayRoundResult, true);
     }
 
     private void DisplayRoundResult()
@@ -513,6 +333,7 @@ public class GridManager : PunBehaviour
 
         if (roundNumber == numberOfRound)
         {
+            GameManager.Instance.GameEnded();
             UIManager.Instance.roundResultPanel.ActivateGameResultsButton(true);
         }
         else
@@ -524,12 +345,13 @@ public class GridManager : PunBehaviour
     List<WinningPattern> alreadyAnimatedPattern = new List<WinningPattern>();
     public void PlayVictoryAnimation()
     {
+        Debug.Log("play victory animation");
         List<WinningPattern> winningPatterns = new List<WinningPattern>();
         optiGrid.GetWinningPatterns(out winningPatterns);
 
         WinningPattern toKeep = new WinningPattern();
         int bestScore = -1;
-
+        Debug.Log("play victory animation2");
         foreach (WinningPattern pattern in winningPatterns)
         {
             bool alreadyDone = false;
@@ -555,7 +377,7 @@ public class GridManager : PunBehaviour
                 bestScore = patternScore;
             }
         }
-
+        Debug.Log("play victory animation3");
         StartCoroutine(playVictoryAnimationPhase1(toKeep));
 
         AudioManager.Instance.PlayAudio(SoundID.ComboRumble);
@@ -564,6 +386,7 @@ public class GridManager : PunBehaviour
 
     IEnumerator playVictoryAnimationPhase1(WinningPattern pattern)
     {
+        Debug.Log("play victory animation4");
         Ball ball = modelGrid.GetCellFromModel((int)pattern.cells[0].y, (int)pattern.cells[0].x).ball;
         ball.FixSortingLayer(true);
         ball.Animator.SetTrigger("WinPhase1");
@@ -588,7 +411,7 @@ public class GridManager : PunBehaviour
         ball.FixSortingLayer(true);
         ball.Animator.SetTrigger("WinPhase1");
         yield return new WaitForSeconds(timeBeforePhase2AnimBegin);
-
+        Debug.Log("play victory animation5");
         StartCoroutine(playVictoryAnimationPhase2(pattern));
     }
 
@@ -601,7 +424,7 @@ public class GridManager : PunBehaviour
         modelGrid.GetCellFromModel((int)pattern.cells[4].y, (int)pattern.cells[4].x).ball.Animator.SetTrigger("WinPhase2");
 
         yield return new WaitForSeconds(timeFromPhase2AnimBeginToRoundResultPanel);
-
+        Debug.Log("play victory animation6");
         StartCoroutine(addVictoryPoints(pattern));
     }
 
@@ -631,27 +454,21 @@ public class GridManager : PunBehaviour
         ball.Animator.SetTrigger("ScoreCounting");
         ball.FixSortingLayer(false);
         yield return new WaitForSeconds(3.0f);
-
+        Debug.Log("play victory animation7");
         playVictoryAnimationEnd(pattern);
     }
 
     private void playVictoryAnimationEnd(WinningPattern pattern)
     {
+        Debug.Log("play victory animation end");
         if (IsEqualityTurn && PlayerManager.Instance.Player1.NbOfTurn != PlayerManager.Instance.Player2.NbOfTurn)
         {
-            if (PlayerManager.Instance.Player1.NbOfTurn < PlayerManager.Instance.Player2.NbOfTurn)
-            {
-                UIManager.Instance.SetPlayer1Turn();
-                PlayerManager.Instance.Player1.StartTurn();
-            }
-            else
-            {
-                UIManager.Instance.SetPlayer2Turn();
-                PlayerManager.Instance.Player2.StartTurn();
-            }
+            Debug.Log("play victory animation end NEXTTURN");
+            NextTurn();
         }
         else
         {
+            Debug.Log("play victory animation end ROUNDRESULT");
             DisplayRoundResult();
         }
     }
@@ -716,11 +533,59 @@ public class GridManager : PunBehaviour
         UIManager.Instance.player2.SetScoreCounter(PlayerManager.Instance.Player2.totalScore);
     }
 
-    [PunRPC]
-    void ReceiveMovementsPhase1(Vector2 pos, int ballIndex)
+    public void SendLastTurnData()
     {
-        //numberOfTurnsPlayer2++;
+        Debug.Log("send last turn data");
+        if (AlreadySentLastTurnData)
+        {
+            Debug.Log("Already sent data");
+            return;
+        }
 
+        if (lastTurnMoves == null)
+        {
+            Debug.Log("last turn moves are null, not sending");
+            return;
+        }
+
+        PhotonView photonView = PhotonView.Get(this);
+        photonView.RPC("SendLastTurnDataRPC", PhotonTargets.Others, lastTurnMoves.ToArray(), lastTurnBallId);
+        Debug.Log("send last turn data after rpc");
+    }
+
+    [PunRPC]
+    void SendLastTurnDataRPC(Vector2[] movements, int ballId)
+    {
+        if (movements == null)
+        {
+            Debug.Log("movements == null");
+            return;
+        }
+
+        Player player = PlayerManager.Instance.GetPlayer(ActualTurn);
+        if (player == null)
+        {
+            Debug.Log("player is null");
+        }
+
+        RemotePlayer remotePlayer = (RemotePlayer)player;
+        if (remotePlayer == null)
+        {
+            Debug.Log("remoteplayer is null");
+        }
+        remotePlayer.SetLastMovements(movements, ballId);
+
+        Debug.Log("send last turn data RPC received");
+        if (movements.Length > 1)
+            StartCoroutine(MoveCoroutine(movements));
+        else if (movements.Length > 0)
+            Phase1Move(movements[0], ballId);
+        else
+            Debug.Log("empty last turn data");
+    }
+
+    void Phase1Move(Vector2 pos, int ballIndex)
+    {
         Cell cell = modelGrid.GetCellFromModel(pos);
         Ball ball;
 
@@ -737,89 +602,20 @@ public class GridManager : PunBehaviour
 
         ball.DOPlace(cell);
 
-        bool justWon = Utils.CheckWin(modelGrid, cell, false);
-        if (justWon || isEqualityTurn)
-        {
-            if (justWon)
-            {
-                DOVirtual.DelayedCall(timeBeforeVictoryAnimation, PlayVictoryAnimation, true);
-            }
-
-            if (!isEqualityTurn && (PlayerManager.Instance.Player1.NbOfTurn != PlayerManager.Instance.Player2.NbOfTurn))
-            {
-                isEqualityTurn = true;
-            }
-            else
-            {
-                EndGame(justWon);
-            }
-        }
-        else
-        {
-            UIManager.Instance.SetPlayer1Turn();
-            PlayerManager.Instance.Player1.StartTurn();
-        }
+        Debug.Log("phase1move");
+        PlayerManager.Instance.GetPlayer(ActualTurn).EndTurn();
     }
-
-    [PunRPC]
-    void ReceiveMovementsPhase2(Vector2[] movements)
-    {
-        //numberOfTurnsPlayer2++;
-
-        StartCoroutine(MoveCoroutine(movements));
-
-        Cell cell = modelGrid.GetCellFromModel(movements[movements.Length - 1]);
-
-        bool justWon = Utils.CheckWin(modelGrid, cell, false);
-        if (justWon || isEqualityTurn)
-        {
-            if (justWon)
-            {
-                DOVirtual.DelayedCall(timeBeforeVictoryAnimation, PlayVictoryAnimation, true);
-            }
-
-            if (!isEqualityTurn && (PlayerManager.Instance.Player1.NbOfTurn != PlayerManager.Instance.Player2.NbOfTurn))
-            {
-                isEqualityTurn = true;
-            }
-            else
-            {
-                EndGame(justWon);
-            }
-        }
-        else
-        {
-            StartCoroutine(waitFor((movements.Length * 1.0f) - 1.0f, UIManager.Instance.SetPlayer1Turn, PlayerManager.Instance.Player1.StartTurn));
-        }
-    }
-
-    IEnumerator waitFor(float t, System.Action callback, System.Action callback2)
-    {
-        while ((t -= Time.deltaTime) > 0)
-            yield return new WaitForEndOfFrame();
-
-        callback();
-        callback2();
-    }
-
-
-    //		void MovePhase2(Vector2[] movements) {
-    //			Sequence sequence = DOTween.Sequence ();
-    //			for (int i = 0; i < movements.Length-1; i++) {
-    //				sequence.Append ();
-    //				player.ChangeBallPosition (grid.GetCellFromModel (movements [i]), grid.GetCellFromModel (movements [i+1]));
-    //			}
-    //
-    //		}
-
+    
     IEnumerator MoveCoroutine(Vector2[] movements)
     {
+        Debug.Log("movecoroutine");
         for (int i = 0; i < movements.Length - 1; i++)
         {
-
             ChangeBallPosition(modelGrid.GetCellFromModel(movements[i]), modelGrid.GetCellFromModel(movements[i + 1]));
             yield return new WaitForSeconds(1f);
         }
+
+        PlayerManager.Instance.GetPlayer(ActualTurn).EndTurn();
     }
 
     public void OnRestart()

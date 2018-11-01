@@ -21,7 +21,8 @@ public class LocalPlayer : Player
         Debug.Log("StartLocalPlayerTurn : " + Color);
 
         EasyTouch.On_TouchUp += OnTouchUp;
-	}
+        hasAlreadyJumpedOnce = false;
+    }
 
 
     public override void EndTurn()
@@ -29,7 +30,6 @@ public class LocalPlayer : Player
         base.EndTurn();
 
         GridManager.Instance.ModelGrid.ResetCellsColor();
-
         EasyTouch.On_TouchUp -= OnTouchUp;
 	}
 
@@ -99,17 +99,18 @@ public class LocalPlayer : Player
                 }
 
 
-                EndTurn();
                 ballCount--;
                 currentBall.DOPlace(pickedCell);
-                currentBall.HideHighlight();
-                currentBall = null;
-
                 CallOnCellSelection(pickedCell);
+
+                movements = new List<Vector2>();
+                movements.Add(new Vector2(pickedCell.x, pickedCell.y));
 
                 SendTurnDataPhase1(pickedCell);
 
-
+                EndTurn();
+                currentBall.HideHighlight();
+                currentBall = null;
             }
             else
             {
@@ -132,10 +133,12 @@ public class LocalPlayer : Player
             if (pickedCell.HasBall())
                 return;
 
-            EndTurn();
             ballCount--;
-            SendTurnDataPhase1(pickedCell);
 
+            SendTurnDataPhase1(pickedCell);
+            movements = new List<Vector2>();
+            movements.Add(new Vector2(pickedCell.x, pickedCell.y));
+            EndTurn();
         }
         else
         {
@@ -202,14 +205,14 @@ public class LocalPlayer : Player
         List<Vector2> movements = new List<Vector2>();
         movements.Add(new Vector2(pickedCell.x, pickedCell.y));
 
-        CallOnTurnFinished(movements);
+        //CallOnTurnFinished(movements);
     }
 
     void SendTurnDataPhase2()
     {
         hasAlreadyJumpedOnce = false;
 
-        CallOnTurnFinished(movements);
+        //CallOnTurnFinished(movements);
     }
 
     public void MoveBall(Cell pickedCell)

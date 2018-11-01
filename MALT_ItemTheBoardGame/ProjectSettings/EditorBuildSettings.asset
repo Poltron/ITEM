@@ -6,10 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/_AppAdvisory/Very_Simple_Ads/Exemple/WithStartupScene/0_LoadingScene.unity
+    path: 
     guid: 3c20f14c0eac04a4b91dd5f7df6f0fc4
-  - enabled: 1
-    path: Assets/_Item/Scenes/login.unity
+  - enabled: 0
+    path: 
     guid: 8f026390fc3074bac9f9da58de571031
   - enabled: 1
     path: Assets/_Item/Scenes/main.unity
@@ -20,3 +20,6 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: f7a554e234e407942b70e944a3f6e9a5
+  - enabled: 0
+    path: Assets/_Item/Scenes/New Scene.unity
+    guid: 9d51ce5876e519742be002941b83262e

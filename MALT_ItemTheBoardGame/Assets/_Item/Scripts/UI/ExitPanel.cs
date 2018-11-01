@@ -24,7 +24,9 @@ public class ExitPanel : MonoBehaviour, IPointerClickHandler
     {
         if (GetComponent<OptionsPanel>() != null)
             uiManager.OnOptionsButton();
-        else
+        else if (GetComponent<HelpPanel>() != null)
             uiManager.OnHelpButton();
+        else
+            uiManager.OnBackToMainMenuButton();
     }
 }
