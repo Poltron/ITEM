@@ -663,8 +663,6 @@ namespace GS
 				FB.ActivateApp();
 				print("Initialized !");
 				loginBtnPanel.SetActive(false);
-
-
 			}
 		}
 		// Perform Unity Tasks When App is Connecting To Facebook 

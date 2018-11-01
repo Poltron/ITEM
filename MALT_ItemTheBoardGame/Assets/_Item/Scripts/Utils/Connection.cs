@@ -37,7 +37,9 @@ public class Connection : PunBehaviour {
 	{
 		// after connect 
 		this.UserId = PhotonNetwork.player.UserId;
-		////Debug.Log("UserID " + this.UserId);
+        ////Debug.Log("UserID " + this.UserId);
+
+        Debug.Log("OnConnectedToMaster");
 
 		// after timeout: re-join "old" room (if one is known)
 		if (!string.IsNullOrEmpty(this.previousRoom))
@@ -49,8 +51,8 @@ public class Connection : PunBehaviour {
 		else
 		{
             // else: join a random room
-            //Debug.Log("joinrandomroom");
-			//PhotonNetwork.JoinRandomRoom();
+            Debug.Log("JoinRandomRoom");
+			PhotonNetwork.JoinRandomRoom();
 		}
 	}
 
@@ -81,4 +83,9 @@ public class Connection : PunBehaviour {
 	{
 		Debug.Log("Disconnected due to: " + cause + ". this.previousRoom: " + this.previousRoom);
 	}
+
+    public override void OnDisconnectedFromPhoton()
+    {
+        Debug.Log("Disconnected from Photon");
+    }
 }

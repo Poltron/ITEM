@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PlayerID
+{
+    Player1,
+    Player2
+}
+
 public class PlayerManager : MonoBehaviour
 {
     private static PlayerManager instance;
@@ -23,6 +29,12 @@ public class PlayerManager : MonoBehaviour
     private Sprite IASprite;
 
     [SerializeField]
+    private AIEvaluationData aiEvaluationData;
+    private AIBehaviour aiBehaviour;
+
+    public AIBehaviour AIBehaviour { get { return aiBehaviour; } }
+
+    [SerializeField]
     public bool disableAI = false;
     [SerializeField]
     public bool randomAI = false;
@@ -33,45 +45,102 @@ public class PlayerManager : MonoBehaviour
             instance = this;
     }
 
-    void Start()
+    private void Start()
     {
-		
-	}
-	
-    public void CreatePlayer(BallColor color, bool isPlayer1 = false)
-    {
-        Player player = new Player();
-        player.ballPrefab = color == BallColor.White ? whiteBallPrefab : blackBallPrefab;
-        player.OnPhase1TurnFinished += GridManager.Instance.Phase1TurnFinishedPlayer;
-        player.OnPhase2TurnFinished += GridManager.Instance.Phase2TurnFinishedPlayer;
+        aiBehaviour = new AIBehaviour(aiEvaluationData);
+    }
 
-        if (isPlayer1)
+    public void CreateLocalPlayer(BallColor color, PlayerID id)
+    {
+        LocalPlayer player = new LocalPlayer(color);
+        if (id == PlayerID.Player1)
         {
+            player.OnTurnFinished += GridManager.Instance.PlayerTurnEnded;
             players[0] = player;
             UIManager.Instance.InitPlayer1(color);
         }
         else
         {
+            player.OnTurnFinished += GridManager.Instance.PlayerTurnEnded;
             players[1] = player;
             UIManager.Instance.InitPlayer2(color);
         }
     }
 
-    public void SetPlayerColor(BallColor color, bool isPlayer1 = false)
+    public void CreateAIPlayer(BallColor color, PlayerID id)
     {
-        if (isPlayer1 && players[0] != null)
+        AIPlayer player = new AIPlayer(color);
+
+        UIManager.Instance.SetPlayer2Name(PlayerManager.Instance.GetIAName());
+        UIManager.Instance.SetPlayer2Pic(PlayerManager.Instance.GetIASprite());
+
+        if (id == PlayerID.Player1)
         {
-            players[0].ballPrefab = color == BallColor.White ? whiteBallPrefab : blackBallPrefab;
+            player.OnTurnFinished += GridManager.Instance.PlayerTurnEnded;
+            players[0] = player;
             UIManager.Instance.InitPlayer1(color);
         }
-        else if (players[1] != null)
+        else
         {
-            players[1].ballPrefab = color == BallColor.White ? whiteBallPrefab : blackBallPrefab;
+            player.OnTurnFinished += GridManager.Instance.PlayerTurnEnded;
+            players[1] = player;
             UIManager.Instance.InitPlayer2(color);
         }
     }
 
-    public string GetIAName()
+    public void CreateRemotePlayer(BallColor color, PlayerID id)
+    {
+        RemotePlayer player = new RemotePlayer(color);
+
+        if (id == PlayerID.Player1)
+        {
+            player.OnTurnFinished += GridManager.Instance.PlayerTurnEnded;
+            players[0] = player;
+            UIManager.Instance.InitPlayer1(color);
+        }
+        else
+        {
+            player.OnTurnFinished += GridManager.Instance.PlayerTurnEnded;
+            players[1] = player;
+            UIManager.Instance.InitPlayer2(color);
+        }
+    }
+
+    public void SetPlayerColor(BallColor color, PlayerID id)
+    {
+        if (id == PlayerID.Player1 && players[0] != null)
+        {
+            players[0].SetColor(color);
+            UIManager.Instance.InitPlayer1(color);
+        }
+        else if (players[1] != null)
+        {
+            players[1].SetColor(color);
+            UIManager.Instance.InitPlayer2(color);
+        }
+    }
+
+    public Player GetPlayer(BallColor color)
+    {
+        if (Player1.Color == color)
+        {
+            return Player1;
+        }
+        else
+        {
+            return Player2;
+        }
+    }
+
+    public void SwitchPlayers()
+    {
+        // switch players
+        Player player1 = players[0];
+        players[0] = players[1];
+        players[1] = player1;
+    }
+
+    private string GetIAName()
     {
         if (Options.IsLanguageFr())
         {
@@ -81,7 +150,7 @@ public class PlayerManager : MonoBehaviour
         return "Charles (AI)";
     }
 
-    public Sprite GetIASprite()
+    private Sprite GetIASprite()
     {
         return IASprite;
     }

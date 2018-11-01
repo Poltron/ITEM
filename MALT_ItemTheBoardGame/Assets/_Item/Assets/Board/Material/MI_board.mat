@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: MI_board
+  m_Name: MI_BOARD
   m_Shader: {fileID: 4800000, guid: 9f5a91d980690d844aa378ee2daf30cb, type: 3}
   m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
   m_LightmapFlags: 0

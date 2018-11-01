@@ -53,6 +53,8 @@ public class Ball : MonoBehaviour
     float highlightCurveTimer;
 
     private Animator _animator;
+    public Animator Animator { get { return _animator; } }
+
     public bool isPickedUp;
 
     private bool isAboveUI;

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using DG.Tweening;
 
 public class TutorialPanel : UIPanel
 {
@@ -260,18 +261,16 @@ public class TutorialPanel : UIPanel
     {
         if (value)
         {
-            PopAskForTuto(false);
             PopTutoScreen1(true);
             GridManager.Instance.SetPlayingTuto(true);
         }
         else
         {
             animator.SetTrigger("PopOut");
-            GameManager.Instance.StartLookingForGame();
-            PopAskForTuto(false);
-            UIManager.Instance.DisplayWaitingForPlayerPanel(true);
+            GridManager.Instance.StartTurns();
         }
 
+        PopAskForTuto(false);
         AudioManager.Instance.PlayAudio(SoundID.CloseWindowTuto);
     }
 
@@ -324,7 +323,10 @@ public class TutorialPanel : UIPanel
 
     public void DisableTutoScreen2()
     {
-        tutoScreen2.gameObject.SetActive(false);
+        /*DOVirtual.DelayedCall(0.1f, () =>
+        {
+            tutoScreen2.gameObject.SetActive(false);
+        });*/
     }
 
     public void OnTutoScreen2NextButton()
@@ -360,8 +362,8 @@ public class TutorialPanel : UIPanel
     {
         PopPhase1MoveScreen(false);
         animator.SetTrigger("PopOut");
-        GameManager.Instance.StartGameVSIA();
-        UIManager.Instance.Phase1Tuto_ShowBall();
+        GridManager.Instance.StartTurns();
+        //UIManager.Instance.Phase1Tuto_ShowBall();
     }
 
     /*

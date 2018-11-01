@@ -1,4 +1,5 @@
 ﻿using DG.Tweening; // DOTween & DOVirtual
+using Facebook.Unity; // Facebook
 using GS; // FacebookPro
 using Photon; // Network
 
@@ -6,23 +7,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum GameState
+{
+    MainMenu,
+    LookingForPlayer,
+    Gameplay,
+    GameResults
+}
+
+public enum GameMode
+{
+    Local,
+    Remote,
+    AI
+}
+
 public class GameManager : PunBehaviour
 {
     static private GameManager instance;
     static public GameManager Instance { get { return instance; } }
 
+    private GameMode gameMode;
+    public GameMode GameMode { get { return gameMode; } }
+
+    private GameState gameState;
+    public GameState GameState { get { return gameState; } }
+
     [SerializeField]
     private FBManager fbManager;
-    private bool isFBConnected = false;
 
     private Connection connection;
 
     [SerializeField]
     private float timeToLaunchGameVSIA = 4;
-
-    public bool isGameFinished = false;
-    public bool isGameStarted = false;
-    public bool isPlayingVSIA = false;
 
     void Awake()
     {
@@ -30,24 +47,24 @@ public class GameManager : PunBehaviour
             instance = this;
         else
             Destroy(gameObject);
+
+        connection = GetComponent<Connection>();
+
+        gameState = GameState.MainMenu;
+
+        Options.Init();
     }
 
-    void Start ()
+    private void Start()
     {
-        Options.Init();
+        UIManager.Instance.EndGame += EndGame;
+    }
 
-        // create local player
-        PlayerManager.Instance.CreatePlayer(BallColor.White, true);
-
-        // connection to photon network
-        connection = GetComponent<Connection>();
-        connection.ApplyUserIdAndConnect();
-
+    public void StartGame ()
+    {
         // load fb data
-        if (fbManager)
+        if (FB.IsLoggedIn)
         {
-            isFBConnected = true;
-
             PlayerManager.Instance.Player1.playerName = fbManager.pName;
             PlayerManager.Instance.Player1.picURL = fbManager.pUrlPic;
 
@@ -69,23 +86,30 @@ public class GameManager : PunBehaviour
         if (Options.GetAskForTuto())
             UIManager.Instance.PopTuto();
         else
-            StartLookingForGame();
+            GridManager.Instance.StartTurns();
+            
+
+        gameState = GameState.Gameplay;
+    }
+    
+    public void EndGame()
+    {
+        GridManager.Instance.ResetGame();
+        UIManager.Instance.ShowGameplayCanvas(false);
+        UIManager.Instance.ShowMenuCanvas(true);
+        GridManager.Instance.DisplayBoard(false);
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (GameState == GameState.LookingForPlayer && Input.GetKeyDown(KeyCode.Space))
         {
+            Disconnect();
             StartGameVSIA();
         }
     }
 
     #region FACEBOOK
-    private void OnFacebookConnect()
-    {
-        connection.ApplyUserIdAndConnect();
-    }
-
     private void OnNameLoaded(string name)
     {
         PlayerManager.Instance.Player1.playerName = name;
@@ -134,64 +158,80 @@ public class GameManager : PunBehaviour
     }
     #endregion FACEBOOK
 
-    public void StartLookingForGame()
+
+    public void StartLocalGame()
     {
-        PhotonNetwork.JoinRandomRoom();
-        DOVirtual.DelayedCall(timeToLaunchGameVSIA, StartGameVSIA, true);
+        gameMode = GameMode.Local;
+
+        GridManager.Instance.InitForGameStart();
+
+        PlayerManager.Instance.CreateLocalPlayer(BallColor.White, PlayerID.Player1);
+        PlayerManager.Instance.CreateLocalPlayer(BallColor.Black, PlayerID.Player2);
+
+        StartGame();
     }
 
     public void StartGameVSIA()
     {
-        if (isGameStarted)
+        if (GameState != GameState.MainMenu && GameState != GameState.LookingForPlayer)
             return;
 
-        connection.enabled = false;
-        PhotonNetwork.LeaveRoom();
-        PhotonNetwork.Disconnect();
+        gameMode = GameMode.AI;
 
-        UIManager.Instance.DisplayWaitingForPlayerPanel(false);
         GridManager.Instance.InitForGameStart();
-        isGameStarted = true;
-        isPlayingVSIA = true;
 
-        PlayerManager.Instance.SetPlayerColor(BallColor.White, true);
-        PlayerManager.Instance.CreatePlayer(BallColor.Black);
-        UIManager.Instance.InitPlayer2(BallColor.Black);
+        PlayerManager.Instance.CreateLocalPlayer(BallColor.White, PlayerID.Player1);
+        PlayerManager.Instance.CreateAIPlayer(BallColor.Black, PlayerID.Player2);
 
-        UIManager.Instance.SetPlayer2Name(PlayerManager.Instance.GetIAName());
-        UIManager.Instance.SetPlayer2Pic(PlayerManager.Instance.GetIASprite());
+        StartGame();
+    }
 
-        UIManager.Instance.SetPlayer1Turn();
-        PlayerManager.Instance.Player1.StartTurn();
+    public void StartLookingForOpponent()
+    {
+        gameMode = GameMode.Remote;
+        gameState = GameState.LookingForPlayer;
+
+        connection.ApplyUserIdAndConnect();
+
+        UIManager.Instance.mainMenuPanel.HideAll();
+        UIManager.Instance.DisplayWaitingForPlayerPanel(true);
+    }
+
+    public void StopLookingForOpponent()
+    {
+        gameState = GameState.MainMenu;
+
+        Disconnect();
+
+        UIManager.Instance.mainMenuPanel.ShowMenu();
+        UIManager.Instance.DisplayWaitingForPlayerPanel(false);
     }
 
     public override void OnJoinedRoom()
     {
         if (PhotonNetwork.room.PlayerCount == 2)
         {
-            UIManager.Instance.DisplayWaitingForPlayerPanel(false);
-            GridManager.Instance.InitForGameStart();
-            isGameStarted = true;
+            gameState = GameState.Gameplay;
 
-            PlayerManager.Instance.SetPlayerColor(BallColor.Black, true);
-            PlayerManager.Instance.CreatePlayer(BallColor.White);
+            GridManager.Instance.InitForGameStart();
+
+            PlayerManager.Instance.CreateLocalPlayer(BallColor.Black, PlayerID.Player1);
+            PlayerManager.Instance.CreateRemotePlayer(BallColor.White, PlayerID.Player2);
 
             UIManager.Instance.SetPlayer2Turn();
             UIManager.Instance.SetPlayer1Name(PlayerManager.Instance.Player1.playerName);
 
-            print("2 players in the room, sending player name : " + PlayerManager.Instance.Player1.playerName);
+            print("OnJoinedRoom : 2 players in the room, sending player name > " + PlayerManager.Instance.Player1.playerName);
             SendName(PlayerManager.Instance.Player1.playerName);
             SendPicURL(PlayerManager.Instance.Player1.picURL);
+
+            StartGame();
         }
         else
         {
-            print("alone in the room, name is : " + PlayerManager.Instance.Player1.playerName);
-
-            UIManager.Instance.DisplayWaitingForPlayerPanel(true);
-            UIManager.Instance.InitPlayer1(BallColor.White);
-            UIManager.Instance.SetPlayer1Name(PlayerManager.Instance.Player1.playerName);
-
-            UIManager.Instance.DisplayYourTurn(false);
+            print("OnJoinedRoom : alone in the room");
+            //UIManager.Instance.InitPlayer1(BallColor.White);
+            //UIManager.Instance.SetPlayer1Name(PlayerManager.Instance.Player1.playerName);
         }
     }
 
@@ -201,37 +241,35 @@ public class GameManager : PunBehaviour
         {
             print("OnPhotonPlayerConnected : New player arrived !");
 
-            UIManager.Instance.DisplayWaitingForPlayerPanel(false);
-            GridManager.Instance.InitForGameStart();
-            isGameStarted = true;
+            gameState = GameState.Gameplay;
 
-            PlayerManager.Instance.SetPlayerColor(BallColor.White, true);
-            PlayerManager.Instance.CreatePlayer(BallColor.Black);
+            GridManager.Instance.InitForGameStart();
+
+            PlayerManager.Instance.CreateLocalPlayer(BallColor.White, PlayerID.Player1);
+            PlayerManager.Instance.CreateRemotePlayer(BallColor.Black, PlayerID.Player2);
 
             UIManager.Instance.SetPlayer1Turn();
             PlayerManager.Instance.Player1.StartTurn();
 
             SendName(PlayerManager.Instance.Player1.playerName);
             SendPicURL(PlayerManager.Instance.Player1.picURL);
+
+            StartGame();
         }
         else
         {
             print("OnPhotonPlayerConnected : Alone in the room.");
-
-            UIManager.Instance.DisplayWaitingForPlayerPanel(true);
         }
     }
 
     public override void OnPhotonPlayerDisconnected(PhotonPlayer otherPlayer)
     {
         Debug.Log("Other player disconnected! isInactive: " + otherPlayer.IsInactive);
-        if (isGameFinished)
+
+        if (GameState == GameState.GameResults)
             return;
 
-        connection.enabled = false;
-        PhotonNetwork.LeaveRoom();
-        PhotonNetwork.Disconnect();
-
+        Disconnect();
         UIManager.Instance.DisplayForfeit(true);
     }
 
@@ -251,8 +289,13 @@ public class GameManager : PunBehaviour
 
     public void RestartConnection()
     {
-        connection.enabled = false;
         PlayerManager.Instance.Player1.EndTurn();
+        Disconnect();
+    }
+
+    public void Disconnect()
+    {
+        connection.enabled = false;
 
         PhotonNetwork.LeaveRoom();
         PhotonNetwork.Disconnect();

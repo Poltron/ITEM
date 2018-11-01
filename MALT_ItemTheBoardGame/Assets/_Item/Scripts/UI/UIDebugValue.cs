@@ -23,10 +23,7 @@ namespace AppAdvisory.Item
     };
 
     public class UIDebugValue : MonoBehaviour {
-
-        [SerializeField]
-        private GridManager gridManager;
-
+        
         [SerializeField]
         private DEBUG_VALUE debugValue;
 
@@ -42,20 +39,20 @@ namespace AppAdvisory.Item
             switch (debugValue)
             {
                 case DEBUG_VALUE.BLACKBALLSLEFT:
-                    if (gridManager.OptiGrid != null)
-                        _text.text = gridManager.OptiGrid.BlackBallsLeft.ToString();
+                    if (GridManager.Instance.OptiGrid != null)
+                        _text.text = GridManager.Instance.OptiGrid.BlackBallsLeft.ToString();
                     break;
                 case DEBUG_VALUE.WHITEBALLSLEFT:
-                    if (gridManager.OptiGrid != null)
-                        _text.text = gridManager.OptiGrid.WhiteBallsLeft.ToString();
+                    if (GridManager.Instance.OptiGrid != null)
+                        _text.text = GridManager.Instance.OptiGrid.WhiteBallsLeft.ToString();
                     break;
                 case DEBUG_VALUE.AIPOSITIONTESTNB:
-                    if (gridManager.AIBehaviour != null)
-                        _text.text = gridManager.AIBehaviour.positionCount.ToString();
+                    if (PlayerManager.Instance.AIBehaviour != null)
+                        _text.text = PlayerManager.Instance.AIBehaviour.positionCount.ToString();
                     break;
                 case DEBUG_VALUE.AIPOSITIONTESTTIME:
-                    if (gridManager.AIBehaviour != null)
-                        _text.text = gridManager.AIBehaviour.timeSpent.ToString("0.0000") + "s";
+                    if (PlayerManager.Instance.AIBehaviour != null)
+                        _text.text = PlayerManager.Instance.AIBehaviour.timeSpent.ToString("0.0000") + "s";
                     break;
                 case DEBUG_VALUE.OPTIGRID:
                     string str = GetLetterFromOptiGrid(8, 0) + "__" + GetLetterFromOptiGrid(8, 1) + "__" + GetLetterFromOptiGrid(8, 2) + "__" + GetLetterFromOptiGrid(8, 3) + "__" + GetLetterFromOptiGrid(8, 4)
@@ -71,37 +68,37 @@ namespace AppAdvisory.Item
                     _text.text = str;
                     break;
                 case DEBUG_VALUE.PLAYER1NBTURN:
-                    _text.text = gridManager.Player1NbOfTurn.ToString();
+                    _text.text = PlayerManager.Instance.Player1.NbOfTurn.ToString();
                     break;
                 case DEBUG_VALUE.PLAYER2NBTURN:
-                    _text.text = gridManager.Player2NbOfTurn.ToString();
+                    _text.text = PlayerManager.Instance.Player2.NbOfTurn.ToString();
                     break;
                 case DEBUG_VALUE.PLAYER1SCORE:
-                    _text.text = gridManager.playerScore.ToString();
+                    _text.text = PlayerManager.Instance.Player1.roundScore.ToString();
                     break;
                 case DEBUG_VALUE.PLAYER2SCORE:
-                    _text.text = gridManager.otherPlayerScore.ToString();
+                    _text.text = PlayerManager.Instance.Player2.roundScore.ToString();
                     break;
                 case DEBUG_VALUE.PLAYER1TOTALSCORE:
-                    _text.text = gridManager.totalPlayerScore.ToString();
+                    _text.text = PlayerManager.Instance.Player1.totalScore.ToString();
                     break;
                 case DEBUG_VALUE.PLAYER2TOTALSCORE:
-                    _text.text = gridManager.totalOtherPlayerScore.ToString();
+                    _text.text = PlayerManager.Instance.Player2.totalScore.ToString();
                     break;
                 case DEBUG_VALUE.WHOSTURN:
                     _text.text = FindObjectOfType<UIManager>().isPlayer1Turn ? "player1turn" : "player2turn";
                     break;
                 case DEBUG_VALUE.EQUALITYTURN:
-                    _text.text = (gridManager.IsEqualityTurn) ? "true" : "false";
+                    _text.text = (GridManager.Instance.IsEqualityTurn) ? "true" : "false";
                     break;
             }
         }
 
         private string GetLetterFromOptiGrid(int x, int y)
         {
-            if (gridManager.OptiGrid != null)
+            if (GridManager.Instance.OptiGrid != null)
             {
-                switch (gridManager.OptiGrid.Cells[x][y])
+                switch (GridManager.Instance.OptiGrid.Cells[x][y])
                 {
                     case CellColor.Black:
                         return "B";
