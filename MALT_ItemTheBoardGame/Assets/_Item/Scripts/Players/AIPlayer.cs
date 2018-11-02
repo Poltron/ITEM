@@ -46,10 +46,9 @@ public class AIPlayer : Player
         currentBall = GridManager.Instance.PlaceBallIA(cell);
         ballCount--;
 
-        List<Vector2> movements = new List<Vector2>();
+        movements = new List<Vector2>();
         movements.Add(new Vector2(move.toY, move.toX));
 
-        CallOnTurnFinished(movements, currentBall.ballId);
         EndTurn();
     }
 

@@ -37821,7 +37821,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roundLabelFR: ROUND 1
-  nextRoundLabelFR: Prochain Round
+  nextRoundLabelFR: Round Suivant
   gameResultsLabelFR: Fin de Partie
   roundLabelEN: ROUND 1
   nextRoundLabelEN: Next Round
@@ -42553,15 +42553,12 @@ MonoBehaviour:
   localButtonTextFR: Duel local
   remoteButtonTextFR: Partie rapide
   aiButtonTextFR: Entrainement
-  exitButtonTextFR: Quitter
   localButtonTextEN: Local Duel
   remoteButtonTextEN: Quick Match
   aiButtonTextEN: Practice
-  exitButtonTextEN: Quit
   localButtonText: {fileID: 1782482392}
   remoteButtonText: {fileID: 868824669}
   aiButtonText: {fileID: 319150154}
-  exitButtonText: {fileID: 0}
   menuButtons: {fileID: 1359227982}
   loginButtons: {fileID: 355148519}
   aiChoiceButtons: {fileID: 1508495528}
