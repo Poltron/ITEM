@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class HelpPanel : UIPanel
 {
@@ -23,7 +24,6 @@ public class HelpPanel : UIPanel
     public bool IsFadingOut { get { return !isFadingIn; } }
     public bool IsFadingIn { get { return isFadingIn; } }
 
-    private AudioManager audioManager;
     private ExitPanel exitPanel;
 
     void Awake()
@@ -35,7 +35,6 @@ public class HelpPanel : UIPanel
     {
         isFadingIn = false;
         animator = GetComponent<Animator>();
-        audioManager = FindObjectOfType<AudioManager>();
         exitPanel = GetComponent<ExitPanel>();
     }
 
@@ -63,11 +62,9 @@ public class HelpPanel : UIPanel
             animator.SetBool("bPopIn", true);
             isFadingIn = true;
             exitPanel.enabled = true;
+            GetComponent<Image>().enabled = true;
 
-            if (audioManager != null)
-            {
-                audioManager.PlayAudio(SoundID.OpenWindowHelp);
-            }
+                AudioManager.Instance.PlayAudio(SoundID.OpenWindowHelp);
         }
     }
 
@@ -84,10 +81,8 @@ public class HelpPanel : UIPanel
             isFadingIn = false;
             exitPanel.enabled = false;
 
-            if (audioManager != null)
-            {
-                audioManager.PlayAudio(SoundID.CloseWindowHelp);
-            }
+            GetComponent<Image>().enabled = false;
+            AudioManager.Instance.PlayAudio(SoundID.CloseWindowHelp);
         }
     }
 
@@ -96,7 +91,7 @@ public class HelpPanel : UIPanel
         if (IsFadingOut)
         {
             isFadingIn = false;
-            gameObject.SetActive(false);
+            //gameObject.SetActive(false);
         }
     }
 

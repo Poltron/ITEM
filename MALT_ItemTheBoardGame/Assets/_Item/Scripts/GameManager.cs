@@ -125,15 +125,6 @@ public class GameManager : PunBehaviour
         GridManager.Instance.DisplayBoard(false);
     }
 
-    private void Update()
-    {
-        if (GameState == GameState.LookingForPlayer && Input.GetKeyDown(KeyCode.Space))
-        {
-            Disconnect();
-            StartGameVSIA();
-        }
-    }
-
     #region FACEBOOK
     private void OnNameLoaded(string name)
     {
@@ -220,7 +211,7 @@ public class GameManager : PunBehaviour
         StartGame();
     }
 
-    public void StartGameVSIA()
+    public void StartGameVSIA(AIProfile aiProfile)
     {
         if (GameState != GameState.MainMenu && GameState != GameState.LookingForPlayer)
             return;
@@ -230,7 +221,7 @@ public class GameManager : PunBehaviour
         GridManager.Instance.InitForGameStart();
 
         PlayerManager.Instance.CreateLocalPlayer(BallColor.White, PlayerID.Player1);
-        PlayerManager.Instance.CreateAIPlayer(BallColor.Black, PlayerID.Player2);
+        PlayerManager.Instance.CreateAIPlayer(aiProfile, BallColor.Black, PlayerID.Player2);
 
         StartGame();
     }

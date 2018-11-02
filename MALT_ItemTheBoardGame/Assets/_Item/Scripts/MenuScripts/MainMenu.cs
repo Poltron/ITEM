@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +13,8 @@ public class MainMenu : UIPanel
     private string remoteButtonTextFR;
     [SerializeField]
     private string aiButtonTextFR;
+    [SerializeField]
+    private string aiChoiceTextFR;
 
     [Header("EN Settings")]
     [SerializeField]
@@ -20,6 +23,8 @@ public class MainMenu : UIPanel
     private string remoteButtonTextEN;
     [SerializeField]
     private string aiButtonTextEN;
+    [SerializeField]
+    private string aiChoiceTextEN;
 
     [Header("")]
     [SerializeField]
@@ -28,6 +33,8 @@ public class MainMenu : UIPanel
     private Text remoteButtonText;
     [SerializeField]
     private Text aiButtonText;
+    [SerializeField]
+    private TextMeshProUGUI aiChoiceText;
 
     [SerializeField]
     private GameObject menuButtons;
@@ -35,12 +42,15 @@ public class MainMenu : UIPanel
     private GameObject loginButtons;
     [SerializeField]
     private GameObject aiChoiceButtons;
+    [SerializeField]
+    private AIPanel[] aiPanels;
 
     protected override void SetLanguageFR()
     {
         localButtonText.text = localButtonTextFR;
         remoteButtonText.text = remoteButtonTextFR;
         aiButtonText.text = aiButtonTextFR;
+        aiChoiceText.text = aiChoiceTextFR;
     }
 
     protected override void SetLanguageEN()
@@ -48,6 +58,7 @@ public class MainMenu : UIPanel
         localButtonText.text = localButtonTextEN;
         remoteButtonText.text = remoteButtonTextEN;
         aiButtonText.text = aiButtonTextEN;
+        aiChoiceText.text = aiChoiceTextEN;
     }
 
     public void ShowMenu()
@@ -69,6 +80,11 @@ public class MainMenu : UIPanel
         menuButtons.SetActive(false);
         loginButtons.SetActive(false);
         aiChoiceButtons.SetActive(true);
+
+        foreach(AIPanel aiPanel in aiPanels)
+        {
+            aiPanel.Refresh();
+        }
     }
 
     public void HideAll()
@@ -93,6 +109,7 @@ public class MainMenu : UIPanel
     public void PlayVSAI()
     {
         Debug.Log("PlayVSAI");
-        GameManager.Instance.StartGameVSIA();
+        ShowAIs();
+        //GameManager.Instance.StartGameVSIA();
     }
 }

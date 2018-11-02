@@ -27,10 +27,10 @@ public class LocalPlayer : Player
 
     public override void EndTurn()
     {
-        base.EndTurn();
-
         GridManager.Instance.ModelGrid.ResetCellsColor();
         EasyTouch.On_TouchUp -= OnTouchUp;
+
+        base.EndTurn();
 	}
 
 

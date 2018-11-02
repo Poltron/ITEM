@@ -118,6 +118,7 @@ public class UIManager : MonoBehaviour
     {
         string language = Options.GetLanguage();
         optionsPanel.SetLanguage(language);
+        backToMainMenuPanel.SetLanguage(language);
         inviteFriendButton.SetLanguage(language);
         waitingForPlayerPanel.SetLanguage(language);
         roundResultPanel.SetLanguage(language);
@@ -127,9 +128,8 @@ public class UIManager : MonoBehaviour
         tutoPanel.SetLanguage(language);
         player1.SetLanguage(language);
         player2.SetLanguage(language);
-        PlayerManager.Instance.Player1.playerName = player1.playerName.text;
 
-        //overlayPanel.SetLanguage(language);
+        PlayerManager.Instance.Player1.playerName = player1.playerName.text;
     }
 
     public void PopTuto()
@@ -369,6 +369,7 @@ public class UIManager : MonoBehaviour
         AudioManager.Instance.PlayAudio(SoundID.ClickUI);
 
         optionsPanel.PopOut();
+        backToMainMenuPanel.PopOut();
 
         if (helpPanel.IsFadingIn)
         {
@@ -385,6 +386,7 @@ public class UIManager : MonoBehaviour
         AudioManager.Instance.PlayAudio(SoundID.ClickUI);
 
         helpPanel.PopOut();
+        backToMainMenuPanel.PopOut();
 
         if (optionsPanel.IsFadingIn)
         {
@@ -399,7 +401,10 @@ public class UIManager : MonoBehaviour
     public void OnBackToMainMenuButton()
     {
         AudioManager.Instance.PlayAudio(SoundID.ClickUI);
-        
+
+        helpPanel.PopOut();
+        optionsPanel.PopOut();
+
         if (backToMainMenuPanel.IsFadingIn)
         {
             backToMainMenuPanel.PopOut();

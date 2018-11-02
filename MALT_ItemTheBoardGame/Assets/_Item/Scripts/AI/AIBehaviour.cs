@@ -2,392 +2,440 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-    public struct Move
+public struct Move
+{
+    public CellColor color;
+    public int fromX;
+    public int fromY;
+    public int toX;
+    public int toY;
+
+    public Move(CellColor _color, int _fromX, int _fromY, int _toX, int _toY)
     {
-        public CellColor color;
-        public int fromX;
-        public int fromY;
-        public int toX;
-        public int toY;
-         
-        public Move(CellColor _color, int _fromX, int _fromY, int _toX, int _toY)
-        {
-            color = _color;
+        color = _color;
 
-            fromX = _fromX;
-            fromY = _fromY;
+        fromX = _fromX;
+        fromY = _fromY;
 
-            toX = _toX;
-            toY = _toY;
-        }
-
-        public bool IsNewBall()
-        {
-            if (fromX == -1 && fromY == -1)
-            {
-                return true;
-            }
-
-            return false;
-        }
+        toX = _toX;
+        toY = _toY;
     }
 
-    public class AIBehaviour
+    public bool IsNewBall()
     {
-        public int positionCount = 0;
-        public float timeSpent;
-
-        AIEvaluationData evaluationData;
-        OptimizedGrid grid;
-
-        public bool canOnlyJump;
-
-        private int playerScore;
-        private int aiScore;
-
-        public AIBehaviour(AIEvaluationData _evaluationData)
+        if (fromX == -1 && fromY == -1)
         {
-            evaluationData = _evaluationData;
+            return true;
         }
 
-        public void SetAIEvaluationData(AIEvaluationData _data)
+        return false;
+    }
+}
+
+public class AIBehaviour
+{
+    public int positionCount = 0;
+    public float timeSpent;
+
+    AIEvaluationData evaluationData;
+    OptimizedGrid grid;
+
+    public bool canOnlyJump;
+
+    private int playerScore;
+    private int aiScore;
+
+    private AIProfile aiProfile;
+
+    public AIBehaviour(AIEvaluationData _evaluationData)
+    {
+        evaluationData = _evaluationData;
+    }
+
+    public void SetAIProfile(AIProfile _aiProfile)
+    {
+        aiProfile = _aiProfile;
+    }
+
+    public void SetAIEvaluationData(AIEvaluationData _data)
+    {
+        evaluationData = _data;
+    }
+
+    public void SetScores(int _playerScore, int _aiScore)
+    {
+        playerScore = _playerScore;
+        aiScore = _aiScore;
+    }
+
+    public IEnumerator GetRandomMove(OptimizedGrid optiGrid, System.Action<Move> toDo)
+    {
+        yield return new WaitForEndOfFrame();
+        grid = optiGrid;
+
+        List<Move> newGameMoves = grid.GetAvailableMoves(CellColor.Black);
+        toDo(newGameMoves[Random.Range(0, newGameMoves.Count - 1)]);
+    }
+
+    public IEnumerator GetBestMove(OptimizedGrid optiGrid, System.Action<Move> toDo)
+    {
+        grid = optiGrid;
+
+        positionCount = 0;
+        timeSpent = 0;
+        float actualTime = Time.realtimeSinceStartup;
+
+        Move bestMove = new Move();
+        bool done = false;
+
+        yield return new WaitForEndOfFrame();
+
+        List<Vector2> canWinCells = new List<Vector2>();
+        // if AI has a 4-0 pattern
+        if (grid.CanColorWin(BallColor.Black, out canWinCells))
         {
-            evaluationData = _data;
-        }
-
-        public void SetScores(int _playerScore, int _aiScore)
-        {
-            playerScore = _playerScore;
-            aiScore = _aiScore;
-        }
-
-        public IEnumerator GetRandomMove(OptimizedGrid optiGrid, System.Action<Move> toDo)
-        {
-            yield return new WaitForEndOfFrame();
-            grid = optiGrid;
-
-            List<Move> newGameMoves = grid.GetAvailableMoves(CellColor.Black);
-            toDo(newGameMoves[Random.Range(0, newGameMoves.Count - 1)]);
-        }
-
-        public IEnumerator GetBestMove(OptimizedGrid optiGrid, System.Action<Move> toDo)
-        {
-            grid = optiGrid;
-
-            positionCount = 0;
-            timeSpent = 0;
-            float actualTime = Time.realtimeSinceStartup;
-
-            Move bestMove = new Move();
-            bool done = false;
-
-            yield return new WaitForEndOfFrame();
-
-            List<Vector2> canWinCells = new List<Vector2>();
-            // if AI has a 4-0 pattern
-            if (grid.CanColorWin(BallColor.Black, out canWinCells))
+            // if AI can move to win
+            if (grid.CanColorMoveToWin(BallColor.Black, canWinCells, out bestMove))
             {
-                // if AI can move to win
+                done = true;
+            }
+        }
+
+        // if Player can win next turn
+        if (grid.CanColorWin(BallColor.White, out canWinCells) && !done)
+        {
+            // if player can move to win next turn
+            if (grid.CanColorMoveToWin(BallColor.White, canWinCells, out bestMove))
+            {
+                // can AI def it ???
                 if (grid.CanColorMoveToWin(BallColor.Black, canWinCells, out bestMove))
                 {
                     done = true;
                 }
             }
-
-            // if Player can win next turn
-            if (grid.CanColorWin(BallColor.White, out canWinCells) && !done)
-            {
-                // if player can move to win next turn
-                if (grid.CanColorMoveToWin(BallColor.White, canWinCells, out bestMove))
-                {
-                    // can AI def it ???
-                    if (grid.CanColorMoveToWin(BallColor.Black, canWinCells, out bestMove))
-                    {
-                        done = true;
-                    }
-                }
-            }
-
-            if (!done)
-            {
-                int depth = 3;
-                bestMove = MiniMaxRoot(depth, true);
-            }
-
-            float newTime = Time.realtimeSinceStartup;
-            timeSpent = newTime - actualTime;
-
-            //Debug.Log(positionCount + " in " + timeSpent);
-
-            toDo(bestMove);
         }
 
-        public Move MiniMaxRoot(int depth, bool isMaximisingPlayer)
+        if (!done)
         {
-            CellColor color = CellColor.Black;
+            int depth = aiProfile.Depth;
+            bestMove = MiniMaxRoot(depth, true);
+        }
 
-            if (!isMaximisingPlayer)
-                color = CellColor.White;
+        float newTime = Time.realtimeSinceStartup;
+        timeSpent = newTime - actualTime;
 
-            List<Move> newGameMoves = grid.GetAvailableMoves(color);
-            int bestMove = int.MinValue + 1;
-            List<Move> bestMovesFound = new List<Move>();
+        Debug.Log(positionCount + " in " + timeSpent);
 
-            // loop on all moves available on this board
-            for (int i = 0; i < newGameMoves.Count; i++)
+        toDo(bestMove);
+    }
+
+    public Move MiniMaxRoot(int depth, bool isMaximisingPlayer)
+    {
+        CellColor color = CellColor.Black;
+
+        if (!isMaximisingPlayer)
+            color = CellColor.White;
+
+        List<Move> newGameMoves = grid.GetAvailableMoves(color);
+        int bestMove = int.MinValue + 1;
+        List<Move> bestMovesFound = new List<Move>();
+
+        // loop on all moves available on this board
+        for (int i = 0; i < newGameMoves.Count; i++)
+        {
+            Move move = newGameMoves[i];
+
+            positionCount++;
+
+            grid.DoMove(move);
+
+            int value = -EvaluateGrid(evaluationData, depth);
+
+            if (!IsGameEnded(value))
+            {
+                // get loop on all moves available on board with this move
+                value = MiniMax(depth - 1, int.MinValue + 1, int.MaxValue - 1, !isMaximisingPlayer);
+            }
+
+            grid.UndoMove(move);
+
+            // is this move better
+            if (value > bestMove)
+            {
+                bestMove = value;
+                bestMovesFound.Clear();
+                bestMovesFound.Add(move);
+            }
+            else if (value == bestMove)
+            {
+                bestMovesFound.Add(move);
+            }
+        }
+
+        return bestMovesFound[Random.Range(0, bestMovesFound.Count - 1)];
+    }
+
+
+    public int MiniMax(int depth, int alpha, int beta, bool isMaximisingPlayer)
+    {
+        positionCount++;
+
+        if (depth == 0)
+        {
+            return -EvaluateGrid(evaluationData, depth);
+        }
+
+        var newGameMoves = grid.GetAvailableMoves(CellColor.Black);
+
+        // IA
+        if (isMaximisingPlayer)
+        {
+            var bestMove = alpha;
+            for (var i = 0; i < newGameMoves.Count; i++)
             {
                 Move move = newGameMoves[i];
 
-                positionCount++;
-
                 grid.DoMove(move);
 
-                int value = -EvaluateGrid(evaluationData, depth);
+                bestMove = -EvaluateGrid(evaluationData, depth);
 
-                if (!IsGameEnded(value))
+                if (!IsGameEnded(bestMove))
                 {
                     // get loop on all moves available on board with this move
-                    value = MiniMax(depth - 1, int.MinValue + 1, int.MaxValue - 1, !isMaximisingPlayer);
+                    bestMove = Mathf.Max(bestMove, MiniMax(depth - 1, bestMove, beta, !isMaximisingPlayer));
                 }
 
                 grid.UndoMove(move);
 
-                // is this move better
-                if (value > bestMove)
+                if (beta <= bestMove)
                 {
-                    bestMove = value;
-                    bestMovesFound.Clear();
-                    bestMovesFound.Add(move);
-                }
-                else if (value == bestMove)
-                {
-                    bestMovesFound.Add(move);
+                    return bestMove;
                 }
             }
-
-            return bestMovesFound[Random.Range(0, bestMovesFound.Count - 1)];
+            return bestMove;
         }
-
-
-        public int MiniMax(int depth, int alpha, int beta, bool isMaximisingPlayer)
+        // Joueur
+        else
         {
-            positionCount++;
-
-            if (depth == 0)
+            var bestMove = beta;
+            for (var i = 0; i < newGameMoves.Count; i++)
             {
-                return -EvaluateGrid(evaluationData, depth);
-            }
+                Move move = newGameMoves[i];
 
-            var newGameMoves = grid.GetAvailableMoves(CellColor.Black);
+                grid.DoMove(move);
 
-            // IA
-            if (isMaximisingPlayer)
-            {
-                var bestMove = alpha;
-                for (var i = 0; i < newGameMoves.Count; i++)
+                bestMove = -EvaluateGrid(evaluationData, depth);
+
+                if (!IsGameEnded(bestMove))
                 {
-                    Move move = newGameMoves[i];
-
-                    grid.DoMove(move);
-
-                    bestMove = -EvaluateGrid(evaluationData, depth);
-
-                    if (!IsGameEnded(bestMove))
-                    {
-                        // get loop on all moves available on board with this move
-                        bestMove = Mathf.Max(bestMove, MiniMax(depth - 1, bestMove, beta, !isMaximisingPlayer));
-                    }
-
-                    grid.UndoMove(move);
-
-                    if (beta <= bestMove)
-                    {
-                        return bestMove;
-                    }
-                }
-                return bestMove;
-            }
-            // Joueur
-            else
-            {
-                var bestMove = beta;
-                for (var i = 0; i < newGameMoves.Count; i++)
-                {
-                    Move move = newGameMoves[i];
-
-                    grid.DoMove(move);
-
-                    bestMove = -EvaluateGrid(evaluationData, depth);
-
-                    if (!IsGameEnded(bestMove))
-                    {
-                        // get loop on all moves available on board with this move
-                        bestMove = Mathf.Min(bestMove, MiniMax(depth - 1, alpha, bestMove, !isMaximisingPlayer));
-                    }
-
-                    grid.UndoMove(move);
-                    
-                    if (bestMove <= alpha)
-                    {
-                        return bestMove;
-                    }
-                }
-                return bestMove;
-            }
-        }
-
-        private int EvaluatePattern(EvaluationPattern[] patterns, int depth)
-        {
-            int value = 0;
-            int blackCount = 0;
-            int whiteCount = 0;
-
-            for (int i = 0; i < patterns.Length; ++i)
-            {
-                blackCount = 0;
-                whiteCount = 0;
-
-                for (int j = 0; j < patterns[i].positions.Length; ++j)
-                {
-                    IntVec2 pos = patterns[i].positions[j];
-                    if (grid.Cells[pos.X][pos.Y] == CellColor.Black)
-                    {
-                        blackCount++;
-                    }
-                    else if (grid.Cells[pos.X][pos.Y] == CellColor.White)
-                    {
-                        whiteCount++;
-                    }
+                    // get loop on all moves available on board with this move
+                    bestMove = Mathf.Min(bestMove, MiniMax(depth - 1, alpha, bestMove, !isMaximisingPlayer));
                 }
 
-                if (blackCount == 5)
+                grid.UndoMove(move);
+
+                if (bestMove <= alpha)
                 {
-                    return -9999999 + depth;
-                }
-                else if (whiteCount == 5)
-                {
-                    return 9999999 - depth;
-                }
-                else
-                {
-                    if (blackCount == 1 && whiteCount == 0)
-                        value -= 100;
-                    else if (blackCount == 2 && whiteCount == 0)
-                        value -= 750;
-                    else if (blackCount == 3 && whiteCount == 0)
-                        value -= 1500;
-                    else if (blackCount == 4 && whiteCount == 0)
-                        value -= 20000;
-
-                    else if (blackCount == 4 && whiteCount == 1)
-                        value += 75000;
-
-                    else if (blackCount == 2 && whiteCount == 1)
-                        value -= 500;
-                    else if (blackCount == 1 && whiteCount == 2)
-                        value += 1000;
-
-                    else if (blackCount == 3 && whiteCount == 1)
-                        value -= 2500;
-                    else if (blackCount == 1 && whiteCount == 3)
-                        value += 2500;
-
-                    else if (blackCount == 3 && whiteCount == 2)
-                        value -= 4000;
-                    else if (blackCount == 2 && whiteCount == 3)
-                        value += 4000;
-
-                    else if (blackCount == 1 && whiteCount == 4)
-                        value -= 75000;
-
-                    else if (blackCount == 0 && whiteCount == 1)
-                        value += 300;
-                    else if (blackCount == 0 && whiteCount == 2)
-                        value += 4000;
-                    else if (blackCount == 0 && whiteCount == 3)
-                        value += 15000;
-                    else if (blackCount == 0 && whiteCount == 4)
-                        value += 50000;
+                    return bestMove;
                 }
             }
-
-            return value;
-        }
-
-        public int EvaluateGrid(AIEvaluationData data, int depth)
-        {
-
-            int value = 0;
-            int tmpValue = 0;
-
-            tmpValue = EvaluatePattern(data.horizontalLinePatterns, depth);
-            if (IsGameEnded(tmpValue))
-            {
-                return tmpValue;
-            }
-            value += tmpValue;
-
-            tmpValue = EvaluatePattern(data.verticalLinePatterns, depth);
-            if (IsGameEnded(tmpValue))
-            {
-                return tmpValue;
-            }
-            value += tmpValue;
-
-            tmpValue = EvaluatePattern(data.diagonalLinePatterns, depth);
-            if (IsGameEnded(tmpValue))
-            {
-                return tmpValue;
-            }
-            value += tmpValue;
-
-            tmpValue = EvaluatePattern(data.otherDiagonalLinePatterns, depth);
-            if (IsGameEnded(tmpValue))
-            {
-                return tmpValue;
-            }
-            value += tmpValue;
-
-            tmpValue = EvaluatePattern(data.horizontalCrossPatterns, depth);
-            if (IsGameEnded(tmpValue))
-            {
-                return tmpValue;
-            }
-            value += tmpValue;
-
-
-            tmpValue = EvaluatePattern(data.diagonalCrossPatterns, depth);
-            if (IsGameEnded(tmpValue))
-            {
-                return tmpValue;
-            }
-            value += tmpValue;
-
-
-            return value;
-        }
-
-        public bool IsGameEnded(int score)
-        {
-            if (score > 9000000 || score < -9000000)
-                return true;
-
-            return false;
-        }
-
-        public bool IsIAWin(int score)
-        {
-            if (score < -9000000)
-                return true;
-
-            return false;
-        }
-
-        public bool IsPlayerWin(int score)
-        {
-            if (score > 9000000)
-                return true;
-
-            return false;
+            return bestMove;
         }
     }
+
+    private int EvaluatePattern(EvaluationPattern[] patterns, int depth)
+    {
+        int value = 0;
+        int blackCount = 0;
+        int whiteCount = 0;
+
+        for (int i = 0; i < patterns.Length; ++i)
+        {
+            blackCount = 0;
+            whiteCount = 0;
+
+            for (int j = 0; j < patterns[i].positions.Length; ++j)
+            {
+                IntVec2 pos = patterns[i].positions[j];
+                if (grid.Cells[pos.X][pos.Y] == CellColor.Black)
+                {
+                    blackCount++;
+                }
+                else if (grid.Cells[pos.X][pos.Y] == CellColor.White)
+                {
+                    whiteCount++;
+                }
+            }
+
+            if (blackCount == 5)
+            {
+                return -9999999 + depth;
+            }
+            else if (whiteCount == 5)
+            {
+                return 9999999 - depth;
+            }
+            else if (depth == 1)
+            {
+                if (blackCount == 1 && whiteCount == 0)
+                    value -= 100;
+                else if (blackCount == 2 && whiteCount == 0)
+                    value -= 1000;
+                else if (blackCount == 3 && whiteCount == 0)
+                    value -= 4000;
+                else if (blackCount == 4 && whiteCount == 0)
+                    value -= 20000;
+
+                else if (blackCount == 4 && whiteCount == 1)
+                    value += 75000;
+
+                else if (blackCount == 2 && whiteCount == 1)
+                    value -= 500;
+                else if (blackCount == 1 && whiteCount == 2)
+                    value += 500;
+
+                else if (blackCount == 3 && whiteCount == 1)
+                    value -= 2500;
+                else if (blackCount == 1 && whiteCount == 3)
+                    value += 3500;
+
+                else if (blackCount == 3 && whiteCount == 2)
+                    value -= 4000;
+                else if (blackCount == 2 && whiteCount == 3)
+                    value += 4000;
+
+                else if (blackCount == 1 && whiteCount == 4)
+                    value -= 75000;
+
+                else if (blackCount == 0 && whiteCount == 1)
+                    value += 200;
+                else if (blackCount == 0 && whiteCount == 2)
+                    value += 1500;
+                else if (blackCount == 0 && whiteCount == 3)
+                    value += 5000;
+                else if (blackCount == 0 && whiteCount == 4)
+                    value += 50000;
+            }
+            else if (depth == 3)
+            {
+                if (blackCount == 1 && whiteCount == 0)
+                    value -= 100;
+                else if (blackCount == 2 && whiteCount == 0)
+                    value -= 750;
+                else if (blackCount == 3 && whiteCount == 0)
+                    value -= 1500;
+                else if (blackCount == 4 && whiteCount == 0)
+                    value -= 20000;
+
+                else if (blackCount == 4 && whiteCount == 1)
+                    value += 75000;
+
+                else if (blackCount == 2 && whiteCount == 1)
+                    value -= 500;
+                else if (blackCount == 1 && whiteCount == 2)
+                    value += 1000;
+
+                else if (blackCount == 3 && whiteCount == 1)
+                    value -= 2500;
+                else if (blackCount == 1 && whiteCount == 3)
+                    value += 2500;
+
+                else if (blackCount == 3 && whiteCount == 2)
+                    value -= 4000;
+                else if (blackCount == 2 && whiteCount == 3)
+                    value += 4000;
+
+                else if (blackCount == 1 && whiteCount == 4)
+                    value -= 75000;
+
+                else if (blackCount == 0 && whiteCount == 1)
+                    value += 300;
+                else if (blackCount == 0 && whiteCount == 2)
+                    value += 4000;
+                else if (blackCount == 0 && whiteCount == 3)
+                    value += 15000;
+                else if (blackCount == 0 && whiteCount == 4)
+                    value += 50000;
+            }
+        }
+
+        return value;
+    }
+
+    public int EvaluateGrid(AIEvaluationData data, int depth)
+    {
+
+        int value = 0;
+        int tmpValue = 0;
+
+        tmpValue = EvaluatePattern(data.horizontalLinePatterns, depth);
+        if (IsGameEnded(tmpValue))
+        {
+            return tmpValue;
+        }
+        value += tmpValue;
+
+        tmpValue = EvaluatePattern(data.verticalLinePatterns, depth);
+        if (IsGameEnded(tmpValue))
+        {
+            return tmpValue;
+        }
+        value += tmpValue;
+
+        tmpValue = EvaluatePattern(data.diagonalLinePatterns, depth);
+        if (IsGameEnded(tmpValue))
+        {
+            return tmpValue;
+        }
+        value += tmpValue;
+
+        tmpValue = EvaluatePattern(data.otherDiagonalLinePatterns, depth);
+        if (IsGameEnded(tmpValue))
+        {
+            return tmpValue;
+        }
+        value += tmpValue;
+
+        tmpValue = EvaluatePattern(data.horizontalCrossPatterns, depth);
+        if (IsGameEnded(tmpValue))
+        {
+            return tmpValue;
+        }
+        value += tmpValue;
+
+
+        tmpValue = EvaluatePattern(data.diagonalCrossPatterns, depth);
+        if (IsGameEnded(tmpValue))
+        {
+            return tmpValue;
+        }
+        value += tmpValue;
+
+
+        return value;
+    }
+
+    public bool IsGameEnded(int score)
+    {
+        if (score > 9000000 || score < -9000000)
+            return true;
+
+        return false;
+    }
+
+    public bool IsIAWin(int score)
+    {
+        if (score < -9000000)
+            return true;
+
+        return false;
+    }
+
+    public bool IsPlayerWin(int score)
+    {
+        if (score > 9000000)
+            return true;
+
+        return false;
+    }
+}

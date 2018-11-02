@@ -288,6 +288,8 @@ public class GridManager : PunBehaviour
 
         Cell cell = modelGrid.GetCellFromModel((int)movements[movements.Count - 1].x, (int)movements[movements.Count - 1].y);
 
+        Debug.Log(cell.name + " : (" + cell.x + " ; " + cell.y + ")");
+
         bool justWon = Utils.CheckWin(modelGrid, cell, false);
         if (justWon || isEqualityTurn)
         {

@@ -4,6 +4,19 @@ using UnityEditor;
 
 public class MakeScriptableObject
 {
+    [MenuItem("Assets/Create/Custom/AI Profile")]
+    public static void CreateMyAIProfile()
+    {
+        AIProfile asset = ScriptableObject.CreateInstance<AIProfile>();
+
+        AssetDatabase.CreateAsset(asset, "Assets/AIProfile.asset");
+        AssetDatabase.SaveAssets();
+
+        EditorUtility.FocusProjectWindow();
+
+        Selection.activeObject = asset;
+    }
+
     [MenuItem("Assets/Create/Custom/AI Evaluation Data")]
     public static void CreateMyAIEvaluationDataAsset()
     {

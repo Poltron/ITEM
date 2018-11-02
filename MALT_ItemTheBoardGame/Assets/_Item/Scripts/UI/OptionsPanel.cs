@@ -115,6 +115,7 @@ public class OptionsPanel : UIPanel
             RefreshValues();
             animator.SetBool("bPopIn", true);
             isFadingIn = true;
+            GetComponent<Image>().enabled = true;
 
             AudioManager.Instance.PlayAudio(SoundID.OpenWindowOptions);
         }
@@ -132,6 +133,7 @@ public class OptionsPanel : UIPanel
             animator.SetBool("bPopIn", false);
             isFadingIn = false;
 
+            GetComponent<Image>().enabled = false;
             AudioManager.Instance.PlayAudio(SoundID.CloseWindowOptions);
         }
     }
@@ -139,7 +141,7 @@ public class OptionsPanel : UIPanel
     private void PopOutAnimationEndCallback()
     {
         isFadingIn = false;
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
     }
 
     public void ToggleEnableBallPlacementHelp(bool notUseful)

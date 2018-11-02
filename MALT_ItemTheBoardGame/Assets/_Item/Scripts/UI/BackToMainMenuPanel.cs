@@ -13,7 +13,9 @@ public class BackToMainMenuPanel : UIPanel
     [SerializeField]
     private string noLabelFR;
     [SerializeField]
-    private string textLabelFR;
+    private string confirmLabelFR;
+    [SerializeField]
+    private string gameLabelFR;
 
     [Header("EN Settings")]
     [SerializeField]
@@ -21,7 +23,9 @@ public class BackToMainMenuPanel : UIPanel
     [SerializeField]
     private string noLabelEN;
     [SerializeField]
-    private string textLabelEN;
+    private string confirmLabelEN;
+    [SerializeField]
+    private string gameLabelEN;
 
     [Header("")]
     [SerializeField]
@@ -30,6 +34,8 @@ public class BackToMainMenuPanel : UIPanel
     private TextMeshProUGUI yesButtonText;
     [SerializeField]
     private TextMeshProUGUI confirmText;
+    [SerializeField]
+    private TextMeshProUGUI gameText;
 
     private Animator animator;
 
@@ -61,7 +67,7 @@ public class BackToMainMenuPanel : UIPanel
         {
             animator.SetBool("bPopIn", true);
             isFadingIn = true;
-
+            GetComponent<Image>().raycastTarget = true;
             AudioManager.Instance.PlayAudio(SoundID.OpenWindowOptions);
         }
     }
@@ -77,6 +83,7 @@ public class BackToMainMenuPanel : UIPanel
         {
             animator.SetBool("bPopIn", false);
             isFadingIn = false;
+            GetComponent<Image>().raycastTarget = false;
 
             AudioManager.Instance.PlayAudio(SoundID.CloseWindowOptions);
         }
@@ -85,26 +92,29 @@ public class BackToMainMenuPanel : UIPanel
     private void PopOutAnimationEndCallback()
     {
         isFadingIn = false;
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
     }
 
     protected override void SetLanguageEN()
     {
         noButtonText.text = noLabelEN;
         yesButtonText.text = yesLabelEN;
-        confirmText.text = textLabelEN;
+        confirmText.text = confirmLabelEN;
+        gameText.text = gameLabelEN;
     }
 
     protected override void SetLanguageFR()
     {
         noButtonText.text = noLabelFR;
         yesButtonText.text = yesLabelFR;
-        confirmText.text = textLabelFR;
+        confirmText.text = confirmLabelFR;
+        gameText.text = gameLabelFR;
     }
 
     public void OnYesButton()
     {
-        PopOutAnimationEndCallback();
+        PopOut();
+        gameObject.SetActive(false);
 
         GameManager.Instance.GameEnded();
         GameManager.Instance.EndGameplay();

@@ -30,8 +30,8 @@ public class PlayerManager : MonoBehaviour
 
     [SerializeField]
     private AIEvaluationData aiEvaluationData;
-    private AIBehaviour aiBehaviour;
 
+    private AIBehaviour aiBehaviour;
     public AIBehaviour AIBehaviour { get { return aiBehaviour; } }
 
     [SerializeField]
@@ -67,12 +67,12 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public void CreateAIPlayer(BallColor color, PlayerID id)
+    public void CreateAIPlayer(AIProfile aiProfile, BallColor color, PlayerID id)
     {
-        AIPlayer player = new AIPlayer(color);
+        AIPlayer player = new AIPlayer(aiProfile, color);
 
-        UIManager.Instance.SetPlayer2Name(PlayerManager.Instance.GetIAName());
-        UIManager.Instance.SetPlayer2Pic(PlayerManager.Instance.GetIASprite());
+        UIManager.Instance.SetPlayer2Name(aiProfile.Name);
+        UIManager.Instance.SetPlayer2Pic(aiProfile.Image);
 
         if (id == PlayerID.Player1)
         {
@@ -138,20 +138,5 @@ public class PlayerManager : MonoBehaviour
         Player player1 = players[0];
         players[0] = players[1];
         players[1] = player1;
-    }
-
-    private string GetIAName()
-    {
-        if (Options.IsLanguageFr())
-        {
-            return "Charles (IA)";
-        }
-
-        return "Charles (AI)";
-    }
-
-    private Sprite GetIASprite()
-    {
-        return IASprite;
     }
 }

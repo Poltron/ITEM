@@ -21,21 +21,21 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 2
         time: 0
-        value: 0.5
+        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 136
       - serializedVersion: 2
         time: 0.5833333
-        value: 0.5
+        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 136
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    attribute: m_Pivot.x
-    path: 
+    attribute: m_AnchoredPosition.x
+    path: HelpBackground
     classID: 224
     script: {fileID: 0}
   - curve:
@@ -43,27 +43,27 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 2
         time: 0
-        value: -0.43
+        value: -874
         inSlope: 0
         outSlope: 0
         tangentMode: 136
       - serializedVersion: 2
         time: 0.5
-        value: 0.6
+        value: 65
         inSlope: 0
         outSlope: 0
         tangentMode: 136
       - serializedVersion: 2
         time: 0.5833333
-        value: 0.5
+        value: 9
         inSlope: 0
         outSlope: 0
         tangentMode: 136
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    attribute: m_Pivot.y
-    path: 
+    attribute: m_AnchoredPosition.y
+    path: HelpBackground
     classID: 224
     script: {fileID: 0}
   m_PPtrCurves: []
@@ -75,15 +75,15 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 0
-      attribute: 2952582672
+      path: 1933727169
+      attribute: 538195251
       script: {fileID: 0}
       typeID: 224
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 0
-      attribute: 3640387206
+      path: 1933727169
+      attribute: 1460864421
       script: {fileID: 0}
       typeID: 224
       customType: 0
@@ -115,21 +115,21 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 2
         time: 0
-        value: 0.5
+        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 136
       - serializedVersion: 2
         time: 0.5833333
-        value: 0.5
+        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 136
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    attribute: m_Pivot.x
-    path: 
+    attribute: m_AnchoredPosition.x
+    path: HelpBackground
     classID: 224
     script: {fileID: 0}
   - curve:
@@ -137,27 +137,27 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 2
         time: 0
-        value: -0.43
+        value: -874
         inSlope: 0
         outSlope: 0
         tangentMode: 136
       - serializedVersion: 2
         time: 0.5
-        value: 0.6
+        value: 65
         inSlope: 0
         outSlope: 0
         tangentMode: 136
       - serializedVersion: 2
         time: 0.5833333
-        value: 0.5
+        value: 9
         inSlope: 0
         outSlope: 0
         tangentMode: 136
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    attribute: m_Pivot.y
-    path: 
+    attribute: m_AnchoredPosition.y
+    path: HelpBackground
     classID: 224
     script: {fileID: 0}
   m_EulerEditorCurves: []

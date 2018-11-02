@@ -1236,7 +1236,7 @@ using System;
             move.toY = pickedCell.x;
             move.color = (CellColor)ball.Color;
 
-            GameObject.FindObjectOfType<GridManager>().OptiGrid.DoMove(move);
+            GridManager.Instance.OptiGrid.DoMove(move);
 
             if (ball.isPickedUp)
                 ball.GetComponent<Animator>().SetTrigger("PlaceBall");

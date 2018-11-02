@@ -5,9 +5,13 @@ using UnityEngine;
 
 public class AIPlayer : Player
 {
-    public AIPlayer(BallColor color)
+    private AIProfile aiProfile;
+    public AIProfile AIProfile { get { return aiProfile; } }
+
+    public AIPlayer(AIProfile _aiProfile, BallColor color)
         : base (color)
     {
+        aiProfile = _aiProfile;
     }
 
     public override void StartTurn()
@@ -28,7 +32,9 @@ public class AIPlayer : Player
     public void PlayIAPhase1()
     {
         Debug.Log("PlayIAPhase1");
-        
+
+        PlayerManager.Instance.AIBehaviour.SetAIProfile(aiProfile);
+
         if (PlayerManager.Instance.randomAI)
             CoroutineRunner.Start(PlayerManager.Instance.AIBehaviour.GetRandomMove(GridManager.Instance.OptiGrid, PlayIAPhase1CalculusEnded));
         else
@@ -43,6 +49,8 @@ public class AIPlayer : Player
     public void PlayAIMovePhase1(Move move)
     {
         Cell cell = GridManager.Instance.ModelGrid.GetCellFromModel(move.toY, move.toX);
+
+        //GridManager.Instance.OptiGrid.DoMove(move);
         currentBall = GridManager.Instance.PlaceBallIA(cell);
         ballCount--;
 
@@ -55,6 +63,8 @@ public class AIPlayer : Player
     public void PlayIAPhase2()
     {
         Debug.Log("PlayIAPhase2");
+
+        PlayerManager.Instance.AIBehaviour.SetAIProfile(aiProfile);
 
         if (PlayerManager.Instance.randomAI)
             CoroutineRunner.Start(PlayerManager.Instance.AIBehaviour.GetRandomMove(GridManager.Instance.OptiGrid, PlayIAPhase2CalculusEnded));
@@ -72,10 +82,10 @@ public class AIPlayer : Player
         Cell cellFrom = GridManager.Instance.ModelGrid.GetCellFromModel(move.fromY, move.fromX);
         Cell cellTo = GridManager.Instance.ModelGrid.GetCellFromModel(move.toY, move.toX);
 
-        GridManager.Instance.OptiGrid.DoMove(move);
+        //GridManager.Instance.OptiGrid.DoMove(move);
         currentBall = GridManager.Instance.ChangeBallPosition(cellFrom, cellTo);
 
-        List<Vector2> movements = new List<Vector2>();
+        movements = new List<Vector2>();
         movements.Add(new Vector2(move.toY, move.toX));
 
         EndTurn();
