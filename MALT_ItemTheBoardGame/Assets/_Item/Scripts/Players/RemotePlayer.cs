@@ -13,9 +13,11 @@ public class RemotePlayer : Player
     {
         base.StartTurn();
 
-        GridManager.Instance.SendLastTurnData();
-        GridManager.Instance.AlreadySentLastTurnData = false;
-        Debug.Log("after send last turn data");
+        if (!(NbOfTurn == 1 && PlayerManager.Instance.GetPlayer(GridManager.Instance.NotActualTurn).NbOfTurn == 0))
+        {
+            GridManager.Instance.SendLastTurnData();
+            Debug.Log("after send last turn data");
+        }
     }
 
     public override void EndTurn()

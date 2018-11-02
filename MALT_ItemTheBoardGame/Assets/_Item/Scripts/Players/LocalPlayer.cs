@@ -202,8 +202,8 @@ public class LocalPlayer : Player
 
     void SendTurnDataPhase1(Cell pickedCell)
     {
-        List<Vector2> movements = new List<Vector2>();
-        movements.Add(new Vector2(pickedCell.x, pickedCell.y));
+        //List<Vector2> movements = new List<Vector2>();
+        //movements.Add(new Vector2(pickedCell.x, pickedCell.y));
 
         //CallOnTurnFinished(movements);
     }

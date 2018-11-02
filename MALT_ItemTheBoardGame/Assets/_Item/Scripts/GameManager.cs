@@ -69,15 +69,21 @@ public class GameManager : PunBehaviour
             PlayerManager.Instance.Player1.playerName = fbManager.pName;
             PlayerManager.Instance.Player1.picURL = fbManager.pUrlPic;
 
+            Debug.Log(fbManager.pName + " / " + fbManager.pUrlPic);
+
             StartCoroutine(Utils.LoadSpriteFromURL(PlayerManager.Instance.Player1.picURL, (sprite) =>
             {
                 UIManager.Instance.SetPlayer1Pic(sprite);
             }));
-
+            UIManager.Instance.SetPlayer1Name(PlayerManager.Instance.Player1.playerName);
+            
             fbManager.NameLoaded += OnNameLoaded;
             fbManager.PicURLLoaded += OnPicURLLoaded;
-
-            UIManager.Instance.SetPlayer1Name(PlayerManager.Instance.Player1.playerName);
+            
+            //
+            SendName(PlayerManager.Instance.Player1.playerName);
+            SendPicURL(PlayerManager.Instance.Player1.picURL);
+            //
         }
         else
         {
@@ -115,6 +121,7 @@ public class GameManager : PunBehaviour
         GridManager.Instance.ResetGame();
         UIManager.Instance.ShowGameplayCanvas(false);
         UIManager.Instance.ShowMenuCanvas(true);
+        UIManager.Instance.mainMenuPanel.ShowMenu();
         GridManager.Instance.DisplayBoard(false);
     }
 
@@ -130,13 +137,15 @@ public class GameManager : PunBehaviour
     #region FACEBOOK
     private void OnNameLoaded(string name)
     {
+        print("onnameloaded " + name);
         PlayerManager.Instance.Player1.playerName = name;
         UIManager.Instance.DisplayPlayer1(true);
-        print("onnameloaded " + name);
     }
 
     private void OnPicURLLoaded(string url)
     {
+        print("onpicurlloaded" + url);
+
         PlayerManager.Instance.Player1.picURL = url;
 
         StartCoroutine(Utils.LoadSpriteFromURL(PlayerManager.Instance.Player1.picURL, (sprite) => {
@@ -144,8 +153,6 @@ public class GameManager : PunBehaviour
         }));
 
         UIManager.Instance.DisplayPlayer1(true);
-
-        print("onpicurlloaded" + url);
     }
 
     private void SendName(string name)
@@ -163,6 +170,7 @@ public class GameManager : PunBehaviour
     [PunRPC]
     private void ReceiveName(string name)
     {
+        Debug.Log("received name " + name);
         UIManager.Instance.SetPlayer2Name(name);
         return;
     }
@@ -170,6 +178,7 @@ public class GameManager : PunBehaviour
     [PunRPC]
     private void ReceivePicURL(string picURL)
     {
+        Debug.Log("received pic url " + picURL);
         StartCoroutine(Utils.LoadSpriteFromURL(picURL, (sprite) => {
             UIManager.Instance.SetPlayer2Pic(sprite);
         }));
@@ -185,6 +194,28 @@ public class GameManager : PunBehaviour
 
         PlayerManager.Instance.CreateLocalPlayer(BallColor.White, PlayerID.Player1);
         PlayerManager.Instance.CreateLocalPlayer(BallColor.Black, PlayerID.Player2);
+
+        // setup les noms
+        if (Options.GetLanguage() == "FR")
+        {
+            if (!FB.IsLoggedIn)
+            {
+                PlayerManager.Instance.Player1.playerName = "Joueur 1";
+                UIManager.Instance.SetPlayer1Name(PlayerManager.Instance.Player1.playerName);
+            }
+            PlayerManager.Instance.Player2.playerName = "Joueur 2";
+            UIManager.Instance.SetPlayer2Name(PlayerManager.Instance.Player2.playerName);
+        }
+        else
+        {
+            if (!FB.IsLoggedIn)
+            {
+                PlayerManager.Instance.Player1.playerName = "Player 1";
+                UIManager.Instance.SetPlayer1Name(PlayerManager.Instance.Player1.playerName);
+            }
+            PlayerManager.Instance.Player2.playerName = "Player 2";
+            UIManager.Instance.SetPlayer2Name(PlayerManager.Instance.Player2.playerName);
+        }
 
         StartGame();
     }
@@ -229,6 +260,8 @@ public class GameManager : PunBehaviour
     {
         if (PhotonNetwork.room.PlayerCount == 2)
         {
+            print("OnJoinedRoom : 2 players in the room");
+
             gameState = GameState.Gameplay;
 
             GridManager.Instance.InitForGameStart();
@@ -236,7 +269,6 @@ public class GameManager : PunBehaviour
             PlayerManager.Instance.CreateLocalPlayer(BallColor.Black, PlayerID.Player1);
             PlayerManager.Instance.CreateRemotePlayer(BallColor.White, PlayerID.Player2);
 
-            print("OnJoinedRoom : 2 players in the room, sending player name > " + PlayerManager.Instance.Player1.playerName);
             SendName(PlayerManager.Instance.Player1.playerName);
             SendPicURL(PlayerManager.Instance.Player1.picURL);
 
@@ -245,8 +277,6 @@ public class GameManager : PunBehaviour
         else
         {
             print("OnJoinedRoom : alone in the room");
-            //UIManager.Instance.InitPlayer1(BallColor.White);
-            //UIManager.Instance.SetPlayer1Name(PlayerManager.Instance.Player1.playerName);
         }
     }
 
@@ -262,9 +292,6 @@ public class GameManager : PunBehaviour
 
             PlayerManager.Instance.CreateLocalPlayer(BallColor.White, PlayerID.Player1);
             PlayerManager.Instance.CreateRemotePlayer(BallColor.Black, PlayerID.Player2);
-
-            SendName(PlayerManager.Instance.Player1.playerName);
-            SendPicURL(PlayerManager.Instance.Player1.picURL);
 
             StartGame();
         }

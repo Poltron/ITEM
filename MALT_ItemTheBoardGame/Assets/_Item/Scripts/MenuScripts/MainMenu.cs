@@ -12,8 +12,6 @@ public class MainMenu : UIPanel
     private string remoteButtonTextFR;
     [SerializeField]
     private string aiButtonTextFR;
-    [SerializeField]
-    private string exitButtonTextFR;
 
     [Header("EN Settings")]
     [SerializeField]
@@ -22,8 +20,6 @@ public class MainMenu : UIPanel
     private string remoteButtonTextEN;
     [SerializeField]
     private string aiButtonTextEN;
-    [SerializeField]
-    private string exitButtonTextEN;
 
     [Header("")]
     [SerializeField]
@@ -32,8 +28,6 @@ public class MainMenu : UIPanel
     private Text remoteButtonText;
     [SerializeField]
     private Text aiButtonText;
-    [SerializeField]
-    private Text exitButtonText;
 
     [SerializeField]
     private GameObject menuButtons;
@@ -100,10 +94,5 @@ public class MainMenu : UIPanel
     {
         Debug.Log("PlayVSAI");
         GameManager.Instance.StartGameVSIA();
-    }
-
-    public void Exit()
-    {
-        Application.Quit();
     }
 }

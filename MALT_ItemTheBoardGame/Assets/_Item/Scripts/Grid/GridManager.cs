@@ -59,6 +59,7 @@ public class GridManager : PunBehaviour
 
     private BallColor actualTurn;
     public BallColor ActualTurn { get { return actualTurn; } }
+    public BallColor NotActualTurn { get { return (actualTurn == BallColor.White) ? BallColor.Black : BallColor.White; } }
 
     [Header("Victory Animation")]
     [SerializeField]
@@ -162,6 +163,8 @@ public class GridManager : PunBehaviour
 
         isEqualityTurn = false;
         AlreadySentLastTurnData = false;
+        lastTurnBallId = 0;
+        lastTurnMoves = null;
 
         PlayerManager.Instance.Player1.Reset();
         PlayerManager.Instance.Player2.Reset();
@@ -219,22 +222,23 @@ public class GridManager : PunBehaviour
 
     public Ball ChangeBallPosition(Cell firstCell, Cell secondCell)
     {
+        Debug.Log("change ball position");
         Ball ball = firstCell.ball;
 
         secondCell.ball = ball;
         firstCell.ball = null;
 
         ball.owner = secondCell;
-
+        Debug.Log("ball changed");
         Move move = new Move();
         move.fromX = firstCell.y;
         move.fromY = firstCell.x;
         move.toX = secondCell.y;
         move.toY = secondCell.x;
         move.color = (CellColor)ball.Color;
-
+        Debug.Log("move set");
         GridManager.Instance.OptiGrid.DoMove(move);
-
+        Debug.Log("opti move done");
         if (ball.isPickedUp)
             ball.GetComponent<Animator>().SetTrigger("PlaceBall");
         else
@@ -242,11 +246,12 @@ public class GridManager : PunBehaviour
 
         ball.isPickedUp = false;
         ball.FixSortingLayer(true);
-
-        ball.transform.DOMove(secondCell.transform.position, 1f).OnComplete(() =>
+        Debug.Log("doing model move");
+        ball.transform.DOMove(secondCell.transform.position, 0.75f).OnComplete(() =>
         {
             ball.transform.position = secondCell.transform.position;
             ball.FixSortingLayer(false);
+            Debug.Log("model move done");
         });
 
         return ball;
@@ -289,8 +294,8 @@ public class GridManager : PunBehaviour
             if (justWon)
             {
                 DOVirtual.DelayedCall(timeBeforeVictoryAnimation, PlayVictoryAnimation);
-                SendLastTurnData();
-                AlreadySentLastTurnData = true;
+                //SendLastTurnData();
+                //AlreadySentLastTurnData = true;
                 Debug.Log("win animation");
             }
 
@@ -299,10 +304,10 @@ public class GridManager : PunBehaviour
                 isEqualityTurn = true;
                 Debug.Log("player2 equalityturn");
             }
-            else if (!justWon)
+            else
             {
                 Debug.Log("player2 endgame");
-                EndGame();
+                EndGame(justWon);
                 return;
             }
         }
@@ -322,9 +327,13 @@ public class GridManager : PunBehaviour
         }
     }
 
-    public void EndGame()
+    public void EndGame(bool justWon)
     {
-        DOVirtual.DelayedCall(1.5f, DisplayRoundResult, true);
+        if (GameManager.Instance.GameMode == GameMode.Remote && ActualTurn == PlayerManager.Instance.Player1.Color)
+            SendLastTurnData();
+        
+        if (!justWon)
+            DOVirtual.DelayedCall(1.5f, DisplayRoundResult, true);
     }
 
     private void DisplayRoundResult()
@@ -345,13 +354,11 @@ public class GridManager : PunBehaviour
     List<WinningPattern> alreadyAnimatedPattern = new List<WinningPattern>();
     public void PlayVictoryAnimation()
     {
-        Debug.Log("play victory animation");
         List<WinningPattern> winningPatterns = new List<WinningPattern>();
         optiGrid.GetWinningPatterns(out winningPatterns);
 
         WinningPattern toKeep = new WinningPattern();
         int bestScore = -1;
-        Debug.Log("play victory animation2");
         foreach (WinningPattern pattern in winningPatterns)
         {
             bool alreadyDone = false;
@@ -377,7 +384,6 @@ public class GridManager : PunBehaviour
                 bestScore = patternScore;
             }
         }
-        Debug.Log("play victory animation3");
         StartCoroutine(playVictoryAnimationPhase1(toKeep));
 
         AudioManager.Instance.PlayAudio(SoundID.ComboRumble);
@@ -411,7 +417,6 @@ public class GridManager : PunBehaviour
         ball.FixSortingLayer(true);
         ball.Animator.SetTrigger("WinPhase1");
         yield return new WaitForSeconds(timeBeforePhase2AnimBegin);
-        Debug.Log("play victory animation5");
         StartCoroutine(playVictoryAnimationPhase2(pattern));
     }
 
@@ -424,7 +429,6 @@ public class GridManager : PunBehaviour
         modelGrid.GetCellFromModel((int)pattern.cells[4].y, (int)pattern.cells[4].x).ball.Animator.SetTrigger("WinPhase2");
 
         yield return new WaitForSeconds(timeFromPhase2AnimBeginToRoundResultPanel);
-        Debug.Log("play victory animation6");
         StartCoroutine(addVictoryPoints(pattern));
     }
 
@@ -454,21 +458,17 @@ public class GridManager : PunBehaviour
         ball.Animator.SetTrigger("ScoreCounting");
         ball.FixSortingLayer(false);
         yield return new WaitForSeconds(3.0f);
-        Debug.Log("play victory animation7");
         playVictoryAnimationEnd(pattern);
     }
 
     private void playVictoryAnimationEnd(WinningPattern pattern)
     {
-        Debug.Log("play victory animation end");
         if (IsEqualityTurn && PlayerManager.Instance.Player1.NbOfTurn != PlayerManager.Instance.Player2.NbOfTurn)
         {
-            Debug.Log("play victory animation end NEXTTURN");
             NextTurn();
         }
         else
         {
-            Debug.Log("play victory animation end ROUNDRESULT");
             DisplayRoundResult();
         }
     }
@@ -568,11 +568,18 @@ public class GridManager : PunBehaviour
             Debug.Log("player is null");
         }
 
-        RemotePlayer remotePlayer = (RemotePlayer)player;
+        RemotePlayer remotePlayer = player as RemotePlayer;
         if (remotePlayer == null)
         {
             Debug.Log("remoteplayer is null");
+
+            remotePlayer = PlayerManager.Instance.GetPlayer(NotActualTurn) as RemotePlayer;
+            if (remotePlayer == null)
+            {
+                Debug.Log("remoteplayer is still null");
+            }
         }
+
         remotePlayer.SetLastMovements(movements, ballId);
 
         Debug.Log("send last turn data RPC received");
@@ -612,8 +619,9 @@ public class GridManager : PunBehaviour
         for (int i = 0; i < movements.Length - 1; i++)
         {
             ChangeBallPosition(modelGrid.GetCellFromModel(movements[i]), modelGrid.GetCellFromModel(movements[i + 1]));
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.9f);
         }
+        Debug.Log("end movecoroutine");
 
         PlayerManager.Instance.GetPlayer(ActualTurn).EndTurn();
     }
