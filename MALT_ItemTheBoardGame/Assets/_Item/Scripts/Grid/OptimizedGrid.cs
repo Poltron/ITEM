@@ -370,29 +370,29 @@ using UnityEngine;
 
         private bool FindWinningPattern(EvaluationPattern[] patterns, out WinningPattern winningPattern, List<WinningPattern> toExclude = null)
         {
-            int blackCount = 0;
-            int whiteCount = 0;
+            int aiPawnCount = 0;
+            int opponentPawnCount = 0;
             winningPattern = new WinningPattern();
 
             for (int i = 0; i < patterns.Length; ++i)
             {
-                blackCount = 0;
-                whiteCount = 0;
+                aiPawnCount = 0;
+                opponentPawnCount = 0;
 
                 for (int j = 0; j < patterns[i].positions.Length; ++j)
                 {
                     IntVec2 pos = patterns[i].positions[j];
                     if (cells[pos.X][pos.Y] == CellColor.Black)
                     {
-                        blackCount++;
+                        aiPawnCount++;
                     }
                     else if (cells[pos.X][pos.Y] == CellColor.White)
                     {
-                        whiteCount++;
+                        opponentPawnCount++;
                     }
                 }
 
-                if (blackCount == 5 || whiteCount == 5)
+                if (aiPawnCount == 5 || opponentPawnCount == 5)
                 {
                     Vector2[] cells = new Vector2[5];
                     cells[0] = new Vector2(patterns[i].positions[0].X, patterns[i].positions[0].Y);
@@ -419,7 +419,7 @@ using UnityEngine;
                         continue;
 
                     winningPattern.cells = cells;
-                    winningPattern.color = (blackCount == 5) ? CellColor.Black : CellColor.White;
+                    winningPattern.color = (aiPawnCount == 5) ? CellColor.Black : CellColor.White;
                     return true;
                 }
             }
@@ -429,29 +429,29 @@ using UnityEngine;
 
         private bool FindCellPattern(EvaluationPattern[] patterns, out List<Vector2> cellsPattern, int blackNeeded, int whiteNeeded, Func<int, int, int, int, bool> condition)
         {
-            int blackCount = 0;
-            int whiteCount = 0;
+            int aiPawnCount = 0;
+            int opponentPawnCount = 0;
             cellsPattern = new List<Vector2>();
 
             for (int i = 0; i < patterns.Length; ++i)
             {
-                blackCount = 0;
-                whiteCount = 0;
+                aiPawnCount = 0;
+                opponentPawnCount = 0;
 
                 for (int j = 0; j < patterns[i].positions.Length; ++j)
                 {
                     IntVec2 pos = patterns[i].positions[j];
                     if (cells[pos.X][pos.Y] == CellColor.Black)
                     {
-                        blackCount++;
+                        aiPawnCount++;
                     }
                     else if (cells[pos.X][pos.Y] == CellColor.White)
                     {
-                        whiteCount++;
+                        opponentPawnCount++;
                     }
                 }
 
-                if (condition(blackCount, blackNeeded, whiteCount, whiteNeeded))
+                if (condition(aiPawnCount, blackNeeded, opponentPawnCount, whiteNeeded))
                 {
                     cellsPattern.Add(new Vector2(patterns[i].positions[0].X, patterns[i].positions[0].Y));
                     cellsPattern.Add(new Vector2(patterns[i].positions[1].X, patterns[i].positions[1].Y));
@@ -556,9 +556,9 @@ using UnityEngine;
             return false;
         }
 
-        private bool CompareBalls(int blackCount, int blackNeeded, int whiteCount, int whiteNeeded)
+        private bool CompareBalls(int aiPawnCount, int blackNeeded, int opponentPawnCount, int whiteNeeded)
         {
-            if (blackCount == blackNeeded && whiteCount == whiteNeeded)
+            if (aiPawnCount == blackNeeded && opponentPawnCount == whiteNeeded)
             {
                 return true;
             }
