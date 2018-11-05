@@ -42,11 +42,10 @@ public class AIBehaviour
 
     public bool canOnlyJump;
 
-    private BallColor playerColor;
-    private int playerScore;
+    private BallColor opponentColor;
+    private int opponentScore;
     private BallColor aiColor;
     private int aiScore;
-    
 
     private AIProfile aiProfile;
 
@@ -55,24 +54,24 @@ public class AIBehaviour
         evaluationData = _evaluationData;
     }
 
-    public void SetAIProfile(AIProfile _aiProfile)
-    {
-        aiProfile = _aiProfile;
-    }
-
     public void SetAIEvaluationData(AIEvaluationData _data)
     {
         evaluationData = _data;
+    }
+
+    public void SetAIProfile(AIProfile _aiProfile)
+    {
+        aiProfile = _aiProfile;
     }
 
     public void SetPlayersData(BallColor _aiColor, int _aiScore, BallColor _playerColor, int _playerScore)
     {
         aiColor = _aiColor;
         aiScore = _aiScore;
-        playerColor = _playerColor;
-        playerScore = _playerScore;
+        opponentColor = _playerColor;
+        opponentScore = _playerScore;
 
-        Debug.Log(aiColor + " : " + aiScore + " __ " + playerColor + " : " + playerScore);
+        Debug.Log(aiColor + " : " + aiScore + " __ " + opponentColor + " : " + opponentScore);
     }
 
     public IEnumerator GetRandomMove(OptimizedGrid optiGrid, System.Action<Move> toDo)
@@ -109,10 +108,10 @@ public class AIBehaviour
         }
 
         // if Player can win next turn
-        if (grid.CanColorWin(playerColor, out canWinCells) && !done)
+        if (grid.CanColorWin(opponentColor, out canWinCells) && !done)
         {
             // if player can move to win next turn
-            if (grid.CanColorMoveToWin(playerColor, canWinCells, out bestMove))
+            if (grid.CanColorMoveToWin(opponentColor, canWinCells, out bestMove))
             {
                 // can AI def it ???
                 if (grid.CanColorMoveToWin(aiColor, canWinCells, out bestMove))
@@ -124,14 +123,14 @@ public class AIBehaviour
 
         if (!done)
         {
-            int depth = aiProfile.Depth;
+            int depth = 3;
             bestMove = MiniMaxRoot(depth, true);
         }
 
         float newTime = Time.realtimeSinceStartup;
         timeSpent = newTime - actualTime;
 
-        Debug.Log(positionCount + " in " + timeSpent);
+        //Debug.Log(positionCount + " in " + timeSpent);
 
         toDo(bestMove);
     }
@@ -140,10 +139,8 @@ public class AIBehaviour
     {
         CellColor color = (CellColor)aiColor;
 
-        if (isMaximisingPlayer)
-            color = (CellColor)playerColor;
-
-        Debug.Log("__" + color);
+        if (!isMaximisingPlayer)
+            color = (CellColor)opponentColor;
 
         List<Move> newGameMoves = grid.GetAvailableMoves(color);
         int bestMove = int.MinValue + 1;
@@ -194,13 +191,13 @@ public class AIBehaviour
             return -EvaluateGrid(evaluationData, depth);
         }
 
-        var newGameMoves = grid.GetAvailableMoves((CellColor)aiColor);
-        /*
         CellColor color = (CellColor)aiColor;
-
         if (!isMaximisingPlayer)
-            color = (CellColor)playerColor;
-            */
+            color = (CellColor)opponentColor;
+
+        var newGameMoves = grid.GetAvailableMoves(color);
+
+
         // IA
         if (isMaximisingPlayer)
         {
@@ -271,11 +268,11 @@ public class AIBehaviour
             for (int j = 0; j < patterns[i].positions.Length; ++j)
             {
                 IntVec2 pos = patterns[i].positions[j];
-                if (grid.Cells[pos.X][pos.Y] == CellColor.Black)
+                if (grid.Cells[pos.X][pos.Y] == (CellColor)aiColor)
                 {
                     aiPawnCount++;
                 }
-                else if (grid.Cells[pos.X][pos.Y] == CellColor.White)
+                else if (grid.Cells[pos.X][pos.Y] == (CellColor)opponentColor)
                 {
                     opponentPawnCount++;
                 }
@@ -289,7 +286,7 @@ public class AIBehaviour
             {
                 return 9999999 - depth;
             }
-            else if (depth == 1)
+            else if (aiProfile.Depth == 1)
             {
                 if (aiPawnCount == 1 && opponentPawnCount == 0)
                     value -= 100;
@@ -330,7 +327,7 @@ public class AIBehaviour
                 else if (aiPawnCount == 0 && opponentPawnCount == 4)
                     value += 50000;
             }
-            else if (depth == 3)
+            else if (aiProfile.Depth == 3)
             {
                 if (aiPawnCount == 1 && opponentPawnCount == 0)
                     value -= 100;
@@ -453,4 +450,3 @@ public class AIBehaviour
         return false;
     }
 }
- 

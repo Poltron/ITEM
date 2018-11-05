@@ -12,6 +12,7 @@ public class AIPlayer : Player
         : base (color)
     {
         aiProfile = _aiProfile;
+        PlayerManager.Instance.AIBehaviour.SetAIProfile(_aiProfile);
     }
 
     public override void StartTurn()
@@ -33,7 +34,6 @@ public class AIPlayer : Player
     {
         Debug.Log("PlayIAPhase1");
 
-        PlayerManager.Instance.AIBehaviour.SetAIProfile(aiProfile);
         PlayerManager.Instance.AIBehaviour.SetPlayersData(PlayerManager.Instance.GetPlayer(GridManager.Instance.ActualTurn).Color,
                                                             PlayerManager.Instance.GetPlayer(GridManager.Instance.ActualTurn).totalScore,
                                                             PlayerManager.Instance.GetPlayer(GridManager.Instance.NotActualTurn).Color,
@@ -53,9 +53,8 @@ public class AIPlayer : Player
     public void PlayAIMovePhase1(Move move)
     {
         Cell cell = GridManager.Instance.ModelGrid.GetCellFromModel(move.toY, move.toX);
-
-        //GridManager.Instance.OptiGrid.DoMove(move);
-        currentBall = GridManager.Instance.PlaceBallIA(cell);
+        
+        currentBall = GridManager.Instance.PlaceBall(PlayerManager.Instance.GetPlayer(GridManager.Instance.ActualTurn).Color, cell);
         ballCount--;
 
         movements = new List<Vector2>();
@@ -68,7 +67,6 @@ public class AIPlayer : Player
     {
         Debug.Log("PlayIAPhase2");
 
-        PlayerManager.Instance.AIBehaviour.SetAIProfile(aiProfile);
         PlayerManager.Instance.AIBehaviour.SetPlayersData(PlayerManager.Instance.GetPlayer(GridManager.Instance.ActualTurn).Color,
                                                             PlayerManager.Instance.GetPlayer(GridManager.Instance.ActualTurn).totalScore,
                                                             PlayerManager.Instance.GetPlayer(GridManager.Instance.NotActualTurn).Color,
@@ -89,8 +87,7 @@ public class AIPlayer : Player
     {
         Cell cellFrom = GridManager.Instance.ModelGrid.GetCellFromModel(move.fromY, move.fromX);
         Cell cellTo = GridManager.Instance.ModelGrid.GetCellFromModel(move.toY, move.toX);
-
-        //GridManager.Instance.OptiGrid.DoMove(move);
+        
         currentBall = GridManager.Instance.ChangeBallPosition(cellFrom, cellTo);
 
         movements = new List<Vector2>();

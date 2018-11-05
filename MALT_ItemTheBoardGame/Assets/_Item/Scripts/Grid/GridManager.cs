@@ -177,9 +177,8 @@ public class GridManager : PunBehaviour
         roundNumber++;
 
         CleanBoard();
-
-        if (GameManager.Instance.GameMode != GameMode.AI)
-            SwitchPlayersColor();
+        
+        SwitchPlayersColor();
 
         StartTurns();
     }
@@ -257,10 +256,21 @@ public class GridManager : PunBehaviour
         return ball;
     }
 
-    public Ball PlaceBallIA(Cell cell)
+    public Ball PlaceBall(BallColor color, Cell cell)
     {
-        Ball ball = blackBalls.First();
-        blackBalls.RemoveAt(0);
+        Ball ball;
+
+        if (color == BallColor.Black)
+        {
+            ball = blackBalls.First();
+            blackBalls.RemoveAt(0);
+        }
+        else
+        {
+            ball = whiteBalls.First();
+            whiteBalls.RemoveAt(0);
+        }
+
         ball.DOPlace(cell);
         return ball;
     }
@@ -269,15 +279,15 @@ public class GridManager : PunBehaviour
     {
         if (ActualTurn == PlayerManager.Instance.Player1.Color)
         {
+            actualTurn = PlayerManager.Instance.Player2.Color;
             UIManager.Instance.SetPlayer2Turn();
             PlayerManager.Instance.Player2.StartTurn();
-            actualTurn = PlayerManager.Instance.Player2.Color;
         }
         else
         {
+            actualTurn = PlayerManager.Instance.Player1.Color;
             UIManager.Instance.SetPlayer1Turn();
             PlayerManager.Instance.Player1.StartTurn();
-            actualTurn = PlayerManager.Instance.Player1.Color;
         }
     }
     
