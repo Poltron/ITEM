@@ -42,8 +42,11 @@ public class AIBehaviour
 
     public bool canOnlyJump;
 
+    private BallColor playerColor;
     private int playerScore;
+    private BallColor aiColor;
     private int aiScore;
+    
 
     private AIProfile aiProfile;
 
@@ -62,10 +65,14 @@ public class AIBehaviour
         evaluationData = _data;
     }
 
-    public void SetScores(int _playerScore, int _aiScore)
+    public void SetPlayersData(BallColor _aiColor, int _aiScore, BallColor _playerColor, int _playerScore)
     {
-        playerScore = _playerScore;
+        aiColor = _aiColor;
         aiScore = _aiScore;
+        playerColor = _playerColor;
+        playerScore = _playerScore;
+
+        Debug.Log(aiColor + " : " + aiScore + " __ " + playerColor + " : " + playerScore);
     }
 
     public IEnumerator GetRandomMove(OptimizedGrid optiGrid, System.Action<Move> toDo)
@@ -73,7 +80,7 @@ public class AIBehaviour
         yield return new WaitForEndOfFrame();
         grid = optiGrid;
 
-        List<Move> newGameMoves = grid.GetAvailableMoves(CellColor.Black);
+        List<Move> newGameMoves = grid.GetAvailableMoves((CellColor)aiColor);
         toDo(newGameMoves[Random.Range(0, newGameMoves.Count - 1)]);
     }
 
@@ -92,23 +99,23 @@ public class AIBehaviour
 
         List<Vector2> canWinCells = new List<Vector2>();
         // if AI has a 4-0 pattern
-        if (grid.CanColorWin(BallColor.Black, out canWinCells))
+        if (grid.CanColorWin(aiColor, out canWinCells))
         {
             // if AI can move to win
-            if (grid.CanColorMoveToWin(BallColor.Black, canWinCells, out bestMove))
+            if (grid.CanColorMoveToWin(aiColor, canWinCells, out bestMove))
             {
                 done = true;
             }
         }
 
         // if Player can win next turn
-        if (grid.CanColorWin(BallColor.White, out canWinCells) && !done)
+        if (grid.CanColorWin(playerColor, out canWinCells) && !done)
         {
             // if player can move to win next turn
-            if (grid.CanColorMoveToWin(BallColor.White, canWinCells, out bestMove))
+            if (grid.CanColorMoveToWin(playerColor, canWinCells, out bestMove))
             {
                 // can AI def it ???
-                if (grid.CanColorMoveToWin(BallColor.Black, canWinCells, out bestMove))
+                if (grid.CanColorMoveToWin(aiColor, canWinCells, out bestMove))
                 {
                     done = true;
                 }
@@ -131,10 +138,12 @@ public class AIBehaviour
 
     public Move MiniMaxRoot(int depth, bool isMaximisingPlayer)
     {
-        CellColor color = CellColor.Black;
+        CellColor color = (CellColor)aiColor;
 
-        if (!isMaximisingPlayer)
-            color = CellColor.White;
+        if (isMaximisingPlayer)
+            color = (CellColor)playerColor;
+
+        Debug.Log("__" + color);
 
         List<Move> newGameMoves = grid.GetAvailableMoves(color);
         int bestMove = int.MinValue + 1;
@@ -185,8 +194,13 @@ public class AIBehaviour
             return -EvaluateGrid(evaluationData, depth);
         }
 
-        var newGameMoves = grid.GetAvailableMoves(CellColor.Black);
+        var newGameMoves = grid.GetAvailableMoves((CellColor)aiColor);
+        /*
+        CellColor color = (CellColor)aiColor;
 
+        if (!isMaximisingPlayer)
+            color = (CellColor)playerColor;
+            */
         // IA
         if (isMaximisingPlayer)
         {
@@ -246,115 +260,115 @@ public class AIBehaviour
     private int EvaluatePattern(EvaluationPattern[] patterns, int depth)
     {
         int value = 0;
-        int blackCount = 0;
-        int whiteCount = 0;
+        int aiPawnCount = 0;
+        int opponentPawnCount = 0;
 
         for (int i = 0; i < patterns.Length; ++i)
         {
-            blackCount = 0;
-            whiteCount = 0;
+            aiPawnCount = 0;
+            opponentPawnCount = 0;
 
             for (int j = 0; j < patterns[i].positions.Length; ++j)
             {
                 IntVec2 pos = patterns[i].positions[j];
                 if (grid.Cells[pos.X][pos.Y] == CellColor.Black)
                 {
-                    blackCount++;
+                    aiPawnCount++;
                 }
                 else if (grid.Cells[pos.X][pos.Y] == CellColor.White)
                 {
-                    whiteCount++;
+                    opponentPawnCount++;
                 }
             }
 
-            if (blackCount == 5)
+            if (aiPawnCount == 5)
             {
                 return -9999999 + depth;
             }
-            else if (whiteCount == 5)
+            else if (opponentPawnCount == 5)
             {
                 return 9999999 - depth;
             }
             else if (depth == 1)
             {
-                if (blackCount == 1 && whiteCount == 0)
+                if (aiPawnCount == 1 && opponentPawnCount == 0)
                     value -= 100;
-                else if (blackCount == 2 && whiteCount == 0)
+                else if (aiPawnCount == 2 && opponentPawnCount == 0)
                     value -= 1000;
-                else if (blackCount == 3 && whiteCount == 0)
+                else if (aiPawnCount == 3 && opponentPawnCount == 0)
                     value -= 4000;
-                else if (blackCount == 4 && whiteCount == 0)
+                else if (aiPawnCount == 4 && opponentPawnCount == 0)
                     value -= 20000;
 
-                else if (blackCount == 4 && whiteCount == 1)
+                else if (aiPawnCount == 4 && opponentPawnCount == 1)
                     value += 75000;
 
-                else if (blackCount == 2 && whiteCount == 1)
+                else if (aiPawnCount == 2 && opponentPawnCount == 1)
                     value -= 500;
-                else if (blackCount == 1 && whiteCount == 2)
+                else if (aiPawnCount == 1 && opponentPawnCount == 2)
                     value += 500;
 
-                else if (blackCount == 3 && whiteCount == 1)
+                else if (aiPawnCount == 3 && opponentPawnCount == 1)
                     value -= 2500;
-                else if (blackCount == 1 && whiteCount == 3)
+                else if (aiPawnCount == 1 && opponentPawnCount == 3)
                     value += 3500;
 
-                else if (blackCount == 3 && whiteCount == 2)
+                else if (aiPawnCount == 3 && opponentPawnCount == 2)
                     value -= 4000;
-                else if (blackCount == 2 && whiteCount == 3)
+                else if (aiPawnCount == 2 && opponentPawnCount == 3)
                     value += 4000;
 
-                else if (blackCount == 1 && whiteCount == 4)
+                else if (aiPawnCount == 1 && opponentPawnCount == 4)
                     value -= 75000;
 
-                else if (blackCount == 0 && whiteCount == 1)
+                else if (aiPawnCount == 0 && opponentPawnCount == 1)
                     value += 200;
-                else if (blackCount == 0 && whiteCount == 2)
+                else if (aiPawnCount == 0 && opponentPawnCount == 2)
                     value += 1500;
-                else if (blackCount == 0 && whiteCount == 3)
+                else if (aiPawnCount == 0 && opponentPawnCount == 3)
                     value += 5000;
-                else if (blackCount == 0 && whiteCount == 4)
+                else if (aiPawnCount == 0 && opponentPawnCount == 4)
                     value += 50000;
             }
             else if (depth == 3)
             {
-                if (blackCount == 1 && whiteCount == 0)
+                if (aiPawnCount == 1 && opponentPawnCount == 0)
                     value -= 100;
-                else if (blackCount == 2 && whiteCount == 0)
+                else if (aiPawnCount == 2 && opponentPawnCount == 0)
                     value -= 750;
-                else if (blackCount == 3 && whiteCount == 0)
+                else if (aiPawnCount == 3 && opponentPawnCount == 0)
                     value -= 1500;
-                else if (blackCount == 4 && whiteCount == 0)
+                else if (aiPawnCount == 4 && opponentPawnCount == 0)
                     value -= 20000;
 
-                else if (blackCount == 4 && whiteCount == 1)
+                else if (aiPawnCount == 4 && opponentPawnCount == 1)
                     value += 75000;
 
-                else if (blackCount == 2 && whiteCount == 1)
+                else if (aiPawnCount == 2 && opponentPawnCount == 1)
                     value -= 500;
-                else if (blackCount == 1 && whiteCount == 2)
+                else if (aiPawnCount == 1 && opponentPawnCount == 2)
                     value += 1000;
 
-                else if (blackCount == 3 && whiteCount == 1)
+                else if (aiPawnCount == 3 && opponentPawnCount == 1)
                     value -= 2500;
-                else if (blackCount == 1 && whiteCount == 3)
+                else if (aiPawnCount == 1 && opponentPawnCount == 3)
                     value += 2500;
 
-                else if (blackCount == 3 && whiteCount == 2)
+                else if (aiPawnCount == 3 && opponentPawnCount == 2)
                     value -= 4000;
-                else if (blackCount == 2 && whiteCount == 3)
+                else if (aiPawnCount == 2 && opponentPawnCount == 3)
                     value += 4000;
 
-                else if (blackCount == 1 && whiteCount == 4)
+                else if (aiPawnCount == 1 && opponentPawnCount == 4)
                     value -= 75000;
 
-                else if (blackCount == 0 && whiteCount == 1)
+                else if (aiPawnCount == 0 && opponentPawnCount == 1)
                     value += 300;
-                else if (blackCount == 0 && whiteCount == 2)
+                else if (aiPawnCount == 0 && opponentPawnCount == 2)
                     value += 4000;
-                else if (blackCount == 0 && whiteCount == 3)
+                else if (aiPawnCount == 0 && opponentPawnCount == 3)
                     value += 15000;
-                else if (blackCount == 0 && whiteCount == 4)
+                else if (aiPawnCount == 0 && opponentPawnCount == 4)
                     value += 50000;
             }
         }
@@ -439,3 +453,4 @@ public class AIBehaviour
         return false;
     }
 }
+ 

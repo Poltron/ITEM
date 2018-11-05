@@ -34,7 +34,11 @@ public class AIPlayer : Player
         Debug.Log("PlayIAPhase1");
 
         PlayerManager.Instance.AIBehaviour.SetAIProfile(aiProfile);
-
+        PlayerManager.Instance.AIBehaviour.SetPlayersData(PlayerManager.Instance.GetPlayer(GridManager.Instance.ActualTurn).Color,
+                                                            PlayerManager.Instance.GetPlayer(GridManager.Instance.ActualTurn).totalScore,
+                                                            PlayerManager.Instance.GetPlayer(GridManager.Instance.NotActualTurn).Color,
+                                                            PlayerManager.Instance.GetPlayer(GridManager.Instance.NotActualTurn).totalScore);
+        
         if (PlayerManager.Instance.randomAI)
             CoroutineRunner.Start(PlayerManager.Instance.AIBehaviour.GetRandomMove(GridManager.Instance.OptiGrid, PlayIAPhase1CalculusEnded));
         else
@@ -65,6 +69,10 @@ public class AIPlayer : Player
         Debug.Log("PlayIAPhase2");
 
         PlayerManager.Instance.AIBehaviour.SetAIProfile(aiProfile);
+        PlayerManager.Instance.AIBehaviour.SetPlayersData(PlayerManager.Instance.GetPlayer(GridManager.Instance.ActualTurn).Color,
+                                                            PlayerManager.Instance.GetPlayer(GridManager.Instance.ActualTurn).totalScore,
+                                                            PlayerManager.Instance.GetPlayer(GridManager.Instance.NotActualTurn).Color,
+                                                            PlayerManager.Instance.GetPlayer(GridManager.Instance.NotActualTurn).totalScore);
 
         if (PlayerManager.Instance.randomAI)
             CoroutineRunner.Start(PlayerManager.Instance.AIBehaviour.GetRandomMove(GridManager.Instance.OptiGrid, PlayIAPhase2CalculusEnded));

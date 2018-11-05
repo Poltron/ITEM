@@ -7,7 +7,7 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine.Rendering;
 
-public enum BallColor : int
+public enum BallColor : byte
 {
     White = 1,
     Black = 2
@@ -19,7 +19,6 @@ public class Ball : MonoBehaviour
 
     [SerializeField]
     private BallColor color;
-
     public BallColor Color { get { return color; } }
 
     [SerializeField]

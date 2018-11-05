@@ -210,10 +210,6 @@ using UnityEngine.UI;
                 if (!stateInfo.IsName("Base.Empty"))
                     portraitTurnAnimator.SetTrigger("PopOut");
             }
-
-            //stateInfo = portraitLightAnimator.GetCurrentAnimatorStateInfo(0);
-            //if (!stateInfo.IsName("Base.Empty"))
-            //    portraitLightAnimator.SetTrigger("PopOut");
         }
 
         public void StartScoreAnim()
