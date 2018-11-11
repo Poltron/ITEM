@@ -92,6 +92,7 @@ public class GameManager : PunBehaviour
 
         // init UI
         UIManager.Instance.Init();
+        GridManager.Instance.ReplaceBalls();
 
         DOVirtual.DelayedCall(GridManager.Instance.timeBeforeVictoryAnimation, () => {
             if (gameState != GameState.Gameplay)
@@ -186,6 +187,8 @@ public class GameManager : PunBehaviour
 
         PlayerManager.Instance.CreateLocalPlayer(BallColor.White, PlayerID.Player1);
         PlayerManager.Instance.CreateLocalPlayer(BallColor.Black, PlayerID.Player2);
+        GridManager.Instance.SetPawnsStartPosition(BallColor.White, BallColor.White);
+        GridManager.Instance.SetPawnsStartPosition(BallColor.Black, BallColor.Black);
 
         // setup les noms
         if (Options.GetLanguage() == "FR")
@@ -223,6 +226,8 @@ public class GameManager : PunBehaviour
 
         PlayerManager.Instance.CreateLocalPlayer(BallColor.White, PlayerID.Player1);
         PlayerManager.Instance.CreateAIPlayer(aiProfile, BallColor.Black, PlayerID.Player2);
+        GridManager.Instance.SetPawnsStartPosition(BallColor.White, BallColor.White);
+        GridManager.Instance.SetPawnsStartPosition(BallColor.Black, BallColor.Black);
 
         StartGame();
     }
@@ -258,6 +263,8 @@ public class GameManager : PunBehaviour
 
             PlayerManager.Instance.CreateLocalPlayer(BallColor.Black, PlayerID.Player1);
             PlayerManager.Instance.CreateRemotePlayer(BallColor.White, PlayerID.Player2);
+            GridManager.Instance.SetPawnsStartPosition(BallColor.White, BallColor.Black);
+            GridManager.Instance.SetPawnsStartPosition(BallColor.Black, BallColor.White);
 
             SendName(PlayerManager.Instance.Player1.playerName);
             SendPicURL(PlayerManager.Instance.Player1.picURL);
@@ -282,6 +289,8 @@ public class GameManager : PunBehaviour
 
             PlayerManager.Instance.CreateLocalPlayer(BallColor.White, PlayerID.Player1);
             PlayerManager.Instance.CreateRemotePlayer(BallColor.Black, PlayerID.Player2);
+            GridManager.Instance.SetPawnsStartPosition(BallColor.White, BallColor.White);
+            GridManager.Instance.SetPawnsStartPosition(BallColor.Black, BallColor.Black);
 
             StartGame();
         }

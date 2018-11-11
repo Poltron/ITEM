@@ -94,7 +94,7 @@ public class LocalPlayer : Player
 
                 if (pickedCell.HasBall())
                 {
-                    currentBall.ResetPosition();
+                    //currentBall.ResetPosition();
                     return;
                 }
 
@@ -239,7 +239,7 @@ public class LocalPlayer : Player
 
         if (pickedCell.HasBall())
         {
-            currentBall.ResetPosition();
+            //currentBall.ResetPosition();
             return;
         }
 
@@ -280,7 +280,7 @@ public class LocalPlayer : Player
         }
         else
         {
-            currentBall.ResetPosition();
+            //currentBall.ResetPosition();
             //Utils.ResetCellsColor (grid);
             return;
         }

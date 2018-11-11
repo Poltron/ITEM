@@ -38,6 +38,11 @@ public class GridManager : PunBehaviour
     [SerializeField]
     private Transform board;
     [SerializeField]
+    public List<GameObject> blackStartPosition;
+    [SerializeField]
+    public List<GameObject> whiteStartPosition;
+
+    [SerializeField]
     public List<Ball> blackBalls;
     [SerializeField]
     public List<Ball> whiteBalls;
@@ -169,16 +174,59 @@ public class GridManager : PunBehaviour
         PlayerManager.Instance.Player1.Reset();
         PlayerManager.Instance.Player2.Reset();
 
+        UIManager.Instance.StopPlayerTurns();
+
         UIManager.Instance.ResetGame();
+    }
+
+    public void SetPawnsStartPosition(BallColor ballColor, BallColor startPositionColor)
+    {
+        if (ballColor == BallColor.Black)
+        {
+            foreach (Ball blackB in blackBalls)
+            {
+                if (startPositionColor == BallColor.Black)
+                {
+                    blackB.startPosition = blackStartPosition[blackB.ballId].transform.localPosition;
+                }
+                else
+                {
+                    blackB.startPosition = whiteStartPosition[blackB.ballId].transform.localPosition;
+                }
+            }
+        }
+        else
+        {
+            foreach (Ball whiteB in whiteBalls)
+            {
+                if (startPositionColor == BallColor.Black)
+                {
+                    whiteB.startPosition = blackStartPosition[whiteB.ballId].transform.localPosition;
+                }
+                else
+                {
+                    whiteB.startPosition = whiteStartPosition[whiteB.ballId].transform.localPosition;
+                }
+            }
+        }
+    }
+
+    public void ReplaceBalls()
+    {
+        Ball[] balls = FindObjectsOfType<Ball>();
+        foreach (Ball b in balls)
+        {
+            b.MoveToResetPosition();
+        }
     }
 
     public void GoToNextRound()
     {
         roundNumber++;
 
-        CleanBoard();
-        
         SwitchPlayersColor();
+
+        CleanBoard();
 
         StartTurns();
     }
@@ -189,11 +237,15 @@ public class GridManager : PunBehaviour
         {
             PlayerManager.Instance.SetPlayerColor(BallColor.White, PlayerID.Player1);
             PlayerManager.Instance.SetPlayerColor(BallColor.Black, PlayerID.Player2);
+            SetPawnsStartPosition(BallColor.White, BallColor.White);
+            SetPawnsStartPosition(BallColor.Black, BallColor.Black);
         }
         else
         {
             PlayerManager.Instance.SetPlayerColor(BallColor.Black, PlayerID.Player1);
             PlayerManager.Instance.SetPlayerColor(BallColor.White, PlayerID.Player2);
+            SetPawnsStartPosition(BallColor.White, BallColor.Black);
+            SetPawnsStartPosition(BallColor.Black, BallColor.White);
         }
     }
 
@@ -228,7 +280,7 @@ public class GridManager : PunBehaviour
         firstCell.ball = null;
 
         ball.owner = secondCell;
-        Debug.Log("ball changed");
+
         Move move = new Move();
         move.fromX = firstCell.y;
         move.fromY = firstCell.x;
@@ -236,10 +288,9 @@ public class GridManager : PunBehaviour
         move.toY = secondCell.x;
         move.color = (CellColor)ball.Color;
         move.isPoint = ball.Score > 0 ? true : false;
-
-        Debug.Log("move set");
+        
         GridManager.Instance.OptiGrid.DoMove(move);
-        Debug.Log("opti move done");
+
         if (ball.isPickedUp)
             ball.GetComponent<Animator>().SetTrigger("PlaceBall");
         else
@@ -247,12 +298,11 @@ public class GridManager : PunBehaviour
 
         ball.isPickedUp = false;
         ball.FixSortingLayer(true);
-        Debug.Log("doing model move");
+
         ball.transform.DOMove(secondCell.transform.position, 0.75f).OnComplete(() =>
         {
             ball.transform.position = secondCell.transform.position;
             ball.FixSortingLayer(false);
-            Debug.Log("model move done");
         });
 
         return ball;

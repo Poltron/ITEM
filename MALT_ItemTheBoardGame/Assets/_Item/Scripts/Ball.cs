@@ -28,7 +28,8 @@ public class Ball : MonoBehaviour
 
     public Cell owner;
 
-    private Vector3 startPosition;
+    [HideInInspector]
+    public Vector3 startPosition;
     private Vector3 startScale;
 
     [SerializeField]
@@ -114,10 +115,6 @@ public class Ball : MonoBehaviour
 
     public void HideHighlight() {
         highlight.gameObject.SetActive(false);
-    }
-
-    public void ResetPosition() {
-        //transform.position = startPosition;
     }
 
     public void PassAboveUI(bool enabled)

@@ -256,6 +256,12 @@ public class UIManager : MonoBehaviour
         player2.SetPic(sprite);
     }
 
+    public void StopPlayerTurns()
+    {
+        player1.StopPortraitAnimation();
+        player2.StopPortraitAnimation();
+    }
+
     public void SetPlayer1Turn()
     {
         isPlayer1Turn = true;
