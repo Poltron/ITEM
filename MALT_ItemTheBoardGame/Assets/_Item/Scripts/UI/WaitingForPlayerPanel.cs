@@ -45,25 +45,4 @@ public class WaitingForPlayerPanel : UIPanel
         label.text = labelFR;
         cancelButtonText.text = cancelButtonTextFR;
     }
-
-    void OnEnable()
-    {
-        timer = 0;
-        cancelButton.gameObject.SetActive(false);
-    }
-
-    void OnDisable()
-    {
-        cancelButton.gameObject.SetActive(false);
-    }
-
-    void Update()
-    {
-        timer += Time.deltaTime;
-        if (timer > timeBeforeCancelButtonPops && !cancelButton.gameObject.activeInHierarchy)
-        {
-            cancelButton.gameObject.SetActive(true);
-        }
-    }
-
 }

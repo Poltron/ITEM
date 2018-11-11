@@ -93,6 +93,7 @@ public class GameManager : PunBehaviour
         // init UI
         UIManager.Instance.Init();
 
+        DOVirtual.DelayedCall(1f, () => { 
         // start with tutorial or not
         if (Options.GetAskForTuto() && GameMode != GameMode.Remote)
         {
@@ -102,6 +103,7 @@ public class GameManager : PunBehaviour
         {
             GridManager.Instance.StartTurns();
         }
+        });
 
         gameState = GameState.Gameplay;
     }
@@ -121,7 +123,6 @@ public class GameManager : PunBehaviour
         GridManager.Instance.ResetGame();
         UIManager.Instance.ShowGameplayCanvas(false);
         UIManager.Instance.ShowMenuCanvas(true);
-        UIManager.Instance.mainMenuPanel.ShowMenu();
         GridManager.Instance.DisplayBoard(false);
     }
 
@@ -130,7 +131,6 @@ public class GameManager : PunBehaviour
     {
         print("onnameloaded " + name);
         PlayerManager.Instance.Player1.playerName = name;
-        UIManager.Instance.DisplayPlayer1(true);
     }
 
     private void OnPicURLLoaded(string url)
@@ -142,8 +142,6 @@ public class GameManager : PunBehaviour
         StartCoroutine(Utils.LoadSpriteFromURL(PlayerManager.Instance.Player1.picURL, (sprite) => {
             UIManager.Instance.SetPlayer1Pic(sprite);
         }));
-
-        UIManager.Instance.DisplayPlayer1(true);
     }
 
     private void SendName(string name)
@@ -232,8 +230,7 @@ public class GameManager : PunBehaviour
         gameState = GameState.LookingForPlayer;
 
         connection.ApplyUserIdAndConnect();
-
-        UIManager.Instance.mainMenuPanel.HideAll();
+        
         UIManager.Instance.DisplayWaitingForPlayerPanel(true);
     }
 
@@ -242,8 +239,7 @@ public class GameManager : PunBehaviour
         gameState = GameState.MainMenu;
 
         Disconnect();
-
-        UIManager.Instance.mainMenuPanel.ShowMenu();
+        
         UIManager.Instance.DisplayWaitingForPlayerPanel(false);
     }
 

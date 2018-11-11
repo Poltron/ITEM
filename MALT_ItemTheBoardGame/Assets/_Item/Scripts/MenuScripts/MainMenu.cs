@@ -37,6 +37,10 @@ public class MainMenu : UIPanel
     private TextMeshProUGUI aiChoiceText;
 
     [SerializeField]
+    private Animator leftMenuAnimator;
+    [SerializeField]
+    private Animator rightMenuAnimator;
+    [SerializeField]
     private GameObject menuButtons;
     [SerializeField]
     private GameObject loginButtons;
@@ -61,37 +65,27 @@ public class MainMenu : UIPanel
         aiChoiceText.text = aiChoiceTextEN;
     }
 
-    public void ShowMenu()
+    public void PopIn()
     {
-        menuButtons.SetActive(true);
-        loginButtons.SetActive(false);
-        aiChoiceButtons.SetActive(false);
+        leftMenuAnimator.SetBool("bPopIn", true);
+        rightMenuAnimator.SetBool("bPopIn", true);
     }
 
-    public void ShowLogin()
+    public void PopOut()
     {
-        menuButtons.SetActive(false);
-        loginButtons.SetActive(true);
-        aiChoiceButtons.SetActive(false);
+        leftMenuAnimator.SetBool("bPopIn", false);
+        rightMenuAnimator.SetBool("bPopIn", false);
     }
 
     public void ShowAIs()
     {
         menuButtons.SetActive(true);
-        loginButtons.SetActive(false);
         aiChoiceButtons.SetActive(true);
 
         foreach(AIPanel aiPanel in aiPanels)
         {
             aiPanel.Refresh();
         }
-    }
-
-    public void HideAll()
-    {
-        menuButtons.SetActive(false);
-        loginButtons.SetActive(false);
-        aiChoiceButtons.SetActive(false);
     }
 
     public void PlayLocalDuel()
@@ -110,6 +104,5 @@ public class MainMenu : UIPanel
     {
         Debug.Log("PlayVSAI");
         ShowAIs();
-        //GameManager.Instance.StartGameVSIA();
     }
 }

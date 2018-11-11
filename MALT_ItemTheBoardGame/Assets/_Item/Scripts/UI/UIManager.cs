@@ -22,7 +22,7 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private CanvasGroup gameplayCanvas;
     [SerializeField]
-    private CanvasGroup menuCanvas;
+    private MainMenu menuUI;
     [SerializeField]
     private GameObject boardContainer;
 
@@ -46,6 +46,7 @@ public class UIManager : MonoBehaviour
     public TutorialPanel tutoPanel;
     public InviteFriendPanel inviteFriendButton;
     public RectTransform overlayPanel;
+    public Animator quickMenu;
     
     public GameObject arrowPrefab;
     private Transform arrowFocus;
@@ -82,19 +83,25 @@ public class UIManager : MonoBehaviour
 
     public void ShowMenuCanvas(bool showed)
     {
-        menuCanvas.gameObject.SetActive(showed);
+        if (showed)
+            menuUI.PopIn();
+        else
+            menuUI.PopOut();
+        //menuCanvas.gameObject.SetActive(showed);
     }
 
     public void ShowGameplayCanvas(bool showed)
     {
-        gameplayCanvas.gameObject.SetActive(showed);
+        player1.PopIn(showed);
+        player2.PopIn(showed);
+        quickMenu.SetBool("bPopIn", showed);
+        boardContainer.GetComponent<Animator>().SetBool("bPopIn", showed);
     }
 
     public void Init()
     {
-        DisplayWaitingForPlayerPanel(false);
-        menuCanvas.gameObject.SetActive(false);
-        gameplayCanvas.gameObject.SetActive(true);
+        ShowMenuCanvas(false);
+        ShowGameplayCanvas(true);
 
         player1.SetScoreCounter(0);
         player2.SetScoreCounter(0);
@@ -211,13 +218,11 @@ public class UIManager : MonoBehaviour
 
     public void InitPlayer1(BallColor color)
     {
-        DisplayPlayer1(true);
         player1.SetColor(color);
     }
 
     public void InitPlayer2(BallColor color)
     {
-        DisplayPlayer2(true);
         player2.SetColor(color);
     }
 

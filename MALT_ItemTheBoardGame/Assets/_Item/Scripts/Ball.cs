@@ -63,7 +63,7 @@ public class Ball : MonoBehaviour
 
     void Awake()
     {
-        startPosition = transform.position;
+        startPosition = transform.localPosition;
         startScale = transform.localScale;
         _animator =  GetComponent<Animator>();
         audioManager = FindObjectOfType<AudioManager>();
@@ -195,7 +195,7 @@ public class Ball : MonoBehaviour
         if (transform.position == startPosition)
             return;
 
-        transform.DOMove(startPosition, 0.75f).OnComplete(() =>
+        transform.DOLocalMove(startPosition, 0.75f).OnComplete(() =>
         {
             if (resetPlaySound)
             {

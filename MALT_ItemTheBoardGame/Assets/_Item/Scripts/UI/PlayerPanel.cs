@@ -212,6 +212,11 @@ using UnityEngine.UI;
             }
         }
 
+        public void PopIn(bool showed)
+        {
+            GetComponent<Animator>().SetBool("bPopIn", showed);
+        }
+
         public void StartScoreAnim()
         {
             scoreCounterAnimator.SetTrigger("PointReceived");

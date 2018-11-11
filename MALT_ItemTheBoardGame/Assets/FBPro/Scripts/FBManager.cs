@@ -711,7 +711,7 @@ namespace GS
 				LoadPlayerPic(false);
 				//LoadInvitableFriends ();
 				//SceneManager.LoadScene (1);
-                menu.ShowMenu();
+                //menu.ShowMenu();
             }
 			else
 			{
@@ -753,8 +753,8 @@ namespace GS
 				//					FacebookConnect ();
 
 				//SceneManager.LoadScene (1);
-                menu.ShowMenu();
-
+                //menu.ShowMenu();
+                
                 //				Invoke("LoadPlayerName",0.1f);
                 //				Invoke("LoadPlayerPic",1f);
             }

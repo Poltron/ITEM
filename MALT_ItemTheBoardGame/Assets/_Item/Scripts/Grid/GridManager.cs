@@ -114,7 +114,7 @@ public class GridManager : PunBehaviour
 
     public void DisplayBoard(bool isShown)
     {
-        board.gameObject.SetActive(isShown);
+        board.GetComponent<Animator>().SetBool("bPopIn", isShown);
     }
 
     private void CreateGrid()

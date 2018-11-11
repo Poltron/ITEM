@@ -14,6 +14,6 @@ public class PlayWithoutFacebook : MonoBehaviour
     public void OnButtonPressed()
     {
         Destroy(dontDestroy.gameObject);
-        menu.ShowMenu();
+        //menu.ShowMenu();
     }
 }
