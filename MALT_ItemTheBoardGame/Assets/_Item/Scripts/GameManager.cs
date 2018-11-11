@@ -93,16 +93,19 @@ public class GameManager : PunBehaviour
         // init UI
         UIManager.Instance.Init();
 
-        DOVirtual.DelayedCall(1f, () => { 
-        // start with tutorial or not
-        if (Options.GetAskForTuto() && GameMode != GameMode.Remote)
-        {
-            UIManager.Instance.PopTuto();
-        }
-        else
-        {
-            GridManager.Instance.StartTurns();
-        }
+        DOVirtual.DelayedCall(GridManager.Instance.timeBeforeVictoryAnimation, () => {
+            if (gameState != GameState.Gameplay)
+                return;
+
+            // start with tutorial or not
+            if (Options.GetAskForTuto() && GameMode != GameMode.Remote)
+            {
+                UIManager.Instance.PopTuto();
+            }
+            else
+            {
+                GridManager.Instance.StartTurns();
+            }
         });
 
         gameState = GameState.Gameplay;

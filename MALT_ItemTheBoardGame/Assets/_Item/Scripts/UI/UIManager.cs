@@ -60,6 +60,9 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private GameObject scoreParticle;
 
+    [SerializeField]
+    public float timeBeforeAskForTutoPop = 2f;
+
     void Awake()
     {
         if (instance == null)
