@@ -47,7 +47,7 @@ public class UIManager : MonoBehaviour
     public InviteFriendPanel inviteFriendButton;
     public RectTransform overlayPanel;
     public Animator quickMenu;
-    
+    public Button backToMainMenuButton;
     public GameObject arrowPrefab;
     private Transform arrowFocus;
 
@@ -171,6 +171,11 @@ public class UIManager : MonoBehaviour
 	public void DisplayPlayer2(bool isShown)
     {
         player2.gameObject.SetActive(isShown);
+    }
+
+    public void DisableBackToMainMenuButton(bool isShown)
+    {
+        backToMainMenuButton.enabled = isShown;
     }
 
     public void DisplayRoundResultPanel(bool isShown, int roundNumber, int yourPoints, int theirPoints)

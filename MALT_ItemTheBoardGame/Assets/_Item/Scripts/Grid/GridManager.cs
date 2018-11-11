@@ -414,6 +414,8 @@ public class GridManager : PunBehaviour
 
     IEnumerator playVictoryAnimationPhase1(WinningPattern pattern)
     {
+        UIManager.Instance.DisableBackToMainMenuButton(false);
+
         Debug.Log("play victory animation4");
         Ball ball = modelGrid.GetCellFromModel((int)pattern.cells[0].y, (int)pattern.cells[0].x).ball;
         ball.FixSortingLayer(true);
@@ -485,6 +487,8 @@ public class GridManager : PunBehaviour
 
     private void playVictoryAnimationEnd(WinningPattern pattern)
     {
+        UIManager.Instance.DisableBackToMainMenuButton(true);
+
         if (IsEqualityTurn && PlayerManager.Instance.Player1.NbOfTurn != PlayerManager.Instance.Player2.NbOfTurn)
         {
             NextTurn();

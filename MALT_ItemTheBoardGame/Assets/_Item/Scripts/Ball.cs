@@ -192,7 +192,7 @@ public class Ball : MonoBehaviour
 
     public void MoveToResetPosition()
     {
-        if (transform.position == startPosition)
+        if (transform.localPosition == startPosition)
             return;
 
         transform.DOLocalMove(startPosition, 0.75f).OnComplete(() =>
