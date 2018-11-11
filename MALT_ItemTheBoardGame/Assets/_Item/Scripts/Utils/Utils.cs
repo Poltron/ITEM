@@ -1235,6 +1235,7 @@ using System;
             move.toX = pickedCell.y;
             move.toY = pickedCell.x;
             move.color = (CellColor)ball.Color;
+            move.isPoint = ball.Score > 0 ? true : false;
 
             GridManager.Instance.OptiGrid.DoMove(move);
 

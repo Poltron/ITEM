@@ -54,7 +54,7 @@ public class AIPlayer : Player
     {
         Cell cell = GridManager.Instance.ModelGrid.GetCellFromModel(move.toY, move.toX);
         
-        currentBall = GridManager.Instance.PlaceBall(PlayerManager.Instance.GetPlayer(GridManager.Instance.ActualTurn).Color, cell);
+        currentBall = GridManager.Instance.PlaceBall((BallColor)move.color, move.isPoint, cell);
         ballCount--;
 
         movements = new List<Vector2>();

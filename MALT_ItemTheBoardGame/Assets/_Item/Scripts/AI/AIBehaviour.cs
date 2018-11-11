@@ -5,15 +5,16 @@ using UnityEngine;
 public struct Move
 {
     public CellColor color;
+    public bool isPoint;
     public int fromX;
     public int fromY;
     public int toX;
     public int toY;
 
-    public Move(CellColor _color, int _fromX, int _fromY, int _toX, int _toY)
+    public Move(CellColor _color, bool _isPoint, int _fromX, int _fromY, int _toX, int _toY)
     {
         color = _color;
-
+        isPoint = _isPoint;
         fromX = _fromX;
         fromY = _fromY;
 
@@ -103,21 +104,36 @@ public class AIBehaviour
             // if AI can move to win
             if (grid.CanColorMoveToWin(aiColor, canWinCells, out bestMove))
             {
-                done = true;
+                grid.DoMove(bestMove);
+
+                if (IsScoreEnoughToWin(aiColor, canWinCells))
+                    done = true;
+
+                grid.UndoMove(bestMove);
             }
         }
 
         // if Player can win next turn
-        if (grid.CanColorWin(opponentColor, out canWinCells) && !done)
+        if (grid.CanColorWin(opponentColor, out canWinCells) && IsScoreEnoughToWin(opponentColor, canWinCells) && !done)
         {
             // if player can move to win next turn
             if (grid.CanColorMoveToWin(opponentColor, canWinCells, out bestMove))
             {
+                grid.DoMove(bestMove);
+                bool canPlayerWin = IsScoreEnoughToWin(opponentColor, canWinCells);
+                grid.UndoMove(bestMove);
+
                 // can AI def it ???
-                if (grid.CanColorMoveToWin(aiColor, canWinCells, out bestMove))
+                if (canPlayerWin && grid.CanColorMoveToWin(aiColor, canWinCells, out bestMove))
                 {
-                    done = true;
+                    grid.DoMove(bestMove);
+
+                    if (IsScoreEnoughToWin(aiColor, canWinCells))
+                        done = true;
+
+                    grid.UndoMove(bestMove);
                 }
+
             }
         }
 
@@ -130,7 +146,7 @@ public class AIBehaviour
         float newTime = Time.realtimeSinceStartup;
         timeSpent = newTime - actualTime;
 
-        //Debug.Log(positionCount + " in " + timeSpent);
+        Debug.Log(positionCount + " in " + timeSpent);
 
         toDo(bestMove);
     }
@@ -182,7 +198,7 @@ public class AIBehaviour
     }
 
 
-    public int MiniMax(int depth, int alpha, int beta, bool isMaximisingPlayer)
+    private int MiniMax(int depth, int alpha, int beta, bool isMaximisingPlayer)
     {
         positionCount++;
 
@@ -256,121 +272,139 @@ public class AIBehaviour
 
     private int EvaluatePattern(EvaluationPattern[] patterns, int depth)
     {
-        int value = 0;
+        int fitness = 0;
         int aiPawnCount = 0;
         int opponentPawnCount = 0;
+        int aiScore = 0;
+        int opponentScore = 0;
 
         for (int i = 0; i < patterns.Length; ++i)
         {
             aiPawnCount = 0;
             opponentPawnCount = 0;
+            aiScore = 0;
+            opponentScore = 0;
 
             for (int j = 0; j < patterns[i].positions.Length; ++j)
             {
                 IntVec2 pos = patterns[i].positions[j];
-                if (grid.Cells[pos.X][pos.Y] == (CellColor)aiColor)
+                if (grid.Cells[pos.X][pos.Y].color == (CellColor)aiColor)
                 {
+                    if (grid.Cells[pos.X][pos.Y].isPoint)
+                        aiScore++;
+
                     aiPawnCount++;
                 }
-                else if (grid.Cells[pos.X][pos.Y] == (CellColor)opponentColor)
+                else if (grid.Cells[pos.X][pos.Y].color == (CellColor)opponentColor)
                 {
+                    if (grid.Cells[pos.X][pos.Y].isPoint)
+                        opponentScore++;
+
                     opponentPawnCount++;
                 }
             }
 
-            if (aiPawnCount == 5)
+            if (aiPawnCount == 5 && IsScoreEnoughToWin(aiColor, aiScore))
             {
-                return -9999999 + depth;
+                return -9999999 + depth - aiScore;
             }
-            else if (opponentPawnCount == 5)
+            else if (opponentPawnCount == 5 && IsScoreEnoughToWin(opponentColor, opponentScore))
             {
-                return 9999999 - depth;
+                return 9999999 - depth + opponentScore;
             }
             else if (aiProfile.Depth == 1)
             {
                 if (aiPawnCount == 1 && opponentPawnCount == 0)
-                    value -= 100;
+                    fitness -= 100;
                 else if (aiPawnCount == 2 && opponentPawnCount == 0)
-                    value -= 1000;
+                    fitness -= 1000;
                 else if (aiPawnCount == 3 && opponentPawnCount == 0)
-                    value -= 4000;
+                    fitness -= 4000;
                 else if (aiPawnCount == 4 && opponentPawnCount == 0)
-                    value -= 20000;
+                    fitness -= 20000;
+                else if (aiPawnCount == 5 && opponentPawnCount == 0) // if it reaches that point, ai playing that would make itself loose
+                    fitness += 1000000;
 
                 else if (aiPawnCount == 4 && opponentPawnCount == 1)
-                    value += 75000;
+                    fitness += 75000;
 
                 else if (aiPawnCount == 2 && opponentPawnCount == 1)
-                    value -= 500;
+                    fitness -= 500;
                 else if (aiPawnCount == 1 && opponentPawnCount == 2)
-                    value += 500;
+                    fitness += 500;
 
                 else if (aiPawnCount == 3 && opponentPawnCount == 1)
-                    value -= 2500;
+                    fitness -= 2500;
                 else if (aiPawnCount == 1 && opponentPawnCount == 3)
-                    value += 3500;
+                    fitness += 3500;
 
                 else if (aiPawnCount == 3 && opponentPawnCount == 2)
-                    value -= 4000;
+                    fitness -= 4000;
                 else if (aiPawnCount == 2 && opponentPawnCount == 3)
-                    value += 4000;
+                    fitness += 4000;
 
                 else if (aiPawnCount == 1 && opponentPawnCount == 4)
-                    value -= 75000;
+                    fitness -= 75000;
 
                 else if (aiPawnCount == 0 && opponentPawnCount == 1)
-                    value += 200;
+                    fitness += 200;
                 else if (aiPawnCount == 0 && opponentPawnCount == 2)
-                    value += 1500;
+                    fitness += 1500;
                 else if (aiPawnCount == 0 && opponentPawnCount == 3)
-                    value += 5000;
+                    fitness += 5000;
                 else if (aiPawnCount == 0 && opponentPawnCount == 4)
-                    value += 50000;
+                    fitness += 50000;
+                else if (aiPawnCount == 0 && opponentPawnCount == 5) // if it reaches that point, opponent playing that would make itself loose
+                    fitness -= 1000000;
             }
             else if (aiProfile.Depth == 3)
             {
                 if (aiPawnCount == 1 && opponentPawnCount == 0)
-                    value -= 100;
+                    fitness -= 100;
                 else if (aiPawnCount == 2 && opponentPawnCount == 0)
-                    value -= 750;
+                    fitness -= 750;
                 else if (aiPawnCount == 3 && opponentPawnCount == 0)
-                    value -= 1500;
+                    fitness -= 1500;
                 else if (aiPawnCount == 4 && opponentPawnCount == 0)
-                    value -= 20000;
+                    fitness -= 20000;
+                else if (aiPawnCount == 5 && opponentPawnCount == 0) // if it reaches that point, ai playing that would make itself loose
+                    fitness += 1000000;
 
                 else if (aiPawnCount == 4 && opponentPawnCount == 1)
-                    value += 75000;
+                    fitness += 75000;
 
                 else if (aiPawnCount == 2 && opponentPawnCount == 1)
-                    value -= 500;
+                    fitness -= 500;
                 else if (aiPawnCount == 1 && opponentPawnCount == 2)
-                    value += 1000;
+                    fitness += 1000;
 
                 else if (aiPawnCount == 3 && opponentPawnCount == 1)
-                    value -= 2500;
+                    fitness -= 2500;
                 else if (aiPawnCount == 1 && opponentPawnCount == 3)
-                    value += 2500;
+                    fitness += 2500;
 
                 else if (aiPawnCount == 3 && opponentPawnCount == 2)
-                    value -= 4000;
+                    fitness -= 4000;
                 else if (aiPawnCount == 2 && opponentPawnCount == 3)
-                    value += 4000;
+                    fitness += 4000;
 
                 else if (aiPawnCount == 1 && opponentPawnCount == 4)
-                    value -= 75000;
+                    fitness -= 75000;
 
                 else if (aiPawnCount == 0 && opponentPawnCount == 1)
-                    value += 300;
+                    fitness += 300;
                 else if (aiPawnCount == 0 && opponentPawnCount == 2)
-                    value += 4000;
+                    fitness += 4000;
                 else if (aiPawnCount == 0 && opponentPawnCount == 3)
-                    value += 15000;
+                    fitness += 15000;
                 else if (aiPawnCount == 0 && opponentPawnCount == 4)
-                    value += 50000;
+                    fitness += 50000;
+                else if (aiPawnCount == 0 && opponentPawnCount == 5) // if it reaches that point, opponent playing that would make itself loose
+                    fitness -= 1000000;
             }
         }
 
-        return value;
+        return fitness;
     }
 
     public int EvaluateGrid(AIEvaluationData data, int depth)
@@ -424,6 +458,32 @@ public class AIBehaviour
 
 
         return value;
+    }
+
+    public bool IsScoreEnoughToWin(BallColor color, List<Vector2> winningPattern)
+    {
+        int total = 0;
+        foreach (Vector2 pawn in winningPattern)
+        {
+            if (grid.Cells[(int)pawn.x][(int)pawn.y].isPoint)
+                total++;
+        }
+
+        return IsScoreEnoughToWin(color, total);
+    }
+
+    public bool IsScoreEnoughToWin(BallColor color, int score)
+    {
+        if (aiColor == color && aiScore + score > opponentScore)
+        {
+            return true;
+        }
+        else if (opponentColor == color && opponentScore + score > aiScore)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public bool IsGameEnded(int score)

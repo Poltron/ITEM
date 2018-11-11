@@ -98,14 +98,23 @@ namespace AppAdvisory.Item
         {
             if (GridManager.Instance.OptiGrid != null)
             {
-                switch (GridManager.Instance.OptiGrid.Cells[x][y])
+                switch (GridManager.Instance.OptiGrid.Cells[x][y].color)
                 {
                     case CellColor.Black:
-                        return "B";
+                        if (GridManager.Instance.OptiGrid.Cells[x][y].isPoint)
+                            return "b";
+                        else
+                            return "B";
                     case CellColor.White:
-                        return "W";
+                        if (GridManager.Instance.OptiGrid.Cells[x][y].isPoint)
+                            return "w";
+                        else
+                            return "W";
                     case CellColor.None:
-                        return "0";
+                        if (GridManager.Instance.OptiGrid.Cells[x][y].isPoint)
+                            return "o";
+                        else
+                            return "0";
                     case CellColor.NOT_A_CELL:
                         return "X";
                 }

@@ -235,6 +235,8 @@ public class GridManager : PunBehaviour
         move.toX = secondCell.y;
         move.toY = secondCell.x;
         move.color = (CellColor)ball.Color;
+        move.isPoint = ball.Score > 0 ? true : false;
+
         Debug.Log("move set");
         GridManager.Instance.OptiGrid.DoMove(move);
         Debug.Log("opti move done");
@@ -256,19 +258,22 @@ public class GridManager : PunBehaviour
         return ball;
     }
 
-    public Ball PlaceBall(BallColor color, Cell cell)
+    public Ball PlaceBall(BallColor color, bool isPoint, Cell cell)
     {
         Ball ball;
+        int score = (isPoint == true) ? 1 : 0;
 
         if (color == BallColor.Black)
         {
-            ball = blackBalls.First();
-            blackBalls.RemoveAt(0);
+            int index = blackBalls.FindIndex(x => x.Score == score);
+            ball = blackBalls[index];
+            blackBalls.RemoveAt(index);
         }
         else
         {
-            ball = whiteBalls.First();
-            whiteBalls.RemoveAt(0);
+            int index = whiteBalls.FindIndex(x => x.Score == score);
+            ball = whiteBalls[index];
+            whiteBalls.RemoveAt(index);
         }
 
         ball.DOPlace(cell);
@@ -323,12 +328,10 @@ public class GridManager : PunBehaviour
                 return;
             }
         }
-
-        if (PlayerManager.Instance.GetPlayer(BallColor.Black).ballCount == 0 && isPlayingTutorial)
+        
+        if (PlayerManager.Instance.GetPlayer(BallColor.Black).NbOfTurn == 10 && PlayerManager.Instance.GetPlayer(BallColor.White).NbOfTurn == 10 && isPlayingTutorial)
         {
-            isPlayingTutorial = false;
-            DOVirtual.DelayedCall(1.5f, UIManager.Instance.DisplayTutorialPhase2Movement);
-            Debug.Log("player2 display tutorial");
+            OnPhase2Begin();
             return;
         }
 
@@ -337,6 +340,13 @@ public class GridManager : PunBehaviour
             Debug.Log("player end turn");
             NextTurn();
         }
+    }
+
+    private void OnPhase2Begin()
+    {
+        optiGrid.UpdateOptimizedGridPoints(modelGrid);
+        DOVirtual.DelayedCall(1.5f, UIManager.Instance.DisplayTutorialPhase2Movement);
+        Debug.Log("player2 display tutorial");
     }
 
     public void EndGame(bool justWon)

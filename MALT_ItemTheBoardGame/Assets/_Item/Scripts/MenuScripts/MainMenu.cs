@@ -77,7 +77,7 @@ public class MainMenu : UIPanel
 
     public void ShowAIs()
     {
-        menuButtons.SetActive(false);
+        menuButtons.SetActive(true);
         loginButtons.SetActive(false);
         aiChoiceButtons.SetActive(true);
 
