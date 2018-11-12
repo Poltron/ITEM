@@ -98,6 +98,7 @@ public class GameManager : PunBehaviour
             if (gameState != GameState.Gameplay)
                 return;
 
+
             // start with tutorial or not
             if (Options.GetAskForTuto() && GameMode != GameMode.Remote)
             {
@@ -105,6 +106,7 @@ public class GameManager : PunBehaviour
             }
             else
             {
+                UIManager.Instance.backToMainMenuButton.enabled = true;
                 GridManager.Instance.StartTurns();
             }
         });

@@ -8,6 +8,8 @@ public class AIPlayer : Player
     private AIProfile aiProfile;
     public AIProfile AIProfile { get { return aiProfile; } }
 
+    public Coroutine activeCoroutine;
+
     public AIPlayer(AIProfile _aiProfile, BallColor color)
         : base (color)
     {
@@ -27,6 +29,9 @@ public class AIPlayer : Player
 
     public override void EndTurn()
     {
+        if (activeCoroutine != null)
+            CoroutineRunner.Stop(activeCoroutine);
+
         base.EndTurn();
     }
 
@@ -38,16 +43,22 @@ public class AIPlayer : Player
                                                             PlayerManager.Instance.GetPlayer(GridManager.Instance.ActualTurn).totalScore,
                                                             PlayerManager.Instance.GetPlayer(GridManager.Instance.NotActualTurn).Color,
                                                             PlayerManager.Instance.GetPlayer(GridManager.Instance.NotActualTurn).totalScore);
+        Debug.Log(
+        PlayerManager.Instance.GetPlayer(GridManager.Instance.ActualTurn).Color + " : " + 
+                                                            PlayerManager.Instance.GetPlayer(GridManager.Instance.ActualTurn).totalScore + " /// " +
+                                                            PlayerManager.Instance.GetPlayer(GridManager.Instance.NotActualTurn).Color + " : " + 
+                                                            PlayerManager.Instance.GetPlayer(GridManager.Instance.NotActualTurn).totalScore
+                                                            );
         
         if (PlayerManager.Instance.randomAI)
-            CoroutineRunner.Start(PlayerManager.Instance.AIBehaviour.GetRandomMove(GridManager.Instance.OptiGrid, PlayIAPhase1CalculusEnded));
+            activeCoroutine = CoroutineRunner.Start(PlayerManager.Instance.AIBehaviour.GetRandomMove(GridManager.Instance.OptiGrid, PlayIAPhase1CalculusEnded));
         else
-            CoroutineRunner.Start(PlayerManager.Instance.AIBehaviour.GetBestMove(GridManager.Instance.OptiGrid, PlayIAPhase1CalculusEnded));
+            activeCoroutine = CoroutineRunner.Start(PlayerManager.Instance.AIBehaviour.GetBestMove(GridManager.Instance.OptiGrid, PlayIAPhase1CalculusEnded));
     }
 
     public void PlayIAPhase1CalculusEnded(Move move)
     {
-        CoroutineRunner.Start(waitFor(3f - PlayerManager.Instance.AIBehaviour.timeSpent, move, PlayAIMovePhase1));
+        activeCoroutine = CoroutineRunner.Start(waitFor(3f - PlayerManager.Instance.AIBehaviour.timeSpent, move, PlayAIMovePhase1));
     }
 
     public void PlayAIMovePhase1(Move move)
@@ -73,14 +84,14 @@ public class AIPlayer : Player
                                                             PlayerManager.Instance.GetPlayer(GridManager.Instance.NotActualTurn).totalScore);
 
         if (PlayerManager.Instance.randomAI)
-            CoroutineRunner.Start(PlayerManager.Instance.AIBehaviour.GetRandomMove(GridManager.Instance.OptiGrid, PlayIAPhase2CalculusEnded));
+            activeCoroutine = CoroutineRunner.Start(PlayerManager.Instance.AIBehaviour.GetRandomMove(GridManager.Instance.OptiGrid, PlayIAPhase2CalculusEnded));
         else
-            CoroutineRunner.Start(PlayerManager.Instance.AIBehaviour.GetBestMove(GridManager.Instance.OptiGrid, PlayIAPhase2CalculusEnded));
+            activeCoroutine = CoroutineRunner.Start(PlayerManager.Instance.AIBehaviour.GetBestMove(GridManager.Instance.OptiGrid, PlayIAPhase2CalculusEnded));
     }
 
     public void PlayIAPhase2CalculusEnded(Move move)
     {
-        CoroutineRunner.Start(waitFor(3f - PlayerManager.Instance.AIBehaviour.timeSpent, move, PlayAIMovePhase2));
+        activeCoroutine = CoroutineRunner.Start(waitFor(3f - PlayerManager.Instance.AIBehaviour.timeSpent, move, PlayAIMovePhase2));
     }
 
     public void PlayAIMovePhase2(Move move)

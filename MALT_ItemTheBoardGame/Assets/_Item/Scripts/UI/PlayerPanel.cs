@@ -199,17 +199,12 @@ using UnityEngine.UI;
             //portraitLightAnimator.SetTrigger("PopIn");
 
             portraitTurnAnimator.gameObject.SetActive(true);
-            portraitTurnAnimator.SetTrigger("PopIn");
-        }
+            portraitTurnAnimator.SetBool("bPopIn", true);
+    }
 
         public void StopPortraitAnimation()
         {
-            if (portraitTurnAnimator.gameObject.activeInHierarchy)
-            {
-                AnimatorStateInfo stateInfo = portraitTurnAnimator.GetCurrentAnimatorStateInfo(0);
-                if (!stateInfo.IsName("Base.Empty"))
-                    portraitTurnAnimator.SetTrigger("PopOut");
-            }
+            portraitTurnAnimator.SetBool("bPopIn", false);
         }
 
         public void PopIn(bool showed)

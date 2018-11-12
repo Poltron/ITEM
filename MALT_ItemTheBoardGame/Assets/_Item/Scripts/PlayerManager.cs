@@ -50,6 +50,12 @@ public class PlayerManager : MonoBehaviour
         aiBehaviour = new AIBehaviour(aiEvaluationData);
     }
 
+    public void DeletePlayers()
+    {
+        players[0] = null;
+        players[1] = null;
+    }
+
     public void CreateLocalPlayer(BallColor color, PlayerID id)
     {
         LocalPlayer player = new LocalPlayer(color);
@@ -130,13 +136,5 @@ public class PlayerManager : MonoBehaviour
         {
             return Player2;
         }
-    }
-
-    public void SwitchPlayers()
-    {
-        // switch players
-        Player player1 = players[0];
-        players[0] = players[1];
-        players[1] = player1;
     }
 }

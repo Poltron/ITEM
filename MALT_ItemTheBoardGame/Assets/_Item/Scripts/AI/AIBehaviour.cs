@@ -71,8 +71,6 @@ public class AIBehaviour
         aiScore = _aiScore;
         opponentColor = _playerColor;
         opponentScore = _playerScore;
-
-        Debug.Log(aiColor + " : " + aiScore + " __ " + opponentColor + " : " + opponentScore);
     }
 
     public IEnumerator GetRandomMove(OptimizedGrid optiGrid, System.Action<Move> toDo)

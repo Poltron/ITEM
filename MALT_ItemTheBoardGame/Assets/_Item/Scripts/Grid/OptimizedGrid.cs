@@ -285,9 +285,9 @@ public class OptimizedGrid
         if (move.IsNewBall())
         {
             cells[move.toX][move.toY].color = move.color;
-            // we do not consider points on new ball
-            
-            move.isPoint = SubBall(move.color).isPoint;
+            cells[move.toX][move.toY].isPoint = move.isPoint;
+
+            SubBall(move.color);
         }
         else // if it wasn't, remove it from its original cell
         {
@@ -699,7 +699,7 @@ public class OptimizedGrid
             ballsLeft = blackBallsLeft.Count;
         else
             ballsLeft = whiteBallsLeft.Count;
-
+        
         if (ballsLeft == 0)
         {
             for (i = 0; i < Cells.Length; ++i)
@@ -768,6 +768,7 @@ public class OptimizedGrid
                         move.toX = i;
                         move.toY = j;
                         move.color = color;
+                        move.isPoint = ((ballsLeft % 2) == 0) ? false : true;
                         moves.Add(move);
                     }
                 }
@@ -805,15 +806,13 @@ public class OptimizedGrid
 
         if (color == CellColor.Black)
         {
-            int rdm = UnityEngine.Random.Range(0, blackBallsLeft.Count - 1);
-            ball = blackBallsLeft[rdm];
-            blackBallsLeft.RemoveAt(rdm);
+            ball = blackBallsLeft[0];
+            blackBallsLeft.RemoveAt(0);
         }
         else
         {
-            int rdm = UnityEngine.Random.Range(0, whiteBallsLeft.Count - 1);
-            ball = whiteBallsLeft[rdm];
-            whiteBallsLeft.RemoveAt(rdm);
+            ball = whiteBallsLeft[0];
+            whiteBallsLeft.RemoveAt(0);
         }
 
         return ball;

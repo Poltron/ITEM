@@ -108,8 +108,8 @@ public class LocalPlayer : Player
 
                 SendTurnDataPhase1(pickedCell);
 
-                EndTurn();
                 currentBall.HideHighlight();
+                EndTurn();
                 currentBall = null;
             }
             else

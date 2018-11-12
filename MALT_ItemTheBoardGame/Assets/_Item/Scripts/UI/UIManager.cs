@@ -45,6 +45,7 @@ public class UIManager : MonoBehaviour
     public HelpPanel helpPanel;
     public TutorialPanel tutoPanel;
     public InviteFriendPanel inviteFriendButton;
+    public Animator fbPanel;
     public RectTransform overlayPanel;
     public Animator quickMenu;
     public Button backToMainMenuButton;
@@ -90,6 +91,7 @@ public class UIManager : MonoBehaviour
             menuUI.PopIn();
         else
             menuUI.PopOut();
+
         //menuCanvas.gameObject.SetActive(showed);
     }
 
@@ -120,7 +122,7 @@ public class UIManager : MonoBehaviour
         {
             inviteFriendButton.gameObject.SetActive(false);
         }
-
+        backToMainMenuButton.enabled = false;
         LanguageChanged();
     }
 
@@ -219,11 +221,6 @@ public class UIManager : MonoBehaviour
         endGamePanel.DisplayWonByForfeit(isShown);
     }
 
-    public void DisplayInviteFriendButton(bool isShown)
-    {
-        inviteFriendButton.gameObject.SetActive(isShown);
-    }
-
     public void InitPlayer1(BallColor color)
     {
         player1.SetColor(color);
@@ -256,10 +253,20 @@ public class UIManager : MonoBehaviour
         player2.SetPic(sprite);
     }
 
+    public void DisplayInviteFriendButton(bool showed)
+    {
+        //fbPanel.SetBool("");
+        //inviteFriendButton.GetComponent<Animator>().SetBool("bPopIn", showed);
+        //fbConnectButton.GetComponent<Animator>().SetBool("bPopIn", !showed);
+    }
+
     public void StopPlayerTurns()
     {
         player1.StopPortraitAnimation();
+        PlayerManager.Instance.Player1.EndTurn();
+
         player2.StopPortraitAnimation();
+        PlayerManager.Instance.Player2.EndTurn();
     }
 
     public void SetPlayer1Turn()

@@ -71,7 +71,11 @@ abstract public class Player
             Debug.Log("currentBall is null");
         }
 
-        CallOnTurnFinished(movements, currentBall.ballId);
+        if (currentBall != null && movements.Count > 0)
+            CallOnTurnFinished(movements, currentBall.ballId);
+
+        currentBall = null;
+
         Debug.Log("after call on turn finished");
     }
 

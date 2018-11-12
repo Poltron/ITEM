@@ -709,9 +709,10 @@ namespace GS
 				// TEST
 				LoadPlayerName();
 				LoadPlayerPic(false);
-				//LoadInvitableFriends ();
-				//SceneManager.LoadScene (1);
-                //menu.ShowMenu();
+                //LoadInvitableFriends ();
+                //SceneManager.LoadScene (1);
+
+                UIManager.Instance.DisplayInviteFriendButton(true);
             }
 			else
 			{
@@ -747,14 +748,14 @@ namespace GS
 				LoadPlayerName();
 				LoadPlayerPic(false);
 				RequestFriendsData();
-				//LoadInvitableFriends ();
+                //LoadInvitableFriends ();
 
-				//				if (FacebookConnect != null)
-				//					FacebookConnect ();
+                //				if (FacebookConnect != null)
+                //					FacebookConnect ();
 
-				//SceneManager.LoadScene (1);
-                //menu.ShowMenu();
-                
+                //SceneManager.LoadScene (1);
+                UIManager.Instance.DisplayInviteFriendButton(true);
+
                 //				Invoke("LoadPlayerName",0.1f);
                 //				Invoke("LoadPlayerPic",1f);
             }

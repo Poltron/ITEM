@@ -75,16 +75,19 @@ public class MainMenu : UIPanel
     {
         leftMenuAnimator.SetBool("bPopIn", false);
         rightMenuAnimator.SetBool("bPopIn", false);
+        ShowAIs(false);
     }
 
-    public void ShowAIs()
+    public void ShowAIs(bool showed)
     {
-        menuButtons.SetActive(true);
-        aiChoiceButtons.SetActive(true);
+        aiChoiceButtons.SetActive(showed);
 
-        foreach(AIPanel aiPanel in aiPanels)
+        if (showed)
         {
-            aiPanel.Refresh();
+            foreach (AIPanel aiPanel in aiPanels)
+            {
+                aiPanel.Refresh();
+            }
         }
     }
 
@@ -103,6 +106,6 @@ public class MainMenu : UIPanel
     public void PlayVSAI()
     {
         Debug.Log("PlayVSAI");
-        ShowAIs();
+        ShowAIs(true);
     }
 }

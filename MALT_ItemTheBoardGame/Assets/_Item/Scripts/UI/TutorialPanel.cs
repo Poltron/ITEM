@@ -268,6 +268,7 @@ public class TutorialPanel : UIPanel
         {
             animator.SetTrigger("PopOut");
             GridManager.Instance.StartTurns();
+            UIManager.Instance.backToMainMenuButton.enabled = true;
         }
 
         PopAskForTuto(false);
@@ -363,6 +364,7 @@ public class TutorialPanel : UIPanel
         PopPhase1MoveScreen(false);
         animator.SetTrigger("PopOut");
         GridManager.Instance.StartTurns();
+        UIManager.Instance.backToMainMenuButton.enabled = true;
         //UIManager.Instance.Phase1Tuto_ShowBall();
     }
 

@@ -98,8 +98,8 @@ public class GridManager : PunBehaviour
 
     public void StartTurns()
     {
-        PlayerManager.Instance.GetPlayer(BallColor.White).StartTurn();
         actualTurn = BallColor.White;
+        PlayerManager.Instance.GetPlayer(BallColor.White).StartTurn();
 
         if (PlayerManager.Instance.Player1.Color == BallColor.White)
         {
@@ -137,7 +137,9 @@ public class GridManager : PunBehaviour
     public void ResetGame()
     {
         roundNumber = 1;
+        UIManager.Instance.StopPlayerTurns();
         CleanBoard();
+        PlayerManager.Instance.DeletePlayers();
     }
 
     public void CleanBoard()
@@ -147,24 +149,18 @@ public class GridManager : PunBehaviour
         optiGrid.Reset();
         modelGrid.Reset();
 
-        blackBalls.Clear();
-        whiteBalls.Clear();
-
-        Ball[] balls = FindObjectsOfType<Ball>();
-
         Ball.resetPlaySound = true;
 
+        Ball[] balls = FindObjectsOfType<Ball>();
         foreach (Ball b in balls)
         {
+            if (b.isPickedUp)
+                b.PutDownBall();
+
             b.Reset();
-
-            if (b.Color == BallColor.Black)
-                blackBalls.Add(b);
-            else
-                whiteBalls.Add(b);
-
-            b.MoveToResetPosition();
         }
+
+        ReplaceBalls();
 
         isEqualityTurn = false;
         AlreadySentLastTurnData = false;
@@ -173,8 +169,6 @@ public class GridManager : PunBehaviour
 
         PlayerManager.Instance.Player1.Reset();
         PlayerManager.Instance.Player2.Reset();
-
-        UIManager.Instance.StopPlayerTurns();
 
         UIManager.Instance.ResetGame();
     }
@@ -315,15 +309,13 @@ public class GridManager : PunBehaviour
 
         if (color == BallColor.Black)
         {
-            int index = blackBalls.FindIndex(x => x.Score == score);
+            int index = blackBalls.FindIndex(x => (x.Score == score) && (x.owner == null));
             ball = blackBalls[index];
-            blackBalls.RemoveAt(index);
         }
         else
         {
-            int index = whiteBalls.FindIndex(x => x.Score == score);
+            int index = whiteBalls.FindIndex(x => (x.Score == score) && (x.owner == null));
             ball = whiteBalls[index];
-            whiteBalls.RemoveAt(index);
         }
 
         ball.DOPlace(cell);
