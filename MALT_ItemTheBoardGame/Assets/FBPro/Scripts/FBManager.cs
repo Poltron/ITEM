@@ -717,11 +717,12 @@ namespace GS
 			else
 			{
 				loginBtnPanel.SetActive (true);
-				//SetFBItems (true);
-				//OnConnect ();
-				//FB.ActivateApp();
-				//FB.LogInWithReadPermissions(readPermission, LoginCallback);
-			}
+                UIManager.Instance.DisplayInviteFriendButton(false);
+                //SetFBItems (true);
+                //OnConnect ();
+                //FB.ActivateApp();
+                //FB.LogInWithReadPermissions(readPermission, LoginCallback);
+            }
 		}
 
 		public void OnConnect() {

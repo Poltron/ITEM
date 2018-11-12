@@ -255,7 +255,7 @@ public class UIManager : MonoBehaviour
 
     public void DisplayInviteFriendButton(bool showed)
     {
-        //fbPanel.SetBool("");
+        Debug.Log("call " + showed);
         //inviteFriendButton.GetComponent<Animator>().SetBool("bPopIn", showed);
         //fbConnectButton.GetComponent<Animator>().SetBool("bPopIn", !showed);
     }
