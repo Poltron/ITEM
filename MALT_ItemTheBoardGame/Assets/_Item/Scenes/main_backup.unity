@@ -13010,7 +13010,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -500.49988, y: 0}
+  m_AnchoredPosition: {x: -500.5, y: 0}
   m_SizeDelta: {x: 440, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &475679514
@@ -27812,7 +27812,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   menu: {fileID: 1791019256}
-  loginBtnPanel: {fileID: 2127470226}
+  loginBtnPanel: {fileID: 2133844871}
   allOtherBtnsPanel: {fileID: 874700372}
   stateSprites:
   - {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
@@ -48032,7 +48032,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 325.45996, y: 0}
+  m_AnchoredPosition: {x: 325.45993, y: 0}
   m_SizeDelta: {x: -650.91, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &1936944627
@@ -52481,8 +52481,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: OnConnect
+      - m_Target: {fileID: 1144164324}
+        m_MethodName: PopLoginFB
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

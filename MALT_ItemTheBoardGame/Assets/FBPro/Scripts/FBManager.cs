@@ -654,14 +654,17 @@ namespace GS
 		#region FB Init Login and Logout
 		public void InitFB()
 		{
+            Debug.Log("InitFB...");
+
 			if (!FB.IsInitialized)
 			{
+                Debug.Log("FB wasn't initialized, initializing");
 				FB.Init(InitCallback, onHideUnity);
 			}
 			else
 			{
 				FB.ActivateApp();
-				print("Initialized !");
+				print("Initialized FB !");
 				loginBtnPanel.SetActive(false);
 			}
 		}
@@ -681,10 +684,11 @@ namespace GS
 		}
 		// Method that will Get called After Facebook Initialization Method Call!
 		private void InitCallback()
-		{
-			if (FB.IsInitialized)
+        {
+            print("Init Callback...");
+            if (FB.IsInitialized)
 			{
-				loginBtnPanel.SetActive(false);
+				loginBtnPanel.SetActive(true);
 
 				LoginFB();
 				print("Initialized !");
@@ -692,12 +696,23 @@ namespace GS
 			else
 			{
 				print("Failed to Initialize the Facebook SDK!");
-				//InitFB();//Try Again!
 			}
 		}
 
+        public void PopLoginFB()
+        {
+            if (!FB.IsLoggedIn)
+            {
+                Debug.Log("FB wasn't logged in...");
+                loginBtnPanel.SetActive(true);
+                UIManager.Instance.DisplayInviteFriendButton(false);
+                OnConnect();
+            }
+        }
+
 		void LoginFB()
 		{
+            Debug.Log("Login FB....");
 			if (FB.IsLoggedIn)
 			{
 				PlayerPrefs.SetInt("FACEBOOK_LOGGED_ONCE", 1);
@@ -713,19 +728,21 @@ namespace GS
                 //SceneManager.LoadScene (1);
 
                 UIManager.Instance.DisplayInviteFriendButton(true);
-            }
+            }/*
 			else
-			{
-				loginBtnPanel.SetActive (true);
+            {
+                Debug.Log("FB wasn't logged in...");
+                loginBtnPanel.SetActive (true);
                 UIManager.Instance.DisplayInviteFriendButton(false);
+                OnConnect();
                 //SetFBItems (true);
-                //OnConnect ();
                 //FB.ActivateApp();
                 //FB.LogInWithReadPermissions(readPermission, LoginCallback);
-            }
+            }*/
 		}
 
 		public void OnConnect() {
+            Debug.Log("on connect");
 			FB.ActivateApp();
 			FB.LogInWithReadPermissions(readPermission, LoginCallback);
 		}
@@ -735,6 +752,7 @@ namespace GS
 		//Callback method of login
 		void LoginCallback(ILoginResult result)
 		{
+            Debug.Log("Login Callback..." + result.Error + " / " + result.RawResult);
 			if (FB.IsLoggedIn)
 			{
 				// AccessToken class will have session details
