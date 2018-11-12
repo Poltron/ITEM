@@ -19,20 +19,20 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 2
         time: 0
-        value: {x: -650, y: 0, z: 0}
+        value: {x: -773.7, y: 0, z: 0}
         inSlope: {x: 2905.472, y: 0, z: 0}
-        outSlope: {x: 1698.585, y: 0, z: 0}
+        outSlope: {x: 858.8009, y: 0, z: 0}
         tangentMode: 0
       - serializedVersion: 2
-        time: 0.35
-        value: {x: 36, y: 0, z: 0}
-        inSlope: {x: 2132.3406, y: 0, z: 0}
-        outSlope: {x: 0, y: 0, z: 0}
+        time: 0.33333334
+        value: {x: 107.7, y: 0, z: 0}
+        inSlope: {x: 1066.1703, y: 0, z: 0}
+        outSlope: {x: 1066.1703, y: 0, z: 0}
         tangentMode: 0
       - serializedVersion: 2
-        time: 0.41666666
-        value: {x: 12, y: 0, z: 0}
-        inSlope: {x: 0, y: 0, z: 0}
+        time: 0.5833333
+        value: {x: 0, y: 0, z: 0}
+        inSlope: {x: -1671.9545, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
       m_PreInfinity: 2
@@ -40,7 +40,17 @@ AnimationClip:
       m_RotationOrder: 4
     path: MainMenuBanner_DFA
   m_ScaleCurves: []
-  m_FloatCurves: []
+  m_FloatCurves:
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_AnchoredPosition.x
+    path: MainMenuBanner_DFA
+    classID: 224
+    script: {fileID: 0}
   m_PPtrCurves: []
   m_SampleRate: 60
   m_WrapMode: 0
@@ -62,7 +72,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.41666666
+    m_StopTime: 0.5833333
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -83,20 +93,20 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 2
         time: 0
-        value: -650
+        value: -773.7
         inSlope: 2905.472
-        outSlope: 1698.585
+        outSlope: 858.8009
         tangentMode: 1
       - serializedVersion: 2
-        time: 0.35
-        value: 36
-        inSlope: 2132.3406
-        outSlope: 0
-        tangentMode: 1
+        time: 0.33333334
+        value: 107.7
+        inSlope: 1066.1703
+        outSlope: 1066.1703
+        tangentMode: 0
       - serializedVersion: 2
-        time: 0.41666666
-        value: 12
-        inSlope: 0
+        time: 0.5833333
+        value: 0
+        inSlope: -1671.9545
         outSlope: 0
         tangentMode: 1
       m_PreInfinity: 2
@@ -116,13 +126,13 @@ AnimationClip:
         outSlope: 0
         tangentMode: 136
       - serializedVersion: 2
-        time: 0.35
+        time: 0.33333334
         value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 136
       - serializedVersion: 2
-        time: 0.41666666
+        time: 0.5833333
         value: 0
         inSlope: 0
         outSlope: 0
@@ -144,13 +154,13 @@ AnimationClip:
         outSlope: 0
         tangentMode: 136
       - serializedVersion: 2
-        time: 0.35
+        time: 0.33333334
         value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 136
       - serializedVersion: 2
-        time: 0.41666666
+        time: 0.5833333
         value: 0
         inSlope: 0
         outSlope: 0
@@ -161,6 +171,16 @@ AnimationClip:
     attribute: m_LocalPosition.z
     path: MainMenuBanner_DFA
     classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_AnchoredPosition.x
+    path: MainMenuBanner_DFA
+    classID: 224
     script: {fileID: 0}
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
