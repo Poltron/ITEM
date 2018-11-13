@@ -73,14 +73,12 @@ public class MainMenu : UIPanel
     {
         leftMenuAnimator.SetBool("bPopIn", true);
         rightMenuAnimator.SetBool("bPopIn", true);
-        fbPanelAnimator.SetBool("bPopIn", true);
     }
 
     public void PopOut()
     {
         leftMenuAnimator.SetBool("bPopIn", false);
         rightMenuAnimator.SetBool("bPopIn", false);
-        fbPanelAnimator.SetBool("bPopIn", false);
         ShowAIs(false);
     }
 

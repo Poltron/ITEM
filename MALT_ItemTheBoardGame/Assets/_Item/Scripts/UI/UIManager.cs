@@ -42,6 +42,7 @@ public class UIManager : MonoBehaviour
     public HelpPanel helpPanel;
     public TutorialPanel tutoPanel;
     public InviteFriendPanel inviteFriendButton;
+    public GameObject fbConnectButton;
     public Animator fbPanel;
     public RectTransform overlayPanel;
     public Animator quickMenu;
@@ -92,9 +93,15 @@ public class UIManager : MonoBehaviour
     public void ShowMenuCanvas(bool showed)
     {
         if (showed)
+        {
             menuUI.PopIn();
+        }
         else
+        {
             menuUI.PopOut();
+        }
+
+        DisplayInviteFriendButton(showed);
 
         //menuCanvas.gameObject.SetActive(showed);
     }
@@ -122,10 +129,6 @@ public class UIManager : MonoBehaviour
         turnSwitchPanel.HideAll();
         tutoPanel.HideAll();
 
-        if (!FB.IsLoggedIn)
-        {
-            inviteFriendButton.gameObject.SetActive(false);
-        }
         backToMainMenuButton.enabled = false;
         LanguageChanged();
     }
@@ -257,12 +260,16 @@ public class UIManager : MonoBehaviour
         player2.SetPic(sprite);
     }
 
+    public void DisplayConnectFBButton(bool showed)
+    {
+        fbPanel.SetBool("bPopIn", showed);
+        fbPanel.SetBool("bIsFBConnected", FB.IsLoggedIn);
+    }
+
     public void DisplayInviteFriendButton(bool showed)
     {
-        Debug.Log("call " + showed);
-        //fbPanel.SetBool("inviteFriend")
-        //inviteFriendButton.GetComponent<Animator>().SetBool("bPopIn", showed);
-        //fbConnectButton.GetComponent<Animator>().SetBool("bPopIn", !showed);
+        fbPanel.SetBool("bPopIn", showed);
+        fbPanel.SetBool("bIsFBConnected", FB.IsLoggedIn);
     }
 
     public void StopPlayerTurns()

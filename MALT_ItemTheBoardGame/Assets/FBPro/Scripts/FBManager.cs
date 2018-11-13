@@ -728,7 +728,12 @@ namespace GS
                 //SceneManager.LoadScene (1);
 
                 UIManager.Instance.DisplayInviteFriendButton(true);
-            }/*
+            }
+            else
+            {
+                UIManager.Instance.DisplayConnectFBButton(true);
+            }
+            /*
 			else
             {
                 Debug.Log("FB wasn't logged in...");
@@ -739,7 +744,7 @@ namespace GS
                 //FB.ActivateApp();
                 //FB.LogInWithReadPermissions(readPermission, LoginCallback);
             }*/
-		}
+        }
 
 		public void OnConnect() {
             Debug.Log("on connect");
