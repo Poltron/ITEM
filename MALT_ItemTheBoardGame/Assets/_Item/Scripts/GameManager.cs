@@ -94,10 +94,9 @@ public class GameManager : PunBehaviour
         UIManager.Instance.Init();
         GridManager.Instance.ReplaceBalls();
 
-        DOVirtual.DelayedCall(GridManager.Instance.timeBeforeVictoryAnimation, () => {
+        DOVirtual.DelayedCall(UIManager.Instance.timeBeforeAskForTutoPop, () => {
             if (gameState != GameState.Gameplay)
                 return;
-
 
             // start with tutorial or not
             if (Options.GetAskForTuto() && GameMode != GameMode.Remote)

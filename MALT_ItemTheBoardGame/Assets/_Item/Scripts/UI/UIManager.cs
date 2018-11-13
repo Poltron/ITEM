@@ -27,9 +27,6 @@ public class UIManager : MonoBehaviour
     private GameObject boardContainer;
 
     [SerializeField]
-    private float timeBeforeNextTurn;
-
-    [SerializeField]
     private SpriteRenderer boardOverlay;
 
 	public PlayerPanel player1;
@@ -61,8 +58,15 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private GameObject scoreParticle;
 
+    [Header("Animation Timing")]
     [SerializeField]
     public float timeBeforeAskForTutoPop = 2f;
+    [SerializeField]
+    private float timeBeforePlayerPanelPopIn;
+    [SerializeField]
+    private float timeBeforeQuickMenuPopIn;
+    [SerializeField]
+    private float timeBeforeBoardPopIn;
 
     void Awake()
     {
@@ -97,10 +101,10 @@ public class UIManager : MonoBehaviour
 
     public void ShowGameplayCanvas(bool showed)
     {
-        player1.PopIn(showed);
-        player2.PopIn(showed);
-        quickMenu.SetBool("bPopIn", showed);
-        boardContainer.GetComponent<Animator>().SetBool("bPopIn", showed);
+        DOVirtual.DelayedCall(timeBeforePlayerPanelPopIn, () => { player1.PopIn(showed); });
+        DOVirtual.DelayedCall(timeBeforePlayerPanelPopIn, () => { player2.PopIn(showed); });
+        DOVirtual.DelayedCall(timeBeforeQuickMenuPopIn, () => { quickMenu.SetBool("bPopIn", showed); });
+        DOVirtual.DelayedCall(timeBeforeBoardPopIn, () => { boardContainer.GetComponent<Animator>().SetBool("bPopIn", showed); });
     }
 
     public void Init()
@@ -256,6 +260,7 @@ public class UIManager : MonoBehaviour
     public void DisplayInviteFriendButton(bool showed)
     {
         Debug.Log("call " + showed);
+        //fbPanel.SetBool("inviteFriend")
         //inviteFriendButton.GetComponent<Animator>().SetBool("bPopIn", showed);
         //fbConnectButton.GetComponent<Animator>().SetBool("bPopIn", !showed);
     }
