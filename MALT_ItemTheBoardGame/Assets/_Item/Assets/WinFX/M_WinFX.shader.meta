@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f95e3af6db2102c4db2ac989bb0aa185
+timeCreated: 1542552118
+licenseType: Free
+ShaderImporter:
+  defaultTextures:
+  - _TextureRay1: {fileID: 2800000, guid: 1c097ab1eb09aa64c879a6cb6874263f, type: 3}
+  - _TextureRay2: {fileID: 2800000, guid: 1c097ab1eb09aa64c879a6cb6874263f, type: 3}
+  - _MaskRay: {fileID: 2800000, guid: 1c097ab1eb09aa64c879a6cb6874263f, type: 3}
+  - _TextureDot1: {fileID: 2800000, guid: 1c097ab1eb09aa64c879a6cb6874263f, type: 3}
+  - _TextureDot2: {fileID: 2800000, guid: 1c097ab1eb09aa64c879a6cb6874263f, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

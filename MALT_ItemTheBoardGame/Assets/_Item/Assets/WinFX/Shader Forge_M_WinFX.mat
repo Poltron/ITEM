@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Shader Forge_M_WinFX
+  m_Shader: {fileID: 4800000, guid: f95e3af6db2102c4db2ac989bb0aa185, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_CustomRenderQueue: 0
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MaskRay:
+        m_Texture: {fileID: 2800000, guid: 1c097ab1eb09aa64c879a6cb6874263f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TextureDot1:
+        m_Texture: {fileID: 2800000, guid: 1c097ab1eb09aa64c879a6cb6874263f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TextureDot2:
+        m_Texture: {fileID: 2800000, guid: 1c097ab1eb09aa64c879a6cb6874263f, type: 3}
+        m_Scale: {x: 1.2, y: 1.2}
+        m_Offset: {x: 0, y: 0}
+    - _TextureRay:
+        m_Texture: {fileID: 2800000, guid: 1c097ab1eb09aa64c879a6cb6874263f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TextureRay1:
+        m_Texture: {fileID: 2800000, guid: 1c097ab1eb09aa64c879a6cb6874263f, type: 3}
+        m_Scale: {x: 0.5, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TextureRay2:
+        m_Texture: {fileID: 2800000, guid: 1c097ab1eb09aa64c879a6cb6874263f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _node_3674:
+        m_Texture: {fileID: 2800000, guid: 1c097ab1eb09aa64c879a6cb6874263f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - PixelSnap: 0
+    - _Cutoff: 0.5
+    - _PowerDot1: 3
+    - _PowerDot2: 5
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilOpFail: 0
+    - _StencilOpZFail: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    m_Colors:
+    - _Color: {r: 0.0034061454, g: 0.4061531, b: 0.46323532, a: 1}
+    - _Color1: {r: 0.310878, g: 0.8455882, b: 0.8013363, a: 1}
+    - _Color2: {r: 0.7352941, g: 0.43565804, b: 0.20544985, a: 1}
+    - _ColorDot1: {r: 1, g: 0.2275862, b: 0, a: 1}
+    - _ColorDot2: {r: 1, g: 0, b: 0, a: 1}
+    - _node_3081: {r: 0.20588237, g: 0.96713984, b: 1, a: 1}

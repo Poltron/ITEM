@@ -81,8 +81,8 @@ Shader "Shader Forge/M_background" {
 ////// Lighting:
 ////// Emissive:
                 float node_9024 = 1.0;
-                float4 node_1815 = _Time;
-                float2 node_7704 = (i.uv0+node_1815.g*float2(0,-0.1));
+                float4 node_782 = _Time;
+                float2 node_7704 = (i.uv0+node_782.g*float2(0,-0.1));
                 float4 _Panner_var = tex2D(_Panner,TRANSFORM_TEX(node_7704, _Panner));
                 float4 _Lines_var = tex2D(_Lines,TRANSFORM_TEX(i.uv0, _Lines));
                 float3 emissive = (lerp(_BGcolor.rgb,float3(node_9024,node_9024,node_9024),((lerp(0.0,_Panner_var.r,_Lines_var.g)*_LineIntensity)*_ColorLines.rgb))+(_Lines_var.b*_Colorglow.rgb));
