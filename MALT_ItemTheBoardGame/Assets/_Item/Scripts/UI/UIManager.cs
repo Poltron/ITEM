@@ -208,19 +208,34 @@ public class UIManager : MonoBehaviour
     }
 
     public void DisplayYouWon(bool isShown, int yourPoints, int theirPoints) {
-        endGamePanel.DisplayWonScreen(isShown);
-        endGamePanel.SetScore(yourPoints, theirPoints);
+        //endGamePanel.DisplayWonScreen(isShown);
+        //endGamePanel.SetScore(yourPoints, theirPoints);
+        player1.SetWinText();
+        player1.GetComponent<Animator>().SetTrigger("Won");
+
+        player2.SetLooseText();
+        player2.GetComponent<Animator>().SetTrigger("Loose");
     }
 
     public void DisplayYouLost(bool isShown, int yourPoints, int theirPoints) {
-        endGamePanel.DisplayLooseScreen(isShown);
-        endGamePanel.SetScore(yourPoints, theirPoints);
+        //endGamePanel.DisplayLooseScreen(isShown);
+        //endGamePanel.SetScore(yourPoints, theirPoints);
+        player1.SetWinText();
+        player1.GetComponent<Animator>().SetTrigger("Loose");
+
+        player2.SetLooseText();
+        player2.GetComponent<Animator>().SetTrigger("Won");
     }
 
     public void DisplayDraw(bool isShown, int yourPoints, int theirPoints)
     {
-        endGamePanel.DisplayDrawScreen(isShown);
-        endGamePanel.SetScore(yourPoints, theirPoints);
+        //endGamePanel.DisplayDrawScreen(isShown);
+        //endGamePanel.SetScore(yourPoints, theirPoints);
+        player1.SetDrawText();
+        player1.GetComponent<Animator>().SetTrigger("Loose");
+
+        player2.SetDrawText();
+        player2.GetComponent<Animator>().SetTrigger("Loose");
     }
 
     public void DisplayForfeit(bool isShown)

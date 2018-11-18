@@ -79,6 +79,9 @@ using UnityEngine.UI;
         [SerializeField]
         private Animator scoreCounterAnimator;
 
+        [SerializeField]
+        private TextMeshProUGUI winDefeatText;
+
         private AudioManager audioManager;
 
         void Awake ()
@@ -231,4 +234,28 @@ using UnityEngine.UI;
 
             audioManager.PlayAudio(SoundID.PortraitRoll);
         }
-	}
+
+        public void SetWinText()
+        {
+            if (Options.IsLanguageEn())
+                winDefeatText.text = "Victory";
+            else
+                winDefeatText.text = "Victoire";
+        }
+
+        public void SetLooseText()
+        {
+            if (Options.IsLanguageEn())
+                winDefeatText.text = "Defeat";
+            else
+                winDefeatText.text = "Défaite";
+        }
+
+        public void SetDrawText()
+        {
+            if (Options.IsLanguageEn())
+                winDefeatText.text = "Draw";
+            else
+                winDefeatText.text = "Egalité";
+        }
+}
