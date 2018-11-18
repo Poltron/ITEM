@@ -48,6 +48,7 @@ Material:
     m_Floats:
     - PixelSnap: 0
     - _Cutoff: 0.5
+    - _OverallOpacity: 0.99529284
     - _PowerDot1: 3
     - _PowerDot2: 5
     - _Stencil: 0
@@ -57,6 +58,7 @@ Material:
     - _StencilOpZFail: 0
     - _StencilReadMask: 255
     - _StencilWriteMask: 255
+    - _node_3269: 0
     m_Colors:
     - _Color: {r: 0.0034061454, g: 0.4061531, b: 0.46323532, a: 1}
     - _Color1: {r: 0.310878, g: 0.8455882, b: 0.8013363, a: 1}

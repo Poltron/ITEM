@@ -106,6 +106,12 @@ public class EndGamePanel : UIPanel
         points.gameObject.SetActive(false);
     }
 
+    public void Display(bool isshown)
+    {
+        gameObject.SetActive(isshown);
+        playAgain.gameObject.SetActive(isshown);
+    }
+
     public void DisplayWonScreen(bool isShown)
     {
         gameObject.SetActive(isShown);

@@ -57,6 +57,9 @@ public class UIManager : MonoBehaviour
     public Cell Phase1Tuto_CellToMoveTo;
 
     [SerializeField]
+    private Material toAnimate;
+
+    [SerializeField]
     private GameObject scoreParticle;
 
     [Header("Animation Timing")]
@@ -68,6 +71,11 @@ public class UIManager : MonoBehaviour
     private float timeBeforeQuickMenuPopIn;
     [SerializeField]
     private float timeBeforeBoardPopIn;
+
+    [SerializeField]
+    private float godrayTimeBeforeAnimation;
+    [SerializeField]
+    private float godrayAnimationTime;
 
     void Awake()
     {
@@ -207,30 +215,39 @@ public class UIManager : MonoBehaviour
         roundResultPanel.SetRoundNumber(roundNumber);
     }
 
-    public void DisplayYouWon(bool isShown, int yourPoints, int theirPoints) {
-        //endGamePanel.DisplayWonScreen(isShown);
-        //endGamePanel.SetScore(yourPoints, theirPoints);
+    IEnumerator PlayGodrayAnimation()
+    {
+        toAnimate.SetFloat("_OverallOpacity", 0);
+        yield return new WaitForSeconds(godrayTimeBeforeAnimation);
+
+        for (float i = 0; i < godrayAnimationTime; i += Time.deltaTime)
+        {
+            Debug.Log(toAnimate.GetFloat("_OverallOpacity"));
+            toAnimate.SetFloat("_OverallOpacity", i);
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
+    public void DisplayYouWon() {
         player1.SetWinText();
-        player1.GetComponent<Animator>().SetTrigger("Won");
+        player1.GetComponent<Animator>().SetTrigger("Win");
+        StartCoroutine(PlayGodrayAnimation());
 
         player2.SetLooseText();
         player2.GetComponent<Animator>().SetTrigger("Loose");
     }
 
-    public void DisplayYouLost(bool isShown, int yourPoints, int theirPoints) {
-        //endGamePanel.DisplayLooseScreen(isShown);
-        //endGamePanel.SetScore(yourPoints, theirPoints);
-        player1.SetWinText();
+    public void DisplayYouLost() {
+        player1.SetLooseText();
         player1.GetComponent<Animator>().SetTrigger("Loose");
 
-        player2.SetLooseText();
-        player2.GetComponent<Animator>().SetTrigger("Won");
+        player2.SetWinText();
+        player2.GetComponent<Animator>().SetTrigger("Win");
+        StartCoroutine(PlayGodrayAnimation());
     }
 
-    public void DisplayDraw(bool isShown, int yourPoints, int theirPoints)
+    public void DisplayDraw()
     {
-        //endGamePanel.DisplayDrawScreen(isShown);
-        //endGamePanel.SetScore(yourPoints, theirPoints);
         player1.SetDrawText();
         player1.GetComponent<Animator>().SetTrigger("Loose");
 
@@ -404,6 +421,7 @@ public class UIManager : MonoBehaviour
     public void OnEndGameButton()
     {
         AudioManager.Instance.PlayAudio(SoundID.ClickUI);
+        endGamePanel.Display(false);
 
         if (EndGame != null)
             EndGame();
@@ -474,8 +492,16 @@ public class UIManager : MonoBehaviour
 
         int isWon = EvaluateWin(PlayerManager.Instance.Player1.totalScore, PlayerManager.Instance.Player2.totalScore);
 
-        endGamePanel.DisplayResult(isWon);
-        endGamePanel.SetScore(PlayerManager.Instance.Player1.totalScore, PlayerManager.Instance.Player2.totalScore);
+        if (isWon == 1)
+            DisplayYouWon();
+        else if (isWon == 0)
+            DisplayDraw();
+        else
+            DisplayYouLost();
+        
+        endGamePanel.Display(true);
+        //endGamePanel.SetScore(PlayerManager.Instance.Player1.totalScore, PlayerManager.Instance.Player2.totalScore);
+
         roundResultPanel.HideAll();
     }
 
