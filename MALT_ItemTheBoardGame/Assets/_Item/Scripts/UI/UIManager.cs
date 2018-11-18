@@ -169,7 +169,7 @@ public class UIManager : MonoBehaviour
 
     public void DisplayWaitingForPlayerPanel(bool isShown)
     {
-        waitingForPlayerPanel.gameObject.SetActive(isShown);
+        waitingForPlayerPanel.GetComponent<Animator>().SetBool("bPopIn", isShown);
     }
 	
 	public void DisplayPlayer1(bool isShown)

@@ -84,7 +84,7 @@ public class EndGamePanel : UIPanel
         youLostText.text = youLostTextEN;
         drawText.text = drawTextEN;
         byForfeitText.text = byForfeitTextEN;
-        playAgainText.text = playAgainTextEN;
+        //playAgainText.text = playAgainTextEN;
     }
 
     protected override void SetLanguageFR()
@@ -93,7 +93,7 @@ public class EndGamePanel : UIPanel
         youLostText.text = youLostTextFR;
         drawText.text = drawTextFR;
         byForfeitText.text = byForfeitTextFR;
-        playAgainText.text = playAgainTextFR;
+        //playAgainText.text = playAgainTextFR;
     }
 
     public void HideAll()

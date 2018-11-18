@@ -47,7 +47,7 @@ public class MainMenu : UIPanel
     [SerializeField]
     private GameObject loginButtons;
     [SerializeField]
-    private GameObject aiChoiceButtons;
+    private Animator aiChoiceButtons;
     [SerializeField]
     private GameObject waitingForPlayerPanel;
     [SerializeField]
@@ -79,12 +79,13 @@ public class MainMenu : UIPanel
     {
         leftMenuAnimator.SetBool("bPopIn", false);
         rightMenuAnimator.SetBool("bPopIn", false);
-        ShowAIs(false);
+        aiChoiceButtons.SetBool("bPopIn", false);
+        UIManager.Instance.DisplayWaitingForPlayerPanel(false);
     }
 
     public void ShowAIs(bool showed)
     {
-        aiChoiceButtons.SetActive(showed);
+        aiChoiceButtons.SetBool("bPopIn", showed);
 
         if (showed)
         {
@@ -104,12 +105,17 @@ public class MainMenu : UIPanel
     public void PlayRemoteDuel()
     {
         Debug.Log("PlayRemoteDuel");
+        ShowAIs(false);
         GameManager.Instance.StartLookingForOpponent();
     }
 
     public void PlayVSAI()
     {
         Debug.Log("PlayVSAI");
+
+        if (GameManager.Instance.GameState == GameState.LookingForPlayer)
+            GameManager.Instance.StopLookingForOpponent();
+
         ShowAIs(true);
     }
 }

@@ -665,7 +665,6 @@ namespace GS
 			{
 				FB.ActivateApp();
 				print("Initialized FB !");
-				loginBtnPanel.SetActive(false);
 			}
 		}
 		// Perform Unity Tasks When App is Connecting To Facebook 
@@ -688,8 +687,6 @@ namespace GS
             print("Init Callback...");
             if (FB.IsInitialized)
 			{
-				loginBtnPanel.SetActive(true);
-
 				LoginFB();
 				print("Initialized !");
 			}
@@ -705,7 +702,6 @@ namespace GS
             {
                 Debug.Log("FB wasn't logged in...");
                 loginBtnPanel.SetActive(true);
-                UIManager.Instance.DisplayInviteFriendButton(false);
                 OnConnect();
             }
         }

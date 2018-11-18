@@ -336,7 +336,10 @@ public class GameManager : PunBehaviour
     {
         connection.enabled = false;
 
-        PhotonNetwork.LeaveRoom();
-        PhotonNetwork.Disconnect();
+        if (PhotonNetwork.room != null)
+            PhotonNetwork.LeaveRoom();
+
+        if (PhotonNetwork.connected)
+            PhotonNetwork.Disconnect();
     }
 }

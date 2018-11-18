@@ -50,14 +50,14 @@ using TMPro;
         protected override void SetLanguageEN()
         {
             roundText.text = roundLabelEN;
-            nextRoundText.text = nextRoundLabelEN;
+            //nextRoundText.text = nextRoundLabelEN;
             gameResultsText.text = gameResultsLabelEN;
         }
 
         protected override void SetLanguageFR()
         {
             roundText.text = roundLabelFR;
-            nextRoundText.text = nextRoundLabelFR;
+            //nextRoundText.text = nextRoundLabelFR;
             gameResultsText.text = gameResultsLabelFR;
         }
 
