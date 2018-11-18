@@ -402,16 +402,32 @@ public class GridManager : PunBehaviour
 
     private void DisplayRoundResult()
     {
-        UIManager.Instance.DisplayRoundResultPanel(true, roundNumber, PlayerManager.Instance.Player1.roundScore, PlayerManager.Instance.Player2.roundScore);
-
         if (roundNumber == numberOfRound)
         {
+            if (PlayerManager.Instance.Player1.roundScore > PlayerManager.Instance.Player2.roundScore)
+            {
+                AudioManager.Instance.PlayJingleAboveMusic(SoundID.JingleWin);
+            }
+            else if (PlayerManager.Instance.Player2.roundScore > PlayerManager.Instance.Player1.roundScore)
+            {
+                AudioManager.Instance.PlayJingleAboveMusic(SoundID.JingleLoose);
+            }
+            else
+            {
+                AudioManager.Instance.PlayJingleAboveMusic(SoundID.JingleDraw);
+            }
+
+            UIManager.Instance.StopPortraitAnimation();
+            UIManager.Instance.DisplayEndGame();
             GameManager.Instance.GameEnded();
-            UIManager.Instance.roundResultPanel.ActivateGameResultsButton(true);
+            DOVirtual.DelayedCall(2.0f, () => { UIManager.Instance.endGamePanel.Display(true); });
         }
         else
         {
-            UIManager.Instance.roundResultPanel.ActivateNextRoundButton(true);
+            UIManager.Instance.player1.StopPortraitAnimation();
+            UIManager.Instance.player2.StopPortraitAnimation();
+
+            UIManager.Instance.roundResultPanel.Display(true);
         }
     }
 

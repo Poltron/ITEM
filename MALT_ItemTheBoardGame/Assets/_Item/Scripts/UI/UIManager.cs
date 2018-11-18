@@ -95,7 +95,8 @@ public class UIManager : MonoBehaviour
 
     public void ResetGame()
     {
-        endGamePanel.HideAll();
+        endGamePanel.Display(false);
+        roundResultPanel.Display(false);
     }
 
     public void ShowMenuCanvas(bool showed)
@@ -132,8 +133,6 @@ public class UIManager : MonoBehaviour
 
         optionsPanel.OnLanguageChange += LanguageChanged;
 
-        endGamePanel.HideAll();
-        roundResultPanel.HideAll();
         turnSwitchPanel.HideAll();
         tutoPanel.HideAll();
 
@@ -195,26 +194,6 @@ public class UIManager : MonoBehaviour
         backToMainMenuButton.enabled = isShown;
     }
 
-    public void DisplayRoundResultPanel(bool isShown, int roundNumber, int yourPoints, int theirPoints)
-    {
-        int isWon = 0;
-        if (yourPoints > theirPoints)
-        {
-            isWon = 1;
-        }
-        else if (theirPoints > yourPoints)
-        {
-            isWon = -1;
-        }
-        
-        player1.StopPortraitAnimation();
-        player2.StopPortraitAnimation();
-
-        roundResultPanel.DisplayRoundResult(isShown);
-        roundResultPanel.SetScore(yourPoints, theirPoints);
-        roundResultPanel.SetRoundNumber(roundNumber);
-    }
-
     IEnumerator PlayGodrayAnimation()
     {
         toAnimate.SetFloat("_OverallOpacity", 0);
@@ -257,7 +236,7 @@ public class UIManager : MonoBehaviour
 
     public void DisplayForfeit(bool isShown)
     {
-        endGamePanel.DisplayWonByForfeit(isShown);
+        //endGamePanel.DisplayWonByForfeit(isShown);
     }
 
     public void InitPlayer1(BallColor color)
@@ -302,6 +281,12 @@ public class UIManager : MonoBehaviour
     {
         fbPanel.SetBool("bPopIn", showed);
         fbPanel.SetBool("bIsFBConnected", FB.IsLoggedIn);
+    }
+
+    public void StopPortraitAnimation()
+    {
+        player1.StopPortraitAnimation();
+        player2.StopPortraitAnimation();
     }
 
     public void StopPlayerTurns()
@@ -389,18 +374,6 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    /*
-    public void DisplayYourTurn(bool isShown)
-    {
-        turnSwitchPanel.SetYourTurn(isShown);
-    }
-
-    public void DisplayOpponentTurn(bool isShown)
-    {
-        turnSwitchPanel.SetOpponentsTurn(isShown);
-    }
-    */
-
     public void ResetPlayerTurn()
     {
         player1.SetColor(Color.white);
@@ -414,7 +387,7 @@ public class UIManager : MonoBehaviour
         if (NextRound != null)
         {
             NextRound();
-            roundResultPanel.HideAll();
+            roundResultPanel.Display(false);
         }
     }
 
@@ -486,10 +459,8 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void OnGoToGameResults()
+    public void DisplayEndGame()
     {
-        AudioManager.Instance.PlayAudio(SoundID.ClickUI);
-
         int isWon = EvaluateWin(PlayerManager.Instance.Player1.totalScore, PlayerManager.Instance.Player2.totalScore);
 
         if (isWon == 1)
@@ -498,11 +469,6 @@ public class UIManager : MonoBehaviour
             DisplayDraw();
         else
             DisplayYouLost();
-        
-        endGamePanel.Display(true);
-        //endGamePanel.SetScore(PlayerManager.Instance.Player1.totalScore, PlayerManager.Instance.Player2.totalScore);
-
-        roundResultPanel.HideAll();
     }
 
     private void DisplayOverlay(bool isShown)
@@ -524,70 +490,4 @@ public class UIManager : MonoBehaviour
 
         return isWon;
     }
-
-    /*public void Phase1Tuto_ShowBall()
-    {
-        overlayPanel.gameObject.SetActive(true);
-        Phase1Tuto_BallToMove.PassAboveUI(true);
-
-        EasyTouch.SetEnableUIDetection(false);
-        PlayerManager.Instance.Player1.SetExclusivePickableObject(Phase1Tuto_BallToMove.gameObject);
-        PlayerManager.Instance.Player1.OnBallSelection += pickBallHack;
-
-        EasyTouch.On_TouchUp += PlayerManager.Instance.Player1.OnTouchUpPublic;
-        arrowFocus = Instantiate(arrowPrefab).transform;
-        arrowFocus.position = Phase1Tuto_BallToMove.transform.position + new Vector3(0, 0.5f, 0);
-    }
-
-    private void pickBallHack(Ball ball)
-    {
-        Phase1Tuto_BallSelected(Phase1Tuto_BallToMove);
-        PlayerManager.Instance.Player1.OnBallSelection -= pickBallHack;
-    }
-    
-    public void Phase1Tuto_BallSelected(Ball ball)
-    {
-        Phase1Tuto_CellToMoveTo.PassAboveUI(true);
-
-        PlayerManager.Instance.Player1.SetExclusivePickableObject(Phase1Tuto_CellToMoveTo.gameObject);
-        PlayerManager.Instance.Player1.OnCellSelection += pickCellHack;
-
-        arrowFocus.DOMove(Phase1Tuto_CellToMoveTo.transform.position + new Vector3(0, 1, 0), 1.0f);
-    }
-
-    private void pickCellHack(Cell cell)
-    {
-        Phase1Tuto_BackToNormal(Phase1Tuto_CellToMoveTo);
-        BackToNormal();
-        PlayerManager.Instance.Player1.OnCellSelection -= pickCellHack;
-
-        EasyTouch.On_TouchUp -= PlayerManager.Instance.Player1.OnTouchUpPublic;
-    }
-
-    private void BackToNormal()
-    {
-        Phase1Tuto_BallToMove.PassAboveUI(false);
-        Phase1Tuto_CellToMoveTo.PassAboveUI(false);
-    }
-
-    public void Phase1Tuto_BackToNormal(Cell cell)
-    {
-        // fade out overlay panel
-        Image overlayImg = overlayPanel.GetComponent<Image>();
-        Color overlayColor = overlayImg.color;
-        overlayColor.a = 0f;
-        overlayImg.DOColor(overlayColor, 1.0f).OnComplete(() => {
-            overlayPanel.gameObject.SetActive(false);
-        });
-        
-        // fade out arrow
-        SpriteRenderer spriteRenderer = arrowFocus.GetComponentInChildren<SpriteRenderer>();
-        Color newcol = spriteRenderer.color;
-        newcol.a = 0f;
-        spriteRenderer.DOColor(newcol, 1.0f).OnComplete(() => { arrowFocus.gameObject.SetActive(false); });
-
-        // setup input detection back to normal
-        PlayerManager.Instance.Player1.SetExclusivePickableObject(null);
-        EasyTouch.SetEnableUIDetection(true);
-    }*/
 }
