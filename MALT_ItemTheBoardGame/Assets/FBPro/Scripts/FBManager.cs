@@ -662,8 +662,9 @@ namespace GS
 				FB.Init(InitCallback, onHideUnity);
 			}
 			else
-			{
-				FB.ActivateApp();
+            {
+                Debug.Log("FB is initialized");
+                FB.ActivateApp();
 				print("Initialized FB !");
 			}
 		}
@@ -701,9 +702,13 @@ namespace GS
             if (!FB.IsLoggedIn)
             {
                 Debug.Log("FB wasn't logged in...");
-                loginBtnPanel.SetActive(true);
+                //loginBtnPanel.SetActive(true);
                 OnConnect();
                 AudioManager.Instance.PlayAudio(SoundID.ClickUI);
+            }
+            else
+            {
+                Debug.Log("Already Logged In");
             }
         }
 
