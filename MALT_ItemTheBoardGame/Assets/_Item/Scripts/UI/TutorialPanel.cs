@@ -169,6 +169,14 @@ public class TutorialPanel : UIPanel
     private Animator phase2MovementsScreen;
 
     private bool toClose;
+    private int animatorHashPopInWithoutB;
+    private int animatorHashPopOut;
+
+    private void Awake()
+    {
+        animatorHashPopInWithoutB = Animator.StringToHash("PopIn");
+        animatorHashPopOut = Animator.StringToHash("PopOut");
+    }
 
     public void HideAll()
     {
@@ -240,15 +248,15 @@ public class TutorialPanel : UIPanel
     {
         if (isShown)
         {
-            animator.SetTrigger("PopIn");
+            animator.SetTrigger(animatorHashPopInWithoutB);
             askForTuto.gameObject.SetActive(isShown);
-            askForTuto.SetTrigger("PopIn");
+            askForTuto.SetTrigger(animatorHashPopInWithoutB);
 
             AudioManager.Instance.PlayAudio(SoundID.OpenWindowTuto);
         }
         else
         {
-            askForTuto.SetTrigger("PopOut");
+            askForTuto.SetTrigger(animatorHashPopOut);
         }
     }
 
@@ -266,12 +274,13 @@ public class TutorialPanel : UIPanel
         }
         else
         {
-            animator.SetTrigger("PopOut");
+            animator.SetTrigger(animatorHashPopOut);
             GridManager.Instance.StartTurns();
             UIManager.Instance.backToMainMenuButton.enabled = true;
         }
 
         PopAskForTuto(false);
+        AudioManager.Instance.PlayAudio(SoundID.ClickUI);
         AudioManager.Instance.PlayAudio(SoundID.CloseWindowTuto);
     }
 
@@ -284,11 +293,11 @@ public class TutorialPanel : UIPanel
         if (isShown)
         {
             tutoScreen1.gameObject.SetActive(isShown);
-            tutoScreen1.SetTrigger("PopIn");
+            tutoScreen1.SetTrigger(animatorHashPopInWithoutB);
         }
         else
         {
-            tutoScreen1.SetTrigger("PopOut");
+            tutoScreen1.SetTrigger(animatorHashPopOut);
             AudioManager.Instance.PlayAudio(SoundID.CloseWindowTuto);
         }
     }
@@ -302,6 +311,7 @@ public class TutorialPanel : UIPanel
     {
         PopTutoScreen1(false);
         PopTutoScreen2(true);
+        AudioManager.Instance.PlayAudio(SoundID.ClickUI);
     }
 
     /*
@@ -313,11 +323,11 @@ public class TutorialPanel : UIPanel
         if (isShown)
         {
             tutoScreen2.gameObject.SetActive(isShown);
-            tutoScreen2.SetTrigger("PopIn");
+            tutoScreen2.SetTrigger(animatorHashPopInWithoutB);
         }
         else
         {
-            tutoScreen2.SetTrigger("PopOut");
+            tutoScreen2.SetTrigger(animatorHashPopOut);
             AudioManager.Instance.PlayAudio(SoundID.CloseWindowTuto);
         }
     }
@@ -334,6 +344,7 @@ public class TutorialPanel : UIPanel
     {
         PopTutoScreen2(false);
         PopPhase1MoveScreen(true);
+        AudioManager.Instance.PlayAudio(SoundID.ClickUI);
     }
 
     /*
@@ -345,11 +356,11 @@ public class TutorialPanel : UIPanel
         if (isShown)
         {
             phase1MovementsScreen.gameObject.SetActive(isShown);
-            phase1MovementsScreen.SetTrigger("PopIn");
+            phase1MovementsScreen.SetTrigger(animatorHashPopInWithoutB);
         }
         else
         {
-            phase1MovementsScreen.SetTrigger("PopOut");
+            phase1MovementsScreen.SetTrigger(animatorHashPopOut);
             AudioManager.Instance.PlayAudio(SoundID.CloseWindowTuto);
         }
     }
@@ -362,9 +373,10 @@ public class TutorialPanel : UIPanel
     public void OnPhase1MoveScreenNextButton()
     {
         PopPhase1MoveScreen(false);
-        animator.SetTrigger("PopOut");
+        animator.SetTrigger(animatorHashPopOut);
         GridManager.Instance.StartTurns();
         UIManager.Instance.backToMainMenuButton.enabled = true;
+        AudioManager.Instance.PlayAudio(SoundID.ClickUI);
         //UIManager.Instance.Phase1Tuto_ShowBall();
     }
 
@@ -377,16 +389,17 @@ public class TutorialPanel : UIPanel
         if (isShown)
         {
             animator.gameObject.SetActive(true);
-            animator.SetTrigger("PopIn");
+            animator.SetTrigger(animatorHashPopInWithoutB);
             phase2MovementsScreen.gameObject.SetActive(true);
-            phase2MovementsScreen.SetTrigger("PopIn");
+            phase2MovementsScreen.SetTrigger(animatorHashPopInWithoutB);
             AudioManager.Instance.PlayAudio(SoundID.OpenWindowTuto);
         }
         else
         {
-            phase2MovementsScreen.SetTrigger("PopOut");
+            phase2MovementsScreen.SetTrigger(animatorHashPopOut);
             AudioManager.Instance.PlayAudio(SoundID.CloseWindowTuto);
         }
+
     }
 
     public void DisablePhase2MoveScreen()
@@ -398,6 +411,7 @@ public class TutorialPanel : UIPanel
     {
         PopPhase2MoveScreen(false);
         GridManager.Instance.NextTurn();
-        animator.SetTrigger("PopOut");
+        animator.SetTrigger(animatorHashPopOut);
+        AudioManager.Instance.PlayAudio(SoundID.ClickUI);
     }
 }

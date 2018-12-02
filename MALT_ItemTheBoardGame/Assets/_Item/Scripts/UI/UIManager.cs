@@ -25,25 +25,33 @@ public class UIManager : MonoBehaviour
     private MainMenu menuUI;
     [SerializeField]
     private GameObject boardContainer;
+    [SerializeField]
+    private Animator boardContainerAnimator;
 
     [SerializeField]
     private SpriteRenderer boardOverlay;
+    [SerializeField]
+    private Animation boardOverlayAnimation;
 
 	public PlayerPanel player1;
+    [SerializeField]
+    private Animator player1Animator;
+
     public PlayerPanel player2;
+    [SerializeField]
+    private Animator player2Animator;
 
     public MainMenu mainMenuPanel;
     public WaitingForPlayerPanel waitingForPlayerPanel;
+    public Animator waitingForPlayerPanelAnimator;
     public RoundPanel roundResultPanel;
     public EndGamePanel endGamePanel;
-    public TurnSwitchPanel turnSwitchPanel;
+    public ForfeitPanel forfeitPanel;
     public BackToMainMenuPanel backToMainMenuPanel;
     public OptionsPanel optionsPanel;
     public HelpPanel helpPanel;
     public TutorialPanel tutoPanel;
-    public InviteFriendPanel inviteFriendButton;
-    public GameObject fbConnectButton;
-    public Animator fbPanel;
+    public FBPanel fbPanel;
     public RectTransform overlayPanel;
     public Animator quickMenu;
     public Button backToMainMenuButton;
@@ -77,8 +85,18 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private float godrayAnimationTime;
 
+    private int animatorHashPopIn;
+    private int animatorHashWin;
+    private int animatorHashLoose;
+    private int animatorHashPopIn2;
+
     void Awake()
     {
+        animatorHashPopIn = Animator.StringToHash("bPopIn");
+        animatorHashWin = Animator.StringToHash("Win");
+        animatorHashLoose = Animator.StringToHash("Loose");
+        animatorHashPopIn2 = Animator.StringToHash("PopIn");
+
         if (instance == null)
             instance = this;
         else
@@ -110,17 +128,15 @@ public class UIManager : MonoBehaviour
             menuUI.PopOut();
         }
 
-        DisplayInviteFriendButton(showed);
-
-        //menuCanvas.gameObject.SetActive(showed);
+        fbPanel.Show(showed);
     }
 
     public void ShowGameplayCanvas(bool showed)
     {
         DOVirtual.DelayedCall(timeBeforePlayerPanelPopIn, () => { player1.PopIn(showed); });
         DOVirtual.DelayedCall(timeBeforePlayerPanelPopIn, () => { player2.PopIn(showed); });
-        DOVirtual.DelayedCall(timeBeforeQuickMenuPopIn, () => { quickMenu.SetBool("bPopIn", showed); });
-        DOVirtual.DelayedCall(timeBeforeBoardPopIn, () => { boardContainer.GetComponent<Animator>().SetBool("bPopIn", showed); });
+        DOVirtual.DelayedCall(timeBeforeQuickMenuPopIn, () => { quickMenu.SetBool(animatorHashPopIn, showed); });
+        DOVirtual.DelayedCall(timeBeforeBoardPopIn, () => { boardContainerAnimator.SetBool(animatorHashPopIn, showed); });
     }
 
     public void Init()
@@ -133,7 +149,6 @@ public class UIManager : MonoBehaviour
 
         optionsPanel.OnLanguageChange += LanguageChanged;
 
-        turnSwitchPanel.HideAll();
         tutoPanel.HideAll();
 
         backToMainMenuButton.enabled = false;
@@ -143,13 +158,12 @@ public class UIManager : MonoBehaviour
     public void LanguageChanged()
     {
         string language = Options.GetLanguage();
+        fbPanel.SetLanguage(language);
         optionsPanel.SetLanguage(language);
         backToMainMenuPanel.SetLanguage(language);
-        inviteFriendButton.SetLanguage(language);
         waitingForPlayerPanel.SetLanguage(language);
         roundResultPanel.SetLanguage(language);
         endGamePanel.SetLanguage(language);
-        turnSwitchPanel.SetLanguage(language);
         helpPanel.SetLanguage(language);
         tutoPanel.SetLanguage(language);
         player1.SetLanguage(language);
@@ -164,19 +178,9 @@ public class UIManager : MonoBehaviour
         tutoPanel.PopAskForTuto(true);
     }
 
-    public void DisplayTurnSwitchPhase1(bool isShown)
-    {
-        turnSwitchPanel.SetPhase1(isShown);
-    }
-
-    public void DisplayTurnSwitchPhase2(bool isShown)
-    {
-        turnSwitchPanel.SetPhase2(isShown);
-    }
-
     public void DisplayWaitingForPlayerPanel(bool isShown)
     {
-        waitingForPlayerPanel.GetComponent<Animator>().SetBool("bPopIn", isShown);
+        waitingForPlayerPanelAnimator.SetBool(animatorHashPopIn, isShown);
     }
 	
 	public void DisplayPlayer1(bool isShown)
@@ -209,34 +213,34 @@ public class UIManager : MonoBehaviour
 
     public void DisplayYouWon() {
         player1.SetWinText();
-        player1.GetComponent<Animator>().SetTrigger("Win");
+        player1Animator.SetTrigger(animatorHashWin);
         StartCoroutine(PlayGodrayAnimation());
 
         player2.SetLooseText();
-        player2.GetComponent<Animator>().SetTrigger("Loose");
+        player2Animator.SetTrigger(animatorHashLoose);
     }
 
     public void DisplayYouLost() {
         player1.SetLooseText();
-        player1.GetComponent<Animator>().SetTrigger("Loose");
+        player1Animator.SetTrigger(animatorHashLoose);
 
         player2.SetWinText();
-        player2.GetComponent<Animator>().SetTrigger("Win");
+        player2Animator.SetTrigger(animatorHashWin);
         StartCoroutine(PlayGodrayAnimation());
     }
 
     public void DisplayDraw()
     {
         player1.SetDrawText();
-        player1.GetComponent<Animator>().SetTrigger("Loose");
+        player1Animator.SetTrigger(animatorHashLoose);
 
         player2.SetDrawText();
-        player2.GetComponent<Animator>().SetTrigger("Loose");
+        player2Animator.SetTrigger(animatorHashLoose);
     }
 
     public void DisplayForfeit(bool isShown)
     {
-        //endGamePanel.DisplayWonByForfeit(isShown);
+        forfeitPanel.Display(isShown);
     }
 
     public void InitPlayer1(BallColor color)
@@ -271,16 +275,19 @@ public class UIManager : MonoBehaviour
         player2.SetPic(sprite);
     }
 
+    public void DisplayFBPanel(bool showed)
+    {
+        fbPanel.Show(false);
+    }
+
     public void DisplayConnectFBButton(bool showed)
     {
-        fbPanel.SetBool("bPopIn", showed);
-        fbPanel.SetBool("bIsFBConnected", FB.IsLoggedIn);
+        fbPanel.ShowFBConnect(showed);
     }
 
     public void DisplayInviteFriendButton(bool showed)
     {
-        fbPanel.SetBool("bPopIn", showed);
-        fbPanel.SetBool("bIsFBConnected", FB.IsLoggedIn);
+        fbPanel.ShowInviteFriend(showed);
     }
 
     public void StopPortraitAnimation()
@@ -360,7 +367,7 @@ public class UIManager : MonoBehaviour
 
     public void AnimateNextTurn()
     {
-        boardOverlay.GetComponent<Animation>().Play();
+        boardOverlayAnimation.Play();
 
         if (isPlayer1Turn)
         {
@@ -380,6 +387,8 @@ public class UIManager : MonoBehaviour
         player2.SetColor(Color.white);
     }
 
+
+
     public void OnNextRoundButton()
     {
         AudioManager.Instance.PlayAudio(SoundID.ClickUI);
@@ -389,6 +398,15 @@ public class UIManager : MonoBehaviour
             NextRound();
             roundResultPanel.Display(false);
         }
+    }
+
+    public void OnForfeitEndGameButton()
+    {
+        AudioManager.Instance.PlayAudio(SoundID.ClickUI);
+        forfeitPanel.Display(false);
+
+        if (EndGame != null)
+            EndGame();
     }
 
     public void OnEndGameButton()

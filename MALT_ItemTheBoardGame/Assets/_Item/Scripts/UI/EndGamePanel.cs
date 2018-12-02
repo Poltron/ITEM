@@ -8,7 +8,7 @@ public class EndGamePanel : UIPanel
 {
     [SerializeField]
     private Animator playAgain;
-    
+
     protected override void SetLanguageEN()
     {
     }
@@ -27,6 +27,6 @@ public class EndGamePanel : UIPanel
         if (isshown)
             Activate(true);
 
-        playAgain.SetBool("bPopIn", isshown);
+        playAgain.SetBool(animatorHashPopIn, isshown);
     }
 }

@@ -4,6 +4,14 @@ using UnityEngine;
 
 public abstract class UIPanel : MonoBehaviour
 {
+    protected int animatorHashPopIn;
+
+    private void Awake()
+    {
+        Debug.Log("called");
+        animatorHashPopIn = Animator.StringToHash("bPopIn");
+    }
+
     private void Start()
     {
         SetLanguage(Options.GetLanguage());

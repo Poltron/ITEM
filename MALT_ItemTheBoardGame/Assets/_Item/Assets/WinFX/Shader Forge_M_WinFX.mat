@@ -48,7 +48,7 @@ Material:
     m_Floats:
     - PixelSnap: 0
     - _Cutoff: 0.5
-    - _OverallOpacity: 0.9945839
+    - _OverallOpacity: 0.9833401
     - _PowerDot1: 3
     - _PowerDot2: 5
     - _Stencil: 0

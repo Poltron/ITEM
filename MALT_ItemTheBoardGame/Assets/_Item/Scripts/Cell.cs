@@ -11,12 +11,14 @@ public class Cell : MonoBehaviour
 	private CircleCollider2D circleCollider;
 
     private Animator animator;
+    private int animatorHasHighlighted;
 
     void Awake()
     {
         animator = GetComponent<Animator>();
         circleCollider = GetComponent<CircleCollider2D> ();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        animatorHasHighlighted = Animator.StringToHash("Highlighted");
     }
 
     public void SetCollider(bool isActive)
@@ -45,7 +47,7 @@ public class Cell : MonoBehaviour
 
     public void SetHighlightedCell(bool isHighlighted)
     {
-        animator.SetBool("Highlighted", isHighlighted);
+        animator.SetBool(animatorHasHighlighted, isHighlighted);
     }
 
     public void PassAboveUI(bool isEnabled)

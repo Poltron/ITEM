@@ -50,6 +50,8 @@ public class Ball : MonoBehaviour
     [SerializeField]
     private AnimationCurve highlightCurve;
 
+    private SortingGroup sortingGroup;
+
     float highlightCurveTimer;
 
     private Animator _animator;
@@ -60,15 +62,24 @@ public class Ball : MonoBehaviour
     private bool isAboveUI;
 
     private bool noFX;
-    private AudioManager audioManager;
+
+    public int AnimatorHashPlaceBall;
+    public int AnimatorHashMove;
+    private int animatorHashPutDown;
+    private int animatorHashPickUp;
 
     void Awake()
     {
         startPosition = transform.localPosition;
         startScale = transform.localScale;
         _animator =  GetComponent<Animator>();
-        audioManager = FindObjectOfType<AudioManager>();
+        sortingGroup = ballSprite.GetComponent<SortingGroup>();
         noFX = false;
+
+        AnimatorHashPlaceBall = Animator.StringToHash("PlaceBall");
+        AnimatorHashMove = Animator.StringToHash("Move");
+        animatorHashPutDown = Animator.StringToHash("PutDown");
+        animatorHashPickUp = Animator.StringToHash("PickUp");
     }
 
     private void Start()
@@ -92,8 +103,8 @@ public class Ball : MonoBehaviour
             FixSortingLayer(true);
 
         ShowHighlight();
-        _animator.SetTrigger("PickUp");
-        audioManager.PlayAudio(SoundID.PawnSelect);
+        _animator.SetTrigger(animatorHashPickUp);
+        AudioManager.Instance.PlayAudio(SoundID.PawnSelect);
         isPickedUp = true;
     }
 
@@ -101,7 +112,7 @@ public class Ball : MonoBehaviour
     {
         FixSortingLayer(false);
         HideHighlight();
-        _animator.SetTrigger("PutDown");
+        _animator.SetTrigger(animatorHashPutDown);
         isPickedUp = false;
     }
 
@@ -123,11 +134,11 @@ public class Ball : MonoBehaviour
 
         if (enabled)
         {
-            ballSprite.GetComponent<SortingGroup>().sortingLayerID = SortingLayer.NameToID("AboveUI");
+            sortingGroup.sortingLayerID = SortingLayer.NameToID("AboveUI");
         }
         else
         {
-            ballSprite.GetComponent<SortingGroup>().sortingLayerID = SortingLayer.NameToID("Ball");
+            sortingGroup.sortingLayerID = SortingLayer.NameToID("Ball");
         }
     }
 
@@ -135,14 +146,14 @@ public class Ball : MonoBehaviour
     {
         if (enabled)
         {
-            ballSprite.GetComponent<SortingGroup>().sortingOrder = 1;
-            ballSprite.GetComponent<SortingGroup>().sortingOrder += (int)Camera.main.WorldToScreenPoint(transform.position).y;
-            ballShadow.GetComponent<SpriteRenderer>().sortingOrder = 1;
+            sortingGroup.sortingOrder = 1;
+            sortingGroup.sortingOrder += (int)Camera.main.WorldToScreenPoint(transform.position).y;
+            ballShadow.sortingOrder = 1;
         }
         else
         {
-            ballSprite.GetComponent<SortingGroup>().sortingOrder = 0;
-            ballShadow.GetComponent<SpriteRenderer>().sortingOrder = 0;
+            sortingGroup.sortingOrder = 0;
+            ballShadow.sortingOrder = 0;
         }
     }
 
@@ -164,7 +175,7 @@ public class Ball : MonoBehaviour
         if (FXTouchBoard)
             GameObject.Instantiate(FXTouchBoard, transform.position, Quaternion.identity);
 
-        audioManager.PlayAudio(SoundID.PawnPlace);
+        AudioManager.Instance.PlayAudio(SoundID.PawnPlace);
     }
 
     private void OnBallTouchBoardVictory()
@@ -176,13 +187,13 @@ public class Ball : MonoBehaviour
         }
 
         Camera.main.GetComponent<CameraShake>().Shake();
-        audioManager.PlayComboImpact();
+        AudioManager.Instance.PlayComboImpact();
         GameObject.Instantiate(FXTouchBoardVictory, transform.position, Quaternion.identity);
     }
 
     private void PopScoreParticle()
     {
-        FindObjectOfType<GridManager>().BallAddScore(this);
+        GridManager.Instance.BallAddScore(this);
     }
 
     static public bool resetPlaySound;
@@ -196,17 +207,17 @@ public class Ball : MonoBehaviour
         {
             if (resetPlaySound)
             {
-                audioManager.PlayAudio(SoundID.PawnPlace);
+                AudioManager.Instance.PlayAudio(SoundID.PawnPlace);
                 resetPlaySound = false;
             }
         });
 
-        _animator.SetTrigger("Move");
+        _animator.SetTrigger(AnimatorHashMove);
         noFX = true;
     }
 
     public void PlayComboLiftUpSound()
     {
-        audioManager.PlayNextBallPopSound();
+        AudioManager.Instance.PlayNextBallPopSound();
     }
 }

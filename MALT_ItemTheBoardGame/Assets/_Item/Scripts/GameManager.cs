@@ -52,6 +52,11 @@ public class GameManager : PunBehaviour
 
         gameState = GameState.MainMenu;
 
+        ///
+        Application.targetFrameRate = 60;
+
+        //
+
         Options.Init();
     }
 
@@ -231,6 +236,8 @@ public class GameManager : PunBehaviour
         GridManager.Instance.SetPawnsStartPosition(BallColor.Black, BallColor.Black);
 
         StartGame();
+
+        AudioManager.Instance.PlayAudio(SoundID.ClickUI);
     }
 
     public void StartLookingForOpponent()
@@ -250,6 +257,8 @@ public class GameManager : PunBehaviour
         Disconnect();
         
         UIManager.Instance.DisplayWaitingForPlayerPanel(false);
+
+        AudioManager.Instance.PlayAudio(SoundID.ClickUI);
     }
 
     public override void OnJoinedRoom()

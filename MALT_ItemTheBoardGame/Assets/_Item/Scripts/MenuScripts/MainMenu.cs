@@ -41,8 +41,6 @@ public class MainMenu : UIPanel
     [SerializeField]
     private Animator rightMenuAnimator;
     [SerializeField]
-    private Animator fbPanelAnimator;
-    [SerializeField]
     private GameObject menuButtons;
     [SerializeField]
     private GameObject loginButtons;
@@ -71,21 +69,21 @@ public class MainMenu : UIPanel
 
     public void PopIn()
     {
-        leftMenuAnimator.SetBool("bPopIn", true);
-        rightMenuAnimator.SetBool("bPopIn", true);
+        leftMenuAnimator.SetBool(animatorHashPopIn, true);
+        rightMenuAnimator.SetBool(animatorHashPopIn, true);
     }
 
     public void PopOut()
     {
-        leftMenuAnimator.SetBool("bPopIn", false);
-        rightMenuAnimator.SetBool("bPopIn", false);
-        aiChoiceButtons.SetBool("bPopIn", false);
+        leftMenuAnimator.SetBool(animatorHashPopIn, false);
+        rightMenuAnimator.SetBool(animatorHashPopIn, false);
+        aiChoiceButtons.SetBool(animatorHashPopIn, false);
         UIManager.Instance.DisplayWaitingForPlayerPanel(false);
     }
 
     public void ShowAIs(bool showed)
     {
-        aiChoiceButtons.SetBool("bPopIn", showed);
+        aiChoiceButtons.SetBool(animatorHashPopIn, showed);
 
         if (showed)
         {
@@ -99,7 +97,9 @@ public class MainMenu : UIPanel
     public void PlayLocalDuel()
     {
         Debug.Log("PlayLocalDuel");
+        
         GameManager.Instance.StartLocalGame();
+        AudioManager.Instance.PlayAudio(SoundID.ClickUI);
     }
 
     public void PlayRemoteDuel()
@@ -107,6 +107,7 @@ public class MainMenu : UIPanel
         Debug.Log("PlayRemoteDuel");
         ShowAIs(false);
         GameManager.Instance.StartLookingForOpponent();
+        AudioManager.Instance.PlayAudio(SoundID.ClickUI);
     }
 
     public void PlayVSAI()
@@ -117,5 +118,6 @@ public class MainMenu : UIPanel
             GameManager.Instance.StopLookingForOpponent();
 
         ShowAIs(true);
+        AudioManager.Instance.PlayAudio(SoundID.ClickUI);
     }
 }

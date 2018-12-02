@@ -1240,9 +1240,9 @@ using System;
             GridManager.Instance.OptiGrid.DoMove(move);
 
             if (ball.isPickedUp)
-                ball.GetComponent<Animator>().SetTrigger("PlaceBall");
+                ball.Animator.SetTrigger(ball.AnimatorHashPlaceBall);
             else
-                ball.GetComponent<Animator>().SetTrigger("Move");
+                ball.Animator.SetTrigger(ball.AnimatorHashMove);
 
             ball.isPickedUp = false;
             ball.FixSortingLayer(true);

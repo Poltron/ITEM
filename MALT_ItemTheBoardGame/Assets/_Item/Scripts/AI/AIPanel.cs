@@ -19,6 +19,15 @@ public class AIPanel : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
     [SerializeField]
     private Animator animator;
 
+    private int animatorHashPopIn;
+    private int animatorHashPopOut;
+
+    private void Awake()
+    {
+        animatorHashPopIn = Animator.StringToHash("PopIn");
+        animatorHashPopOut = Animator.StringToHash("PopOut");
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
         GameManager.Instance.StartGameVSIA(profile);
@@ -27,7 +36,7 @@ public class AIPanel : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
     public void OnPointerEnter(PointerEventData eventData)
     {
         animator.gameObject.SetActive(true);
-        animator.SetTrigger("PopIn");
+        animator.SetTrigger(animatorHashPopIn);
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -36,7 +45,7 @@ public class AIPanel : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
         {
             AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
             if (!stateInfo.IsName("Base.Empty"))
-                animator.SetTrigger("PopOut");
+                animator.SetTrigger(animatorHashPopOut);
         }
     }
 

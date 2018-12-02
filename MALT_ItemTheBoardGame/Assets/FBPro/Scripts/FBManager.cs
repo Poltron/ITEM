@@ -703,6 +703,7 @@ namespace GS
                 Debug.Log("FB wasn't logged in...");
                 loginBtnPanel.SetActive(true);
                 OnConnect();
+                AudioManager.Instance.PlayAudio(SoundID.ClickUI);
             }
         }
 

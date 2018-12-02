@@ -55,12 +55,15 @@ public class OptionsPanel : UIPanel
 
     [Header("")]
     private Animator animator;
+    private Image imageAnimator;
 
     private bool isFadingIn;
     public bool IsFadingOut { get { return !isFadingIn; } }
     public bool IsFadingIn { get { return isFadingIn; } }
 
     public event Action OnLanguageChange;
+
+   
 
     void Awake()
     {
@@ -71,6 +74,7 @@ public class OptionsPanel : UIPanel
     {
         isFadingIn = false;
         animator = GetComponent<Animator>();
+        imageAnimator = GetComponent<Image>();
     }
 
     void RefreshValues()
@@ -113,9 +117,9 @@ public class OptionsPanel : UIPanel
         if (animator.gameObject.activeInHierarchy)
         {
             RefreshValues();
-            animator.SetBool("bPopIn", true);
+            animator.SetBool(animatorHashPopIn, true);
             isFadingIn = true;
-            GetComponent<Image>().enabled = true;
+            imageAnimator.enabled = true;
 
             AudioManager.Instance.PlayAudio(SoundID.OpenWindowOptions);
         }
@@ -130,10 +134,10 @@ public class OptionsPanel : UIPanel
 
         if (animator.gameObject.activeInHierarchy)
         {
-            animator.SetBool("bPopIn", false);
+            animator.SetBool(animatorHashPopIn, false);
             isFadingIn = false;
 
-            GetComponent<Image>().enabled = false;
+            imageAnimator.enabled = false;
             AudioManager.Instance.PlayAudio(SoundID.CloseWindowOptions);
         }
     }
@@ -200,6 +204,8 @@ public class OptionsPanel : UIPanel
 
         if (OnLanguageChange != null)
             OnLanguageChange.Invoke();
+
+        AudioManager.Instance.PlayAudio(SoundID.ClickUI);
     }
 
     protected override void SetLanguageFR()

@@ -37,6 +37,8 @@ public class GridManager : PunBehaviour
     private AIEvaluationData aiEvaluationData;
     [SerializeField]
     private Transform board;
+    private Animator boardAnimator;
+
     [SerializeField]
     public List<GameObject> blackStartPosition;
     [SerializeField]
@@ -79,12 +81,28 @@ public class GridManager : PunBehaviour
     [HideInInspector]
     public WinningPattern actualWinningPattern;
 
+    private int animatorHashPopIn;
+    private int animatorHashPlaceBall;
+    private int animatorHashMove;
+    private int animatorHashWinPhase1;
+    private int animatorHashWinPhase2;
+    private int animatorHashScoreCounting;
+
     private void Awake()
     {
+        animatorHashPopIn = Animator.StringToHash("bPopIn");
+        animatorHashPlaceBall = Animator.StringToHash("PlaceBall");
+        animatorHashMove = Animator.StringToHash("Move");
+        animatorHashWinPhase1 = Animator.StringToHash("WinPhase1");
+        animatorHashWinPhase2 = Animator.StringToHash("WinPhase2");
+        animatorHashScoreCounting = Animator.StringToHash("ScoreCounting");
+
         if (instance == null)
             instance = this;
         else
             Destroy(gameObject);
+
+        boardAnimator = board.GetComponent<Animator>();
     }
 
     void Start()
@@ -119,7 +137,7 @@ public class GridManager : PunBehaviour
 
     public void DisplayBoard(bool isShown)
     {
-        board.GetComponent<Animator>().SetBool("bPopIn", isShown);
+        boardAnimator.SetBool(animatorHashPopIn, isShown);
     }
 
     private void CreateGrid()
@@ -247,7 +265,7 @@ public class GridManager : PunBehaviour
     {
         if (color == BallColor.White)
         {
-            foreach(Ball ball in whiteBalls)
+            foreach (Ball ball in whiteBalls)
             {
                 if (ball.ballId == id)
                     return ball;
@@ -282,13 +300,13 @@ public class GridManager : PunBehaviour
         move.toY = secondCell.x;
         move.color = (CellColor)ball.Color;
         move.isPoint = ball.Score > 0 ? true : false;
-        
+
         GridManager.Instance.OptiGrid.DoMove(move);
 
         if (ball.isPickedUp)
-            ball.GetComponent<Animator>().SetTrigger("PlaceBall");
+            ball.Animator.SetTrigger(animatorHashPlaceBall);
         else
-            ball.GetComponent<Animator>().SetTrigger("Move");
+            ball.Animator.SetTrigger(animatorHashMove);
 
         ball.isPickedUp = false;
         ball.FixSortingLayer(true);
@@ -337,7 +355,7 @@ public class GridManager : PunBehaviour
             PlayerManager.Instance.Player1.StartTurn();
         }
     }
-    
+
     public void PlayerTurnEnded(List<Vector2> movements, int ballId)
     {
         lastTurnMoves = movements;
@@ -370,7 +388,7 @@ public class GridManager : PunBehaviour
                 return;
             }
         }
-        
+
         if (PlayerManager.Instance.GetPlayer(BallColor.Black).NbOfTurn == 10 && PlayerManager.Instance.GetPlayer(BallColor.White).NbOfTurn == 10 && isPlayingTutorial)
         {
             OnPhase2Begin();
@@ -395,7 +413,7 @@ public class GridManager : PunBehaviour
     {
         if (GameManager.Instance.GameMode == GameMode.Remote && ActualTurn == PlayerManager.Instance.Player1.Color)
             SendLastTurnData();
-        
+
         if (!justWon)
             DOVirtual.DelayedCall(1.5f, DisplayRoundResult, true);
     }
@@ -477,38 +495,38 @@ public class GridManager : PunBehaviour
         Debug.Log("play victory animation4");
         Ball ball = modelGrid.GetCellFromModel((int)pattern.cells[0].y, (int)pattern.cells[0].x).ball;
         ball.FixSortingLayer(true);
-        ball.Animator.SetTrigger("WinPhase1");
+        ball.Animator.SetTrigger(animatorHashWinPhase1);
         yield return new WaitForSeconds(timeBetweenBallsPhase1AnimBegin);
 
         ball = modelGrid.GetCellFromModel((int)pattern.cells[1].y, (int)pattern.cells[1].x).ball;
         ball.FixSortingLayer(true);
-        ball.Animator.SetTrigger("WinPhase1");
+        ball.Animator.SetTrigger(animatorHashWinPhase1);
         yield return new WaitForSeconds(timeBetweenBallsPhase1AnimBegin);
 
         ball = modelGrid.GetCellFromModel((int)pattern.cells[2].y, (int)pattern.cells[2].x).ball;
         ball.FixSortingLayer(true);
-        ball.Animator.SetTrigger("WinPhase1");
+        ball.Animator.SetTrigger(animatorHashWinPhase1);
         yield return new WaitForSeconds(timeBetweenBallsPhase1AnimBegin);
 
         ball = modelGrid.GetCellFromModel((int)pattern.cells[3].y, (int)pattern.cells[3].x).ball;
         ball.FixSortingLayer(true);
-        ball.Animator.SetTrigger("WinPhase1");
+        ball.Animator.SetTrigger(animatorHashWinPhase1);
         yield return new WaitForSeconds(timeBetweenBallsPhase1AnimBegin);
 
         ball = modelGrid.GetCellFromModel((int)pattern.cells[4].y, (int)pattern.cells[4].x).ball;
         ball.FixSortingLayer(true);
-        ball.Animator.SetTrigger("WinPhase1");
+        ball.Animator.SetTrigger(animatorHashWinPhase1);
         yield return new WaitForSeconds(timeBeforePhase2AnimBegin);
         StartCoroutine(playVictoryAnimationPhase2(pattern));
     }
 
     IEnumerator playVictoryAnimationPhase2(WinningPattern pattern)
     {
-        modelGrid.GetCellFromModel((int)pattern.cells[0].y, (int)pattern.cells[0].x).ball.Animator.SetTrigger("WinPhase2");
-        modelGrid.GetCellFromModel((int)pattern.cells[1].y, (int)pattern.cells[1].x).ball.Animator.SetTrigger("WinPhase2");
-        modelGrid.GetCellFromModel((int)pattern.cells[2].y, (int)pattern.cells[2].x).ball.Animator.SetTrigger("WinPhase2");
-        modelGrid.GetCellFromModel((int)pattern.cells[3].y, (int)pattern.cells[3].x).ball.Animator.SetTrigger("WinPhase2");
-        modelGrid.GetCellFromModel((int)pattern.cells[4].y, (int)pattern.cells[4].x).ball.Animator.SetTrigger("WinPhase2");
+        modelGrid.GetCellFromModel((int)pattern.cells[0].y, (int)pattern.cells[0].x).ball.Animator.SetTrigger(animatorHashWinPhase2);
+        modelGrid.GetCellFromModel((int)pattern.cells[1].y, (int)pattern.cells[1].x).ball.Animator.SetTrigger(animatorHashWinPhase2);
+        modelGrid.GetCellFromModel((int)pattern.cells[2].y, (int)pattern.cells[2].x).ball.Animator.SetTrigger(animatorHashWinPhase2);
+        modelGrid.GetCellFromModel((int)pattern.cells[3].y, (int)pattern.cells[3].x).ball.Animator.SetTrigger(animatorHashWinPhase2);
+        modelGrid.GetCellFromModel((int)pattern.cells[4].y, (int)pattern.cells[4].x).ball.Animator.SetTrigger(animatorHashWinPhase2);
 
         yield return new WaitForSeconds(timeFromPhase2AnimBeginToRoundResultPanel);
         StartCoroutine(addVictoryPoints(pattern));
@@ -517,27 +535,27 @@ public class GridManager : PunBehaviour
     IEnumerator addVictoryPoints(WinningPattern pattern)
     {
         Ball ball = modelGrid.GetCellFromModel((int)pattern.cells[0].y, (int)pattern.cells[0].x).ball;
-        ball.Animator.SetTrigger("ScoreCounting");
+        ball.Animator.SetTrigger(animatorHashScoreCounting);
         ball.FixSortingLayer(false);
         yield return new WaitForSeconds(1.0f);
 
         ball = modelGrid.GetCellFromModel((int)pattern.cells[1].y, (int)pattern.cells[1].x).ball;
-        ball.Animator.SetTrigger("ScoreCounting");
+        ball.Animator.SetTrigger(animatorHashScoreCounting);
         ball.FixSortingLayer(false);
         yield return new WaitForSeconds(1.0f);
 
         ball = modelGrid.GetCellFromModel((int)pattern.cells[2].y, (int)pattern.cells[2].x).ball;
-        ball.Animator.SetTrigger("ScoreCounting");
+        ball.Animator.SetTrigger(animatorHashScoreCounting);
         ball.FixSortingLayer(false);
         yield return new WaitForSeconds(1.0f);
 
         ball = modelGrid.GetCellFromModel((int)pattern.cells[3].y, (int)pattern.cells[3].x).ball;
-        ball.Animator.SetTrigger("ScoreCounting");
+        ball.Animator.SetTrigger(animatorHashScoreCounting);
         ball.FixSortingLayer(false);
         yield return new WaitForSeconds(1.0f);
 
         ball = modelGrid.GetCellFromModel((int)pattern.cells[4].y, (int)pattern.cells[4].x).ball;
-        ball.Animator.SetTrigger("ScoreCounting");
+        ball.Animator.SetTrigger(animatorHashScoreCounting);
         ball.FixSortingLayer(false);
         yield return new WaitForSeconds(3.0f);
         playVictoryAnimationEnd(pattern);
@@ -696,7 +714,7 @@ public class GridManager : PunBehaviour
         Debug.Log("phase1move");
         PlayerManager.Instance.GetPlayer(ActualTurn).EndTurn();
     }
-    
+
     IEnumerator MoveCoroutine(Vector2[] movements)
     {
         Debug.Log("movecoroutine");

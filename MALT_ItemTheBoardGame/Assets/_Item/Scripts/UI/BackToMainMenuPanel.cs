@@ -38,6 +38,7 @@ public class BackToMainMenuPanel : UIPanel
     private TextMeshProUGUI gameText;
 
     private Animator animator;
+    private Image _image;
 
     private bool isFadingIn;
     public bool IsFadingOut { get { return !isFadingIn; } }
@@ -52,6 +53,7 @@ public class BackToMainMenuPanel : UIPanel
     {
         isFadingIn = false;
         animator = GetComponent<Animator>();
+        _image = GetComponent<Image>();
     }
 
     public void PopIn()
@@ -65,9 +67,9 @@ public class BackToMainMenuPanel : UIPanel
 
         if (animator.gameObject.activeInHierarchy)
         {
-            animator.SetBool("bPopIn", true);
+            animator.SetBool(animatorHashPopIn, true);
             isFadingIn = true;
-            GetComponent<Image>().raycastTarget = true;
+            _image.raycastTarget = true;
             AudioManager.Instance.PlayAudio(SoundID.OpenWindowOptions);
         }
     }
@@ -81,9 +83,9 @@ public class BackToMainMenuPanel : UIPanel
 
         if (animator.gameObject.activeInHierarchy)
         {
-            animator.SetBool("bPopIn", false);
+            animator.SetBool(animatorHashPopIn, false);
             isFadingIn = false;
-            GetComponent<Image>().raycastTarget = false;
+            _image.raycastTarget = false;
 
             AudioManager.Instance.PlayAudio(SoundID.CloseWindowOptions);
         }

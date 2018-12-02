@@ -10,6 +10,15 @@ public class ExitPanel : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     private UIManager uiManager;
 
+    private OptionsPanel optionsPanel;
+    private HelpPanel helpPanel;
+
+    void Awake()
+    {
+        optionsPanel = GetComponent<OptionsPanel>();
+        helpPanel = GetComponent<HelpPanel>();
+    }
+
     void Start ()
     {
 		
@@ -22,9 +31,9 @@ public class ExitPanel : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (GetComponent<OptionsPanel>() != null)
+        if (optionsPanel != null)
             uiManager.OnOptionsButton();
-        else if (GetComponent<HelpPanel>() != null)
+        else if (helpPanel != null)
             uiManager.OnHelpButton();
         else
             uiManager.OnBackToMainMenuButton();

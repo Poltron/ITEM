@@ -27,6 +27,6 @@ public class RoundPanel : UIPanel
         if (isShown)
             Activate(true);
 
-        animator.SetBool("bPopIn", isShown);
+        animator.SetBool(animatorHashPopIn, isShown);
     }
 }

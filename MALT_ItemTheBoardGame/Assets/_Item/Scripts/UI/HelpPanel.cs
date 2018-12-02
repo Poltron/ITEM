@@ -25,6 +25,7 @@ public class HelpPanel : UIPanel
     public bool IsFadingIn { get { return isFadingIn; } }
 
     private ExitPanel exitPanel;
+    private Image _image;
 
     void Awake()
     {
@@ -36,6 +37,7 @@ public class HelpPanel : UIPanel
         isFadingIn = false;
         animator = GetComponent<Animator>();
         exitPanel = GetComponent<ExitPanel>();
+        _image = GetComponent<Image>();
     }
 
     protected override void SetLanguageEN()
@@ -59,10 +61,10 @@ public class HelpPanel : UIPanel
 
         if (animator.gameObject.activeInHierarchy)
         {
-            animator.SetBool("bPopIn", true);
+            animator.SetBool(animatorHashPopIn, true);
             isFadingIn = true;
             exitPanel.enabled = true;
-            GetComponent<Image>().enabled = true;
+            _image.enabled = true;
 
                 AudioManager.Instance.PlayAudio(SoundID.OpenWindowHelp);
         }
@@ -77,11 +79,11 @@ public class HelpPanel : UIPanel
 
         if (animator.gameObject.activeInHierarchy)
         {
-            animator.SetBool("bPopIn", false);
+            animator.SetBool(animatorHashPopIn, false);
             isFadingIn = false;
             exitPanel.enabled = false;
 
-            GetComponent<Image>().enabled = false;
+            _image.enabled = false;
             AudioManager.Instance.PlayAudio(SoundID.CloseWindowHelp);
         }
     }
