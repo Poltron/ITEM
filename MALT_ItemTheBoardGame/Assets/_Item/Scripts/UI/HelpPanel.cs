@@ -27,8 +27,10 @@ public class HelpPanel : UIPanel
     private ExitPanel exitPanel;
     private Image _image;
 
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         Init();
     }
 

@@ -172,8 +172,10 @@ public class TutorialPanel : UIPanel
     private int animatorHashPopInWithoutB;
     private int animatorHashPopOut;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         animatorHashPopInWithoutB = Animator.StringToHash("PopIn");
         animatorHashPopOut = Animator.StringToHash("PopOut");
     }

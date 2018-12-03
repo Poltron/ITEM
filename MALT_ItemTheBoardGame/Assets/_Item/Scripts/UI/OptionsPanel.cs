@@ -63,10 +63,10 @@ public class OptionsPanel : UIPanel
 
     public event Action OnLanguageChange;
 
-   
-
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         Init();
     }
 

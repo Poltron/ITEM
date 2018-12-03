@@ -9,6 +9,11 @@ public class EndGamePanel : UIPanel
     [SerializeField]
     private Animator playAgain;
 
+    protected override void Awake()
+    {
+        base.Awake();
+    }
+
     protected override void SetLanguageEN()
     {
     }

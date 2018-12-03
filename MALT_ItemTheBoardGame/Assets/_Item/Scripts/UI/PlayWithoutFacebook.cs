@@ -8,12 +8,8 @@ public class PlayWithoutFacebook : MonoBehaviour
     [SerializeField]
     private MainMenu menu;
 
-    [SerializeField]
-    private DontDestroyOnLoad dontDestroy;
-
     public void OnButtonPressed()
     {
-        Destroy(dontDestroy.gameObject);
         //menu.ShowMenu();
     }
 }

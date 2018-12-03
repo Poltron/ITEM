@@ -9,6 +9,11 @@ public class RoundPanel : UIPanel
     [SerializeField]
     private Animator animator;
 
+    protected override void Awake()
+    {
+        base.Awake();
+    }
+
     protected override void SetLanguageEN()
     {
     }

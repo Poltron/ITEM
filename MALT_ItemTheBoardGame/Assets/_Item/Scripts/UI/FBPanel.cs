@@ -29,7 +29,12 @@ public class FBPanel : UIPanel
     private Animator inviteFriendAnimator;
     [SerializeField]
     private Animator fbConnectAnimator;
-    
+
+    protected override void Awake()
+    {
+        base.Awake();
+    }
+
     protected override void SetLanguageEN()
     {
         inviteFriendText.text = inviteFriendLabelEN;

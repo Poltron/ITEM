@@ -26,8 +26,10 @@ public class ForfeitPanel : UIPanel
     private Button cancelButton;
     private Animator animator;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         animator = GetComponent<Animator>();
     }
 

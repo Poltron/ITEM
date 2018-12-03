@@ -84,8 +84,10 @@ public class PlayerPanel : UIPanel
     private AudioManager audioManager;
     private int animatorHashPointReceived;
 
-    void Awake()
+    protected override void Awake() 
     {
+        base.Awake();
+
         Debug.Log("playerpanelawake");
         panel = GetComponent<Image>();
         animatorHashPointReceived = Animator.StringToHash("PointReceived");
@@ -217,7 +219,7 @@ public class PlayerPanel : UIPanel
 
     public void PopIn(bool showed)
     {
-        GetComponent<Animator>().SetBool(animatorHashPopIn, showed);
+        GetComponent<Animator>().SetBool(animatorHashPopInSpecial, showed);
     }
 
     public void StartScoreAnim()

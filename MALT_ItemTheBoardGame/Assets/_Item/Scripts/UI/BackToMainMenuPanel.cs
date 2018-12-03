@@ -44,8 +44,10 @@ public class BackToMainMenuPanel : UIPanel
     public bool IsFadingOut { get { return !isFadingIn; } }
     public bool IsFadingIn { get { return isFadingIn; } }
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         Init();
     }
 

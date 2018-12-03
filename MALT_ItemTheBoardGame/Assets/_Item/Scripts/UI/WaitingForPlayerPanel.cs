@@ -29,6 +29,11 @@ public class WaitingForPlayerPanel : UIPanel
     [SerializeField]
     private float timeBeforeCancelButtonPops;
 
+    protected override void Awake()
+    {
+        base.Awake();
+    }
+
     void Start()
     {
         SetLanguage(Options.GetLanguage());
