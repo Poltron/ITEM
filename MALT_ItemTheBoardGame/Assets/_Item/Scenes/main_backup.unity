@@ -34113,7 +34113,6 @@ GameObject:
   - component: {fileID: 1471556910}
   - component: {fileID: 1471556912}
   - component: {fileID: 1471556911}
-  - component: {fileID: 1471556913}
   m_Layer: 5
   m_Name: WaitingForAnotherPlayerPanel
   m_TagString: Untagged
@@ -34139,7 +34138,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 586.9995, y: 0}
+  m_AnchoredPosition: {x: 587, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1471556911
@@ -34178,26 +34177,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!223 &1471556913
-Canvas:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1471556909}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_RenderMode: 2
-  m_Camera: {fileID: 0}
-  m_PlaneDistance: 100
-  m_PixelPerfect: 0
-  m_ReceivesEvents: 1
-  m_OverrideSorting: 0
-  m_OverridePixelPerfect: 0
-  m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 0
-  m_SortingLayerID: 0
-  m_SortingOrder: 0
-  m_TargetDisplay: 0
 --- !u!1 &1478284018
 GameObject:
   m_ObjectHideFlags: 0
@@ -36037,7 +36016,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1508495529}
   - component: {fileID: 1508495530}
-  - component: {fileID: 1508495531}
   m_Layer: 5
   m_Name: AIs
   m_TagString: Untagged
@@ -36066,7 +36044,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 548.9995, y: 0}
+  m_AnchoredPosition: {x: 549, y: 0}
   m_SizeDelta: {x: 950, y: 900}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &1508495530
@@ -36086,26 +36064,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!223 &1508495531
-Canvas:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1508495528}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_RenderMode: 2
-  m_Camera: {fileID: 0}
-  m_PlaneDistance: 100
-  m_PixelPerfect: 0
-  m_ReceivesEvents: 1
-  m_OverrideSorting: 0
-  m_OverridePixelPerfect: 0
-  m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 27
-  m_SortingLayerID: 0
-  m_SortingOrder: 0
-  m_TargetDisplay: 0
 --- !u!1 &1511878392
 GameObject:
   m_ObjectHideFlags: 0
@@ -45794,7 +45752,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1929484180}
   - component: {fileID: 1929484181}
-  - component: {fileID: 1929484182}
   m_Layer: 5
   m_Name: FBPanel
   m_TagString: Untagged
@@ -45819,7 +45776,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -475.00003, y: -450}
+  m_AnchoredPosition: {x: -475, y: -450}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1929484181
@@ -45841,26 +45798,6 @@ MonoBehaviour:
   fbConnectText: {fileID: 1779898773}
   inviteFriendAnimator: {fileID: 1262623656}
   fbConnectAnimator: {fileID: 2133844873}
---- !u!223 &1929484182
-Canvas:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1929484179}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_RenderMode: 2
-  m_Camera: {fileID: 0}
-  m_PlaneDistance: 100
-  m_PixelPerfect: 0
-  m_ReceivesEvents: 1
-  m_OverrideSorting: 0
-  m_OverridePixelPerfect: 0
-  m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 0
-  m_SortingLayerID: 0
-  m_SortingOrder: 0
-  m_TargetDisplay: 0
 --- !u!1 &1933420239
 GameObject:
   m_ObjectHideFlags: 0
