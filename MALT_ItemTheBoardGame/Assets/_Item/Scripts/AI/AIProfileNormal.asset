@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: AIProfileNormal
   m_EditorClassIdentifier: 
   aiName: Juliette
-  levelFR: Normal
-  levelEN: Normal
+  levelFR: Facile
+  levelEN: Easy
   depth: 1
-  image: {fileID: 21300000, guid: 5a291975860c3b5439c69ece8fd218ee, type: 3}
+  image: {fileID: 21300000, guid: 7c9ca0a486679934eaf5463899853f4a, type: 3}

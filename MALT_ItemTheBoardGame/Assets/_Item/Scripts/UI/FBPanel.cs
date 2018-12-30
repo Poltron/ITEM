@@ -26,10 +26,15 @@ public class FBPanel : UIPanel
 
     [Header("")]
     [SerializeField]
-    private Animator inviteFriendAnimator;
+    private Animation inviteFriendAnimation;
     [SerializeField]
-    private Animator fbConnectAnimator;
-    
+    private Animation fbConnectAnimation;
+
+    protected override void Awake()
+    {
+        base.Awake();
+    }
+
     protected override void SetLanguageEN()
     {
         inviteFriendText.text = inviteFriendLabelEN;
@@ -58,7 +63,10 @@ public class FBPanel : UIPanel
         if (!FB.IsInitialized)
             return;
 
-        fbConnectAnimator.SetBool(animatorHashPopIn, showed);
+        if (showed)
+            fbConnectAnimation.Play("FBConnectPopIn", PlayMode.StopAll);
+        else
+            fbConnectAnimation.Play("FBConnectPopOut", PlayMode.StopAll);
     }
 
     public void ShowInviteFriend(bool showed)
@@ -66,6 +74,9 @@ public class FBPanel : UIPanel
         if (!FB.IsInitialized)
             return;
 
-        inviteFriendAnimator.SetBool(animatorHashPopIn, showed);
+        if (showed)
+            inviteFriendAnimation.Play("InviteFriendPopIn", PlayMode.StopAll);
+        else
+            inviteFriendAnimation.Play("InviteFriendPopOut", PlayMode.StopAll);
     }
 }

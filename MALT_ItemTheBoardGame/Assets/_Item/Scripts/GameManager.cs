@@ -38,9 +38,6 @@ public class GameManager : PunBehaviour
 
     private Connection connection;
 
-    [SerializeField]
-    private float timeToLaunchGameVSIA = 4;
-
     void Awake()
     {
         if (instance == null)
@@ -50,12 +47,9 @@ public class GameManager : PunBehaviour
 
         connection = GetComponent<Connection>();
 
-        gameState = GameState.MainMenu;
-
-        ///
         Application.targetFrameRate = 60;
 
-        //
+        gameState = GameState.MainMenu;
 
         Options.Init();
     }
@@ -70,11 +64,8 @@ public class GameManager : PunBehaviour
         // load fb data
         if (FB.IsLoggedIn)
         {
-            Debug.Log("Logged in Facebook");
             PlayerManager.Instance.Player1.playerName = fbManager.pName;
             PlayerManager.Instance.Player1.picURL = fbManager.pUrlPic;
-
-            Debug.Log(fbManager.pName + " / " + fbManager.pUrlPic);
 
             StartCoroutine(Utils.LoadSpriteFromURL(PlayerManager.Instance.Player1.picURL, (sprite) =>
             {
@@ -92,7 +83,6 @@ public class GameManager : PunBehaviour
         }
         else
         {
-            Debug.Log("Not logged in Facebook");
         }
 
         // init UI
@@ -169,7 +159,6 @@ public class GameManager : PunBehaviour
     [PunRPC]
     private void ReceiveName(string name)
     {
-        Debug.Log("received name " + name);
         UIManager.Instance.SetPlayer2Name(name);
         return;
     }
@@ -177,7 +166,6 @@ public class GameManager : PunBehaviour
     [PunRPC]
     private void ReceivePicURL(string picURL)
     {
-        Debug.Log("received pic url " + picURL);
         StartCoroutine(Utils.LoadSpriteFromURL(picURL, (sprite) => {
             UIManager.Instance.SetPlayer2Pic(sprite);
         }));
@@ -246,8 +234,6 @@ public class GameManager : PunBehaviour
         gameState = GameState.LookingForPlayer;
 
         connection.ApplyUserIdAndConnect();
-        
-        UIManager.Instance.DisplayWaitingForPlayerPanel(true);
     }
 
     public void StopLookingForOpponent()
@@ -255,8 +241,8 @@ public class GameManager : PunBehaviour
         gameState = GameState.MainMenu;
 
         Disconnect();
-        
-        UIManager.Instance.DisplayWaitingForPlayerPanel(false);
+
+        UIManager.Instance.mainMenuPanel.ShowWaitingForPlayer(false);
 
         AudioManager.Instance.PlayAudio(SoundID.ClickUI);
     }
@@ -306,14 +292,11 @@ public class GameManager : PunBehaviour
         }
         else
         {
-            print("OnPhotonPlayerConnected : Alone in the room.");
         }
     }
 
     public override void OnPhotonPlayerDisconnected(PhotonPlayer otherPlayer)
     {
-        Debug.Log("Other player disconnected! isInactive: " + otherPlayer.IsInactive);
-
         if (GameState == GameState.GameResults)
             return;
 
@@ -323,7 +306,6 @@ public class GameManager : PunBehaviour
 
     public override void OnLeftRoom()
     {
-        print("leftRoom");
     }
 
     public void OnRestart()

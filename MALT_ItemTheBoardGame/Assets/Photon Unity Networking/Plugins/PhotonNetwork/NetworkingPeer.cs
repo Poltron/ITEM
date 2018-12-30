@@ -428,7 +428,8 @@ internal class NetworkingPeer : LoadBalancingPeer, IPhotonPeerListener
 
     protected internal short currentLevelPrefix = 0;
 
-    /// <summary>Internally used to flag if the message queue was disabled by a "scene sync" situation (to re-enable it).</summary>
+    /// <summary>Internally used to flag if the message queue was disabled by a "scene 
+    /// " situation (to re-enable it).</summary>
     protected internal bool loadingLevelAndPausedNetwork = false;
 
     /// <summary>For automatic scene syncing, the loaded scene is put into a room property. This is the name of said prop.</summary>

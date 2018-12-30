@@ -18,8 +18,6 @@ public class LocalPlayer : Player
     {
         base.StartTurn();
 
-        Debug.Log("StartLocalPlayerTurn : " + Color);
-
         EasyTouch.On_TouchUp += OnTouchUp;
         hasAlreadyJumpedOnce = false;
     }
@@ -41,7 +39,6 @@ public class LocalPlayer : Player
 
     public void OnTouchUpPublic(Gesture gesture)
     {
-        //Debug.Log("on touch up public");
         OnTouchUp(gesture);
     }
 
@@ -53,12 +50,8 @@ public class LocalPlayer : Player
 
         lastInput = Time.realtimeSinceStartup;
 
-        //Debug.Log("on touch up");
-
         if (!gesture.pickedObject)
             return;
-
-        //Debug.Log(gesture.pickedObject.name);
 
         if (exclusivePickableObject != null && gesture.pickedObject != exclusivePickableObject)
             return;

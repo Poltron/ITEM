@@ -12,7 +12,6 @@ public class Connection : PunBehaviour {
 	public void ApplyUserIdAndConnect()
 	{
 		string nickName = "DemoNick";
-		Debug.Log("Nickname: " + nickName + " userID: " + this.UserId,this);
 
         connected = true;
 
@@ -39,19 +38,17 @@ public class Connection : PunBehaviour {
 		this.UserId = PhotonNetwork.player.UserId;
         ////Debug.Log("UserID " + this.UserId);
 
-        Debug.Log("OnConnectedToMaster");
-
 		// after timeout: re-join "old" room (if one is known)
 		if (!string.IsNullOrEmpty(this.previousRoom))
 		{
-			Debug.Log("ReJoining previous room: " + this.previousRoom);
+			//Debug.Log("ReJoining previous room: " + this.previousRoom);
 			PhotonNetwork.ReJoinRoom(this.previousRoom);
 			this.previousRoom = null;       // we only will try to re-join once. if this fails, we will get into a random/new room
 		}
 		else
 		{
             // else: join a random room
-            Debug.Log("JoinRandomRoom");
+            //Debug.Log("JoinRandomRoom");
 			PhotonNetwork.JoinRandomRoom();
 		}
 	}
@@ -63,13 +60,13 @@ public class Connection : PunBehaviour {
 
 	public override void OnPhotonRandomJoinFailed(object[] codeAndMsg)
 	{
-        Debug.Log("randomjoinfailed then create");
+        //Debug.Log("randomjoinfailed then create");
         PhotonNetwork.CreateRoom(null, new RoomOptions() { MaxPlayers = 2, PlayerTtl = 5000 }, null);
     }
 
 	public override void OnJoinedRoom()
 	{
-		Debug.Log("Joined room: " + PhotonNetwork.room.Name);
+		//Debug.Log("Joined room: " + PhotonNetwork.room.Name);
 		this.previousRoom = PhotonNetwork.room.Name;
 
 	}
@@ -81,11 +78,11 @@ public class Connection : PunBehaviour {
 
 	public override void OnConnectionFail(DisconnectCause cause)
 	{
-		Debug.Log("Disconnected due to: " + cause + ". this.previousRoom: " + this.previousRoom);
+		//Debug.Log("Disconnected due to: " + cause + ". this.previousRoom: " + this.previousRoom);
 	}
 
     public override void OnDisconnectedFromPhoton()
     {
-        Debug.Log("Disconnected from Photon");
+        //Debug.Log("Disconnected from Photon");
     }
 }

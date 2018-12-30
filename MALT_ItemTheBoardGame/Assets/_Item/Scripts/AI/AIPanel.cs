@@ -17,15 +17,10 @@ public class AIPanel : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
     private TextMeshProUGUI aiName;
 
     [SerializeField]
-    private Animator animator;
-
-    private int animatorHashPopIn;
-    private int animatorHashPopOut;
+    private Color color;
 
     private void Awake()
     {
-        animatorHashPopIn = Animator.StringToHash("PopIn");
-        animatorHashPopOut = Animator.StringToHash("PopOut");
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -35,18 +30,12 @@ public class AIPanel : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        animator.gameObject.SetActive(true);
-        animator.SetTrigger(animatorHashPopIn);
+        image.color = color;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (animator.gameObject.activeInHierarchy)
-        {
-            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-            if (!stateInfo.IsName("Base.Empty"))
-                animator.SetTrigger(animatorHashPopOut);
-        }
+        image.color = Color.white;
     }
 
     public void Refresh()

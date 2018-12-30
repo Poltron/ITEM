@@ -73,16 +73,12 @@ public class AudioManager : MonoBehaviour
     {
         if (music == null)
         {
-            Debug.Log("AudioManager start");
-
             Music musicGO = FindObjectOfType<Music>();
             if (musicGO)
                 music = musicGO.GetComponent<AudioSource>();
 
             if (music == null)
                 Debug.LogError("pas d'élément MUSIC :(");
-
-            Debug.Log("AudioManager start end");
         }
     }
 
@@ -142,7 +138,6 @@ public class AudioManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        //Debug.Log(music.volume);
         music.volume = reducedMusicVolume;
 
         GameObject jingle = GameObject.Instantiate(jinglePrefab, Vector3.zero, Quaternion.identity);

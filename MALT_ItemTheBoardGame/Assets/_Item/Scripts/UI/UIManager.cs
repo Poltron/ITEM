@@ -26,7 +26,7 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private GameObject boardContainer;
     [SerializeField]
-    private Animator boardContainerAnimator;
+    private Animation boardContainerAnimation;
 
     [SerializeField]
     private SpriteRenderer boardOverlay;
@@ -43,7 +43,6 @@ public class UIManager : MonoBehaviour
 
     public MainMenu mainMenuPanel;
     public WaitingForPlayerPanel waitingForPlayerPanel;
-    public Animator waitingForPlayerPanelAnimator;
     public RoundPanel roundResultPanel;
     public EndGamePanel endGamePanel;
     public ForfeitPanel forfeitPanel;
@@ -52,17 +51,10 @@ public class UIManager : MonoBehaviour
     public HelpPanel helpPanel;
     public TutorialPanel tutoPanel;
     public FBPanel fbPanel;
-    public RectTransform overlayPanel;
-    public Animator quickMenu;
+    public QuickMenuButtonPanel quickMenu;
     public Button backToMainMenuButton;
-    public GameObject arrowPrefab;
-    private Transform arrowFocus;
 
     public bool isPlayer1Turn;
-
-    public Ball Phase1Tuto_BallToMove;
-
-    public Cell Phase1Tuto_CellToMoveTo;
 
     [SerializeField]
     private Material toAnimate;
@@ -85,17 +77,13 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private float godrayAnimationTime;
 
-    private int animatorHashPopIn;
     private int animatorHashWin;
     private int animatorHashLoose;
-    private int animatorHashPopIn2;
 
     void Awake()
     {
-        animatorHashPopIn = Animator.StringToHash("bPopIn");
         animatorHashWin = Animator.StringToHash("Win");
         animatorHashLoose = Animator.StringToHash("Loose");
-        animatorHashPopIn2 = Animator.StringToHash("PopIn");
 
         if (instance == null)
             instance = this;
@@ -133,10 +121,24 @@ public class UIManager : MonoBehaviour
 
     public void ShowGameplayCanvas(bool showed)
     {
+        if (showed)
+        {
+            gameplayCanvas.alpha = 1;
+            gameplayCanvas.interactable = true;
+            gameplayCanvas.blocksRaycasts = true;
+        }
+        else
+        {
+            DOVirtual.DelayedCall(1.0f, () => {
+                gameplayCanvas.alpha = 0;
+                gameplayCanvas.interactable = false;
+                gameplayCanvas.blocksRaycasts = false;
+            });
+        }
+
         DOVirtual.DelayedCall(timeBeforePlayerPanelPopIn, () => { player1.PopIn(showed); });
         DOVirtual.DelayedCall(timeBeforePlayerPanelPopIn, () => { player2.PopIn(showed); });
-        DOVirtual.DelayedCall(timeBeforeQuickMenuPopIn, () => { quickMenu.SetBool(animatorHashPopIn, showed); });
-        DOVirtual.DelayedCall(timeBeforeBoardPopIn, () => { boardContainerAnimator.SetBool(animatorHashPopIn, showed); });
+        DOVirtual.DelayedCall(timeBeforeQuickMenuPopIn, () => { DisplayQuickMenuButtons(showed); });
     }
 
     public void Init()
@@ -166,6 +168,8 @@ public class UIManager : MonoBehaviour
         endGamePanel.SetLanguage(language);
         helpPanel.SetLanguage(language);
         tutoPanel.SetLanguage(language);
+        quickMenu.SetLanguage(language);
+        mainMenuPanel.SetLanguage(language);
         player1.SetLanguage(language);
         player2.SetLanguage(language);
 
@@ -177,11 +181,6 @@ public class UIManager : MonoBehaviour
         tutoPanel.gameObject.SetActive(true);
         tutoPanel.PopAskForTuto(true);
     }
-
-    public void DisplayWaitingForPlayerPanel(bool isShown)
-    {
-        waitingForPlayerPanelAnimator.SetBool(animatorHashPopIn, isShown);
-    }
 	
 	public void DisplayPlayer1(bool isShown)
     {
@@ -191,6 +190,18 @@ public class UIManager : MonoBehaviour
 	public void DisplayPlayer2(bool isShown)
     {
         player2.gameObject.SetActive(isShown);
+    }
+
+    public void DisplayQuickMenuButtons(bool enabled)
+    {
+        if (enabled)
+        {
+            quickMenu.PopIn();
+        }
+        else
+        {
+            quickMenu.PopOut();
+        }
     }
 
     public void DisableBackToMainMenuButton(bool isShown)
@@ -205,7 +216,6 @@ public class UIManager : MonoBehaviour
 
         for (float i = 0; i < godrayAnimationTime; i += Time.deltaTime)
         {
-            Debug.Log(toAnimate.GetFloat("_OverallOpacity"));
             toAnimate.SetFloat("_OverallOpacity", i);
             yield return new WaitForEndOfFrame();
         }
@@ -433,14 +443,10 @@ public class UIManager : MonoBehaviour
         optionsPanel.PopOut();
         backToMainMenuPanel.PopOut();
 
-        if (helpPanel.IsFadingIn)
-        {
+        if (helpPanel.IsShown)
             helpPanel.PopOut();
-        }
         else
-        {
             helpPanel.PopIn();
-        }
     }
 
     public void OnOptionsButton()
@@ -450,14 +456,10 @@ public class UIManager : MonoBehaviour
         helpPanel.PopOut();
         backToMainMenuPanel.PopOut();
 
-        if (optionsPanel.IsFadingIn)
-        {
+        if (optionsPanel.IsShown)
             optionsPanel.PopOut();
-        }
         else
-        {
             optionsPanel.PopIn();
-        }
     }
 
     public void OnBackToMainMenuButton()
@@ -467,14 +469,10 @@ public class UIManager : MonoBehaviour
         helpPanel.PopOut();
         optionsPanel.PopOut();
 
-        if (backToMainMenuPanel.IsFadingIn)
-        {
+        if (backToMainMenuPanel.IsShown)
             backToMainMenuPanel.PopOut();
-        }
         else
-        {
             backToMainMenuPanel.PopIn();
-        }
     }
 
     public void DisplayEndGame()
@@ -487,11 +485,6 @@ public class UIManager : MonoBehaviour
             DisplayDraw();
         else
             DisplayYouLost();
-    }
-
-    private void DisplayOverlay(bool isShown)
-    {
-        overlayPanel.gameObject.SetActive(isShown);
     }
 
     private int EvaluateWin(int playerPoints, int opponentPoints)

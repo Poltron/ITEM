@@ -654,18 +654,13 @@ namespace GS
 		#region FB Init Login and Logout
 		public void InitFB()
 		{
-            Debug.Log("InitFB...");
-
 			if (!FB.IsInitialized)
 			{
-                Debug.Log("FB wasn't initialized, initializing");
 				FB.Init(InitCallback, onHideUnity);
 			}
 			else
-            {
-                Debug.Log("FB is initialized");
-                FB.ActivateApp();
-				print("Initialized FB !");
+			{
+				FB.ActivateApp();
 			}
 		}
 		// Perform Unity Tasks When App is Connecting To Facebook 
@@ -701,28 +696,20 @@ namespace GS
         {
             if (!FB.IsLoggedIn)
             {
-                Debug.Log("FB wasn't logged in...");
-                //loginBtnPanel.SetActive(true);
+                loginBtnPanel.SetActive(true);
                 OnConnect();
                 AudioManager.Instance.PlayAudio(SoundID.ClickUI);
-            }
-            else
-            {
-                Debug.Log("Already Logged In");
             }
         }
 
 		void LoginFB()
 		{
-            Debug.Log("Login FB....");
 			if (FB.IsLoggedIn)
 			{
 				PlayerPrefs.SetInt("FACEBOOK_LOGGED_ONCE", 1);
 				PlayerPrefs.Save();
 
 				//SetFBItems(true);
-				print("Logged In !");
-
 				// TEST
 				LoadPlayerName();
 				LoadPlayerPic(false);
@@ -738,7 +725,6 @@ namespace GS
             /*
 			else
             {
-                Debug.Log("FB wasn't logged in...");
                 loginBtnPanel.SetActive (true);
                 UIManager.Instance.DisplayInviteFriendButton(false);
                 OnConnect();
@@ -749,7 +735,6 @@ namespace GS
         }
 
 		public void OnConnect() {
-            Debug.Log("on connect");
 			FB.ActivateApp();
 			FB.LogInWithReadPermissions(readPermission, LoginCallback);
 		}
@@ -759,7 +744,6 @@ namespace GS
 		//Callback method of login
 		void LoginCallback(ILoginResult result)
 		{
-            Debug.Log("Login Callback..." + result.Error + " / " + result.RawResult);
 			if (FB.IsLoggedIn)
 			{
 				// AccessToken class will have session details

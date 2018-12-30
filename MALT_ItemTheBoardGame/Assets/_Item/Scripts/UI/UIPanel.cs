@@ -5,14 +5,15 @@ using UnityEngine;
 public abstract class UIPanel : MonoBehaviour
 {
     protected int animatorHashPopIn;
+    protected int animatorHashPopInSpecial;
 
-    private void Awake()
+    protected virtual void Awake()
     {
-        Debug.Log("called");
         animatorHashPopIn = Animator.StringToHash("bPopIn");
+        animatorHashPopInSpecial = Animator.StringToHash("bPopInSpecial");
     }
 
-    private void Start()
+    protected virtual void Start()
     {
         SetLanguage(Options.GetLanguage());
     }

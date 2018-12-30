@@ -17,9 +17,14 @@ public class InviteFriendPanel : UIPanel
     [SerializeField]
     private Text label;
 
-    void Start()
+    protected override void Awake()
     {
-		
+        base.Awake();
+    }
+
+    protected override void Start()
+    {
+        base.Start();
 	}
 	
     protected override void SetLanguageEN()
