@@ -114,10 +114,14 @@ public class GridManager : PunBehaviour
 
     public void StartTurns()
     {
-        actualTurn = BallColor.White;
-        PlayerManager.Instance.GetPlayer(BallColor.White).StartTurn();
+        if (roundNumber == 1)
+            actualTurn = BallColor.White;
+        else
+            actualTurn = BallColor.Black;
 
-        if (PlayerManager.Instance.Player1.Color == BallColor.White)
+        PlayerManager.Instance.GetPlayer(actualTurn).StartTurn();
+
+        if (PlayerManager.Instance.Player1.Color == actualTurn)
         {
             UIManager.Instance.SetPlayer1Turn();
         }
@@ -237,29 +241,9 @@ public class GridManager : PunBehaviour
     {
         roundNumber++;
 
-        SwitchPlayersColor();
-
         CleanBoard();
 
         StartTurns();
-    }
-
-    private void SwitchPlayersColor()
-    {
-        if (PlayerManager.Instance.Player1.Color == BallColor.Black)
-        {
-            PlayerManager.Instance.SetPlayerColor(BallColor.White, PlayerID.Player1);
-            PlayerManager.Instance.SetPlayerColor(BallColor.Black, PlayerID.Player2);
-            SetPawnsStartPosition(BallColor.White, BallColor.White);
-            SetPawnsStartPosition(BallColor.Black, BallColor.Black);
-        }
-        else
-        {
-            PlayerManager.Instance.SetPlayerColor(BallColor.Black, PlayerID.Player1);
-            PlayerManager.Instance.SetPlayerColor(BallColor.White, PlayerID.Player2);
-            SetPawnsStartPosition(BallColor.White, BallColor.Black);
-            SetPawnsStartPosition(BallColor.Black, BallColor.White);
-        }
     }
 
     public Ball GetBall(BallColor color, int id)

@@ -18,6 +18,8 @@ public class OptionsPanel : UIPanel
     private string muteMusicLabelFR;
     [SerializeField]
     private string muteSFXFR;
+    [SerializeField]
+    private string privacyPolicyFR;
 
     [Header("EN Settings")]
     [SerializeField]
@@ -30,6 +32,8 @@ public class OptionsPanel : UIPanel
     private string muteMusicLabelEN;
     [SerializeField]
     private string muteSFXEN;
+    [SerializeField]
+    private string privacyPolicyEN;
 
     [Header("")]
     [SerializeField]
@@ -52,6 +56,8 @@ public class OptionsPanel : UIPanel
     private Toggle muteSFXToggle;
     [SerializeField]
     private TextMeshProUGUI muteSFXLabel;
+    [SerializeField]
+    private TextMeshProUGUI privacyPolicyLabel;
 
     [Header("")]
     private Animation _animation;
@@ -194,6 +200,11 @@ public class OptionsPanel : UIPanel
         AudioManager.Instance.PlayAudio(SoundID.ClickUI);
     }
 
+    public void OpenPrivacyPolicy()
+    {
+        Application.OpenURL("http://www.google.com");
+    }
+
     protected override void SetLanguageFR()
     {
         roundHelpPopupLabel.text = roundHelpPopupLabelFR;
@@ -201,6 +212,7 @@ public class OptionsPanel : UIPanel
         askForTutoLabel.text = askForTutoLabelFR;
         muteMusicLabel.text = muteMusicLabelFR;
         muteSFXLabel.text = muteSFXFR;
+        privacyPolicyLabel.text = privacyPolicyFR;
     }
 
     protected override void SetLanguageEN()
@@ -210,6 +222,7 @@ public class OptionsPanel : UIPanel
         askForTutoLabel.text = askForTutoLabelEN;
         muteMusicLabel.text = muteMusicLabelEN;
         muteSFXLabel.text = muteSFXEN;
+        privacyPolicyLabel.text = privacyPolicyEN;
     }
 
     public void AnimEndCallback()
