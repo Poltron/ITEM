@@ -575,7 +575,7 @@ public class GridManager : PunBehaviour
         modelGrid.ResetCellsColor();
 
         List<Move> moves = new List<Move>();
-        if (PlayerManager.Instance.Player1.HasAlreadyJumpedOnce)
+        if (PlayerManager.Instance.GetPlayer(GridManager.Instance.ActualTurn).HasAlreadyJumpedOnce)
             moves = optiGrid.GetAvailableMoves(cell, true);
         else
             moves = optiGrid.GetAvailableMoves(cell);

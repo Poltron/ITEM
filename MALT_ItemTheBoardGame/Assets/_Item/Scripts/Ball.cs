@@ -121,7 +121,7 @@ public class Ball : MonoBehaviour
         highlight.gameObject.SetActive(true);
 
         if (owner)
-            FindObjectOfType<GridManager>().HighlightAvailableMoveCells(owner);
+            GridManager.Instance.HighlightAvailableMoveCells(owner);
     }
 
     public void HideHighlight() {
