@@ -214,7 +214,6 @@ namespace Facebook.Unity.Example
         protected virtual void Awake()
         {
             // Limit the framerate to 60 to keep device from burning through cpu
-            Application.targetFrameRate = 60;
         }
 
         protected bool Button(string label)

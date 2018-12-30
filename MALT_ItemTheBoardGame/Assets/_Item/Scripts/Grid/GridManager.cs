@@ -37,7 +37,7 @@ public class GridManager : PunBehaviour
     private AIEvaluationData aiEvaluationData;
     [SerializeField]
     private Transform board;
-    private Animator boardAnimator;
+    private Animation boardAnimation;
 
     [SerializeField]
     public List<GameObject> blackStartPosition;
@@ -81,7 +81,6 @@ public class GridManager : PunBehaviour
     [HideInInspector]
     public WinningPattern actualWinningPattern;
 
-    private int animatorHashPopIn;
     private int animatorHashPlaceBall;
     private int animatorHashMove;
     private int animatorHashWinPhase1;
@@ -90,7 +89,6 @@ public class GridManager : PunBehaviour
 
     private void Awake()
     {
-        animatorHashPopIn = Animator.StringToHash("bPopIn");
         animatorHashPlaceBall = Animator.StringToHash("PlaceBall");
         animatorHashMove = Animator.StringToHash("Move");
         animatorHashWinPhase1 = Animator.StringToHash("WinPhase1");
@@ -102,7 +100,7 @@ public class GridManager : PunBehaviour
         else
             Destroy(gameObject);
 
-        boardAnimator = board.GetComponent<Animator>();
+        boardAnimation = board.GetComponent<Animation>();
     }
 
     void Start()
@@ -137,7 +135,10 @@ public class GridManager : PunBehaviour
 
     public void DisplayBoard(bool isShown)
     {
-        boardAnimator.SetBool(animatorHashPopIn, isShown);
+        if (isShown)
+            boardAnimation.Play("BoardPopIn", PlayMode.StopAll);
+        else
+            boardAnimation.Play("BoardPopOut", PlayMode.StopAll);
     }
 
     private void CreateGrid()
@@ -285,7 +286,6 @@ public class GridManager : PunBehaviour
 
     public Ball ChangeBallPosition(Cell firstCell, Cell secondCell)
     {
-        Debug.Log("change ball position");
         Ball ball = firstCell.ball;
 
         secondCell.ball = ball;
@@ -363,8 +363,6 @@ public class GridManager : PunBehaviour
 
         Cell cell = modelGrid.GetCellFromModel((int)movements[movements.Count - 1].x, (int)movements[movements.Count - 1].y);
 
-        Debug.Log(cell.name + " : (" + cell.x + " ; " + cell.y + ")");
-
         bool justWon = Utils.CheckWin(modelGrid, cell, false);
         if (justWon || isEqualityTurn)
         {
@@ -373,17 +371,14 @@ public class GridManager : PunBehaviour
                 DOVirtual.DelayedCall(timeBeforeVictoryAnimation, PlayVictoryAnimation);
                 //SendLastTurnData();
                 //AlreadySentLastTurnData = true;
-                Debug.Log("win animation");
             }
 
             if (!isEqualityTurn && (PlayerManager.Instance.Player1.NbOfTurn != PlayerManager.Instance.Player2.NbOfTurn))
             {
                 isEqualityTurn = true;
-                Debug.Log("player2 equalityturn");
             }
             else
             {
-                Debug.Log("player2 endgame");
                 EndGame(justWon);
                 return;
             }
@@ -397,7 +392,6 @@ public class GridManager : PunBehaviour
 
         if (!justWon && !isEqualityTurn)
         {
-            Debug.Log("player end turn");
             NextTurn();
         }
     }
@@ -406,7 +400,6 @@ public class GridManager : PunBehaviour
     {
         optiGrid.UpdateOptimizedGridPoints(modelGrid);
         DOVirtual.DelayedCall(1.5f, UIManager.Instance.DisplayTutorialPhase2Movement);
-        Debug.Log("player2 display tutorial");
     }
 
     public void EndGame(bool justWon)
@@ -492,7 +485,6 @@ public class GridManager : PunBehaviour
     {
         UIManager.Instance.DisableBackToMainMenuButton(false);
 
-        Debug.Log("play victory animation4");
         Ball ball = modelGrid.GetCellFromModel((int)pattern.cells[0].y, (int)pattern.cells[0].x).ball;
         ball.FixSortingLayer(true);
         ball.Animator.SetTrigger(animatorHashWinPhase1);
@@ -600,7 +592,6 @@ public class GridManager : PunBehaviour
         int score = 0;
         if (winningPattern.cells.Length == 0)
         {
-            //Debug.Log("no winning pattern");
         }
         else
         {
@@ -637,22 +628,18 @@ public class GridManager : PunBehaviour
 
     public void SendLastTurnData()
     {
-        Debug.Log("send last turn data");
         if (AlreadySentLastTurnData)
         {
-            Debug.Log("Already sent data");
             return;
         }
 
         if (lastTurnMoves == null)
         {
-            Debug.Log("last turn moves are null, not sending");
             return;
         }
 
         PhotonView photonView = PhotonView.Get(this);
         photonView.RPC("SendLastTurnDataRPC", PhotonTargets.Others, lastTurnMoves.ToArray(), lastTurnBallId);
-        Debug.Log("send last turn data after rpc");
     }
 
     [PunRPC]
@@ -660,37 +647,29 @@ public class GridManager : PunBehaviour
     {
         if (movements == null)
         {
-            Debug.Log("movements == null");
             return;
         }
 
         Player player = PlayerManager.Instance.GetPlayer(ActualTurn);
         if (player == null)
         {
-            Debug.Log("player is null");
         }
 
         RemotePlayer remotePlayer = player as RemotePlayer;
         if (remotePlayer == null)
         {
-            Debug.Log("remoteplayer is null");
-
             remotePlayer = PlayerManager.Instance.GetPlayer(NotActualTurn) as RemotePlayer;
             if (remotePlayer == null)
             {
-                Debug.Log("remoteplayer is still null");
             }
         }
 
         remotePlayer.SetLastMovements(movements, ballId);
 
-        Debug.Log("send last turn data RPC received");
         if (movements.Length > 1)
             StartCoroutine(MoveCoroutine(movements));
         else if (movements.Length > 0)
             Phase1Move(movements[0], ballId);
-        else
-            Debug.Log("empty last turn data");
     }
 
     void Phase1Move(Vector2 pos, int ballIndex)
@@ -711,26 +690,22 @@ public class GridManager : PunBehaviour
 
         ball.DOPlace(cell);
 
-        Debug.Log("phase1move");
         PlayerManager.Instance.GetPlayer(ActualTurn).EndTurn();
     }
 
     IEnumerator MoveCoroutine(Vector2[] movements)
     {
-        Debug.Log("movecoroutine");
         for (int i = 0; i < movements.Length - 1; i++)
         {
             ChangeBallPosition(modelGrid.GetCellFromModel(movements[i]), modelGrid.GetCellFromModel(movements[i + 1]));
             yield return new WaitForSeconds(0.9f);
         }
-        Debug.Log("end movecoroutine");
 
         PlayerManager.Instance.GetPlayer(ActualTurn).EndTurn();
     }
 
     public void OnRestart()
     {
-        Debug.Log("RESTART THE GAME");
         GameManager.Instance.Disconnect();
     }
 

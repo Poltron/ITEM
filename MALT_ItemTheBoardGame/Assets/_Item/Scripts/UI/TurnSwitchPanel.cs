@@ -64,7 +64,6 @@ public class TurnSwitchPanel : UIPanel
 
     private UIManager uiManager;
     private Action callBack;
-    private AudioManager audioManager;
 
     public void SetUIManager(UIManager ui)
     {
@@ -124,13 +123,8 @@ public class TurnSwitchPanel : UIPanel
     {
         gameObject.SetActive(true);
         animator.SetTrigger("popIn");
-
-        if (audioManager == null)
-        {
-            audioManager = FindObjectOfType<AudioManager>();
-        }
-
-        audioManager.PlayAudio(SoundID.SwitchTurn);
+        
+        AudioManager.Instance.PlayAudio(SoundID.SwitchTurn);
     }
 
     private void CallbackTurnSwitchAnimation()

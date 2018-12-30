@@ -37,66 +37,57 @@ public class BackToMainMenuPanel : UIPanel
     [SerializeField]
     private TextMeshProUGUI gameText;
 
-    private Animator animator;
+    private Animation _animation;
     private Image _image;
 
-    private bool isFadingIn;
-    public bool IsFadingOut { get { return !isFadingIn; } }
-    public bool IsFadingIn { get { return isFadingIn; } }
+    private bool isShown;
+    public bool IsShown { get { return isShown; } }
+
+    private CanvasGroup canvasGroup;
 
     protected override void Awake()
     {
         base.Awake();
 
-        Init();
-    }
-
-    void Init()
-    {
-        isFadingIn = false;
-        animator = GetComponent<Animator>();
+        isShown = false;
+        _animation = GetComponent<Animation>();
         _image = GetComponent<Image>();
+        canvasGroup = GetComponent<CanvasGroup>();
     }
 
     public void PopIn()
     {
-        gameObject.SetActive(true);
+        if (isShown)
+            return;
 
-        if (animator == null)
-        {
-            Init();
-        }
+        canvasGroup.interactable = true;
+        canvasGroup.blocksRaycasts = true;
+        canvasGroup.alpha = 1;
 
-        if (animator.gameObject.activeInHierarchy)
-        {
-            animator.SetBool(animatorHashPopIn, true);
-            isFadingIn = true;
-            _image.raycastTarget = true;
-            AudioManager.Instance.PlayAudio(SoundID.OpenWindowOptions);
-        }
+        _animation.Play("BackToMainMenuPopIn", PlayMode.StopAll);
+        isShown = true;
+        _image.raycastTarget = true;
+        AudioManager.Instance.PlayAudio(SoundID.OpenWindowOptions);
     }
 
     public void PopOut()
     {
-        if (animator == null)
-        {
-            Init();
-        }
+        if (!isShown)
+            return;
 
-        if (animator.gameObject.activeInHierarchy)
-        {
-            animator.SetBool(animatorHashPopIn, false);
-            isFadingIn = false;
-            _image.raycastTarget = false;
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
 
-            AudioManager.Instance.PlayAudio(SoundID.CloseWindowOptions);
-        }
+        _animation.Play("BackToMainMenuPopOut", PlayMode.StopAll);
+        isShown = false;
+        _image.raycastTarget = false;
+        
+        AudioManager.Instance.PlayAudio(SoundID.CloseWindowOptions);
     }
 
-    private void PopOutAnimationEndCallback()
+    public void AnimEndCallback()
     {
-        isFadingIn = false;
-        //gameObject.SetActive(false);
+        canvasGroup.alpha = 0;
     }
 
     protected override void SetLanguageEN()
@@ -118,7 +109,6 @@ public class BackToMainMenuPanel : UIPanel
     public void OnYesButton()
     {
         PopOut();
-        gameObject.SetActive(false);
 
         GameManager.Instance.GameEnded();
         GameManager.Instance.EndGameplay();

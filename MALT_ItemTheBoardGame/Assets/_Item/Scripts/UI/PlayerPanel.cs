@@ -73,9 +73,6 @@ public class PlayerPanel : UIPanel
     private Animator portraitTurnAnimator;
 
     [SerializeField]
-    private Animator portraitLightAnimator;
-
-    [SerializeField]
     private Animator scoreCounterAnimator;
 
     [SerializeField]
@@ -88,7 +85,6 @@ public class PlayerPanel : UIPanel
     {
         base.Awake();
 
-        Debug.Log("playerpanelawake");
         panel = GetComponent<Image>();
         animatorHashPointReceived = Animator.StringToHash("PointReceived");
     }
@@ -204,10 +200,7 @@ public class PlayerPanel : UIPanel
     public void PlayPortraitAnimation()
     {
         portraitRotationAnimation.Play();
-
-        //portraitLightAnimator.gameObject.SetActive(true);
-        //portraitLightAnimator.SetTrigger("PopIn");
-
+        
         portraitTurnAnimator.gameObject.SetActive(true);
         portraitTurnAnimator.SetBool(animatorHashPopIn, true);
     }
@@ -234,12 +227,7 @@ public class PlayerPanel : UIPanel
 
     private void PlayPortraitRollSound()
     {
-        if (audioManager == null)
-        {
-            audioManager = FindObjectOfType<AudioManager>();
-        }
-
-        audioManager.PlayAudio(SoundID.PortraitRoll);
+        AudioManager.Instance.PlayAudio(SoundID.PortraitRoll);
     }
 
     public void SetWinText()

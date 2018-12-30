@@ -13,7 +13,7 @@ public abstract class UIPanel : MonoBehaviour
         animatorHashPopInSpecial = Animator.StringToHash("bPopInSpecial");
     }
 
-    private void Start()
+    protected virtual void Start()
     {
         SetLanguage(Options.GetLanguage());
     }

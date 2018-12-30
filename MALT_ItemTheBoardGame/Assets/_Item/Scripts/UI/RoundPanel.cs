@@ -6,12 +6,15 @@ using TMPro;
 
 public class RoundPanel : UIPanel
 {
-    [SerializeField]
-    private Animator animator;
+    private Animation roundAnimation;
+
+    private bool isShown;
 
     protected override void Awake()
     {
         base.Awake();
+
+        roundAnimation = GetComponent<Animation>();
     }
 
     protected override void SetLanguageEN()
@@ -22,16 +25,17 @@ public class RoundPanel : UIPanel
     {
     }
 
-    public void Activate(bool isShown)
+    public void Display(bool enabled)
     {
-        animator.gameObject.SetActive(isShown);
-    }
+        if (enabled && !isShown)
+        {
+            roundAnimation.Play("RoundPanelPopIn", PlayMode.StopAll);
+        }
+        else if (!enabled && isShown)
+        {
+            roundAnimation.Play("RoundPanelPopOut", PlayMode.StopAll);
+        }
 
-    public void Display(bool isShown)
-    {
-        if (isShown)
-            Activate(true);
-
-        animator.SetBool(animatorHashPopIn, isShown);
+        isShown = enabled;
     }
 }

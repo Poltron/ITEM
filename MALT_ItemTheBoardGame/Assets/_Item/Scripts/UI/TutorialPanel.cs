@@ -151,9 +151,6 @@ public class TutorialPanel : UIPanel
 
     [Header("")]
     [SerializeField]
-    private Animator animator;
-
-    [SerializeField]
     private Animator askForTuto;
 
     [SerializeField]
@@ -182,7 +179,6 @@ public class TutorialPanel : UIPanel
 
     public void HideAll()
     {
-        animator.gameObject.SetActive(false);
         askForTuto.gameObject.SetActive(false);
 
         tutoScreen1.gameObject.SetActive(false);
@@ -250,7 +246,6 @@ public class TutorialPanel : UIPanel
     {
         if (isShown)
         {
-            animator.SetTrigger(animatorHashPopInWithoutB);
             askForTuto.gameObject.SetActive(isShown);
             askForTuto.SetTrigger(animatorHashPopInWithoutB);
 
@@ -276,7 +271,6 @@ public class TutorialPanel : UIPanel
         }
         else
         {
-            animator.SetTrigger(animatorHashPopOut);
             GridManager.Instance.StartTurns();
             UIManager.Instance.backToMainMenuButton.enabled = true;
         }
@@ -375,7 +369,6 @@ public class TutorialPanel : UIPanel
     public void OnPhase1MoveScreenNextButton()
     {
         PopPhase1MoveScreen(false);
-        animator.SetTrigger(animatorHashPopOut);
         GridManager.Instance.StartTurns();
         UIManager.Instance.backToMainMenuButton.enabled = true;
         AudioManager.Instance.PlayAudio(SoundID.ClickUI);
@@ -390,8 +383,6 @@ public class TutorialPanel : UIPanel
     {
         if (isShown)
         {
-            animator.gameObject.SetActive(true);
-            animator.SetTrigger(animatorHashPopInWithoutB);
             phase2MovementsScreen.gameObject.SetActive(true);
             phase2MovementsScreen.SetTrigger(animatorHashPopInWithoutB);
             AudioManager.Instance.PlayAudio(SoundID.OpenWindowTuto);
@@ -413,7 +404,6 @@ public class TutorialPanel : UIPanel
     {
         PopPhase2MoveScreen(false);
         GridManager.Instance.NextTurn();
-        animator.SetTrigger(animatorHashPopOut);
         AudioManager.Instance.PlayAudio(SoundID.ClickUI);
     }
 }

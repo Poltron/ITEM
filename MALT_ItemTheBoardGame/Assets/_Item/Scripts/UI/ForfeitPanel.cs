@@ -24,17 +24,20 @@ public class ForfeitPanel : UIPanel
     private Text cancelButtonText;
     [SerializeField]
     private Button cancelButton;
-    private Animator animator;
+
+    private Animation forfeitAnimation;
 
     protected override void Awake()
     {
         base.Awake();
 
-        animator = GetComponent<Animator>();
+        forfeitAnimation = GetComponent<Animation>();
     }
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();
+
         SetLanguage(Options.GetLanguage());
     }
 
@@ -52,6 +55,9 @@ public class ForfeitPanel : UIPanel
 
     public void Display(bool showed)
     {
-        animator.SetBool(animatorHashPopIn, showed);
+        if (showed)
+            forfeitAnimation.Play("ForfeitPopIn", PlayMode.StopAll);
+        else
+            forfeitAnimation.Play("ForfeitPopOut", PlayMode.StopAll);
     }
 }

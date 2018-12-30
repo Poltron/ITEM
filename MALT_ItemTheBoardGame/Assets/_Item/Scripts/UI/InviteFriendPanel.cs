@@ -22,9 +22,9 @@ public class InviteFriendPanel : UIPanel
         base.Awake();
     }
 
-    void Start()
+    protected override void Start()
     {
-		
+        base.Start();
 	}
 	
     protected override void SetLanguageEN()

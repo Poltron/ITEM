@@ -7,7 +7,9 @@ using UnityEngine.UI;
 public class EndGamePanel : UIPanel
 {
     [SerializeField]
-    private Animator playAgain;
+    private Animation playAgain;
+
+    private bool isShown;
 
     protected override void Awake()
     {
@@ -22,16 +24,17 @@ public class EndGamePanel : UIPanel
     {
     }
 
-    public void Activate(bool isShown)
+    public void Display(bool enabled)
     {
-        playAgain.gameObject.SetActive(isShown);
-    }
+        if (enabled && !isShown)
+        {
+            playAgain.Play("EndGamePanelPopIn", PlayMode.StopAll);
+        }
+        else if (!enabled && isShown)
+        {
+            playAgain.Play("EndGamePanelPopOut", PlayMode.StopAll);
+        }
 
-    public void Display(bool isshown)
-    {
-        if (isshown)
-            Activate(true);
-
-        playAgain.SetBool(animatorHashPopIn, isshown);
+        isShown = enabled;
     }
 }

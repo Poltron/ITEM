@@ -54,12 +54,13 @@ public class OptionsPanel : UIPanel
     private TextMeshProUGUI muteSFXLabel;
 
     [Header("")]
-    private Animator animator;
-    private Image imageAnimator;
+    private Animation _animation;
+    private Image _image;
 
-    private bool isFadingIn;
-    public bool IsFadingOut { get { return !isFadingIn; } }
-    public bool IsFadingIn { get { return isFadingIn; } }
+    private bool isShown;
+    public bool IsShown { get { return isShown; } }
+
+    private CanvasGroup canvasGroup;
 
     public event Action OnLanguageChange;
 
@@ -67,14 +68,10 @@ public class OptionsPanel : UIPanel
     {
         base.Awake();
 
-        Init();
-    }
-
-    void Init()
-    {
-        isFadingIn = false;
-        animator = GetComponent<Animator>();
-        imageAnimator = GetComponent<Image>();
+        isShown = false;
+        _animation = GetComponent<Animation>();
+        _image = GetComponent<Image>();
+        canvasGroup = GetComponent<CanvasGroup>();
     }
 
     void RefreshValues()
@@ -107,45 +104,34 @@ public class OptionsPanel : UIPanel
 
     public void PopIn()
     {
-        gameObject.SetActive(true);
+        if (isShown)
+            return;
 
-        if (animator == null)
-        {
-            Init();
-        }
+        canvasGroup.interactable = true;
+        canvasGroup.blocksRaycasts = true;
+        canvasGroup.alpha = 1;
 
-        if (animator.gameObject.activeInHierarchy)
-        {
-            RefreshValues();
-            animator.SetBool(animatorHashPopIn, true);
-            isFadingIn = true;
-            imageAnimator.enabled = true;
+        RefreshValues();
+        _animation.Play("OptionsPanelPopIn", PlayMode.StopAll);
+        isShown = true;
+        _image.enabled = true;
 
-            AudioManager.Instance.PlayAudio(SoundID.OpenWindowOptions);
-        }
+        AudioManager.Instance.PlayAudio(SoundID.OpenWindowOptions);
     }
 
     public void PopOut()
     {
-        if (animator == null)
-        {
-            Init();
-        }
+        if (!isShown)
+            return;
 
-        if (animator.gameObject.activeInHierarchy)
-        {
-            animator.SetBool(animatorHashPopIn, false);
-            isFadingIn = false;
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
 
-            imageAnimator.enabled = false;
-            AudioManager.Instance.PlayAudio(SoundID.CloseWindowOptions);
-        }
-    }
+        _animation.Play("OptionsPanelPopOut", PlayMode.StopAll);
+        _image.enabled = false;
+        isShown = false;
 
-    private void PopOutAnimationEndCallback()
-    {
-        isFadingIn = false;
-        //gameObject.SetActive(false);
+        AudioManager.Instance.PlayAudio(SoundID.CloseWindowOptions);
     }
 
     public void ToggleEnableBallPlacementHelp(bool notUseful)
@@ -224,5 +210,10 @@ public class OptionsPanel : UIPanel
         askForTutoLabel.text = askForTutoLabelEN;
         muteMusicLabel.text = muteMusicLabelEN;
         muteSFXLabel.text = muteSFXEN;
+    }
+
+    public void AnimEndCallback()
+    {
+        canvasGroup.alpha = 0;
     }
 }

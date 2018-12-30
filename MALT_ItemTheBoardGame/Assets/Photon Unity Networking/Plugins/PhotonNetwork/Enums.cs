@@ -250,7 +250,10 @@ public enum PhotonNetworkingMessage
     OnConnectedToMaster,
 
     /// <summary>
-    /// Implement to customize the data a PhotonView regularly synchronizes. Called every 'network-update' when observed by PhotonView.
+    /// Implement to customize the data a PhotonView regularly 
+    /// 
+    /// 
+    /// hronizes. Called every 'network-update' when observed by PhotonView.
     /// </summary>
     /// <remarks>
     /// This method will be called in scripts that are assigned as Observed component of a PhotonView.

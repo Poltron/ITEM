@@ -34,8 +34,10 @@ public class WaitingForPlayerPanel : UIPanel
         base.Awake();
     }
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();
+
         SetLanguage(Options.GetLanguage());
 	}
 

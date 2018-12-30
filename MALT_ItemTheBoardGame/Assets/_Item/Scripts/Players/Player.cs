@@ -60,12 +60,10 @@ abstract public class Player
     public virtual void StartTurn()
     {
         nbOfTurn++;
-        Debug.Log(Color + " turn started");
     }
 
     public virtual void EndTurn()
     {
-        Debug.Log(Color + " turn ended");
         if (currentBall == null)
         {
             Debug.Log("currentBall is null");
@@ -75,8 +73,6 @@ abstract public class Player
             CallOnTurnFinished(movements, currentBall.ballId);
 
         currentBall = null;
-
-        Debug.Log("after call on turn finished");
     }
 
     protected void CallOnBallSelection(Ball ball)
