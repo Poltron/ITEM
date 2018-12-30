@@ -309,10 +309,14 @@ public class UIManager : MonoBehaviour
     public void StopPlayerTurns()
     {
         player1.StopPortraitAnimation();
-        PlayerManager.Instance.Player1.EndTurn();
+
+        if (PlayerManager.Instance.Player1 != null)
+            PlayerManager.Instance.Player1.EndTurn();
 
         player2.StopPortraitAnimation();
-        PlayerManager.Instance.Player2.EndTurn();
+
+        if (PlayerManager.Instance.Player2 != null)
+            PlayerManager.Instance.Player2.EndTurn();
     }
 
     public void SetPlayer1Turn()

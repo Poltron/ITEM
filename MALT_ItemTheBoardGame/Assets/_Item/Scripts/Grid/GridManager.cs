@@ -661,15 +661,13 @@ public class GridManager : PunBehaviour
         Cell cell = modelGrid.GetCellFromModel(pos);
         Ball ball;
 
-        if (PlayerManager.Instance.Player1.Color == BallColor.White)
+        if (PlayerManager.Instance.GetPlayer(ActualTurn).Color == BallColor.Black)
         {
             ball = blackBalls.Find(x => x.ballId == ballIndex);
-            blackBalls.Remove(ball);
         }
         else
         {
             ball = whiteBalls.Find(x => x.ballId == ballIndex);
-            whiteBalls.Remove(ball);
         }
 
         ball.DOPlace(cell);

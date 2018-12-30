@@ -60,4 +60,10 @@ public class ForfeitPanel : UIPanel
         else
             forfeitAnimation.Play("ForfeitPopOut", PlayMode.StopAll);
     }
+
+    public void BackToMenuButtonClick()
+    {
+        Display(false);
+        GameManager.Instance.EndGameplay();
+    }
 }

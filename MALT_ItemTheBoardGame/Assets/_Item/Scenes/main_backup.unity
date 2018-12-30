@@ -14471,7 +14471,7 @@ CanvasGroup:
   m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
+  m_IgnoreParentGroups: 1
 --- !u!1 &867804465
 GameObject:
   m_ObjectHideFlags: 0
@@ -22216,8 +22216,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 277280091}
-        m_MethodName: StopLookingForOpponent
+      - m_Target: {fileID: 853122912}
+        m_MethodName: BackToMenuButtonClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -33912,7 +33912,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 325.46, y: 0}
+  m_AnchoredPosition: {x: 325.45993, y: 0}
   m_SizeDelta: {x: -650.91, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!111 &1936944627
@@ -36073,7 +36073,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2065579785
 MonoBehaviour:
   m_ObjectHideFlags: 0
