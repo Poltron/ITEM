@@ -202,7 +202,7 @@ public class OptionsPanel : UIPanel
 
     public void OpenPrivacyPolicy()
     {
-        Application.OpenURL("http://www.google.com");
+        Application.OpenURL("https://jeu-item.fr/declaration-de-confidentialite-eu/");
     }
 
     protected override void SetLanguageFR()
