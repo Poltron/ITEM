@@ -36,7 +36,10 @@ public enum SoundID
 
     JingleWin,
     JingleLoose,
-    JingleDraw
+    JingleDraw,
+
+    NextRound,
+    WinGodray
 }
 
 [System.Serializable]
@@ -55,8 +58,9 @@ public class AudioManager : MonoBehaviour
     [Header("Audio Prefabs")]
     [SerializeField]
     private SoundListSO sounds;
-
-    private AudioSource music;
+    [SerializeField]
+    private Music music;
+    public Music Music { get { return music; } }
 
     private int ballNumber;
     private bool isComboImpactPlayed;
@@ -71,15 +75,6 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        if (music == null)
-        {
-            Music musicGO = FindObjectOfType<Music>();
-            if (musicGO)
-                music = musicGO.GetComponent<AudioSource>();
-
-            if (music == null)
-                Debug.LogError("pas d'élément MUSIC :(");
-        }
     }
 
     public void PlayAudio(SoundID id)
@@ -129,16 +124,16 @@ public class AudioManager : MonoBehaviour
 
     private IEnumerator crossFade(GameObject jinglePrefab)
     {
-        float baseMusicVolume = music.volume;
+        float baseMusicVolume = music.GameSource.volume;
         float reducedMusicVolume = baseMusicVolume * 0.25f;
 
         for (float i = 0; i < 1; i += Time.deltaTime)
         {
-            music.volume -= (baseMusicVolume - reducedMusicVolume) * Time.deltaTime;
+            music.GameSource.volume -= (baseMusicVolume - reducedMusicVolume) * Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
 
-        music.volume = reducedMusicVolume;
+        music.GameSource.volume = reducedMusicVolume;
 
         GameObject jingle = GameObject.Instantiate(jinglePrefab, Vector3.zero, Quaternion.identity);
         float jingleDuration = jingle.GetComponent<AudioSource>().clip.length;
@@ -147,12 +142,11 @@ public class AudioManager : MonoBehaviour
         
         for (float i = 0; i < 1; i += Time.deltaTime)
         {
-            music.volume += (baseMusicVolume - reducedMusicVolume) * Time.deltaTime;
+            music.GameSource.volume += (baseMusicVolume - reducedMusicVolume) * Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
-        //Debug.Log(music.volume);
 
-        music.volume = baseMusicVolume;
+        music.GameSource.volume = baseMusicVolume;
     }
 
     /*

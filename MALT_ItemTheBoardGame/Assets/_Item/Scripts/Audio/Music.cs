@@ -4,18 +4,57 @@ using UnityEngine;
 
 public class Music : MonoBehaviour
 {
-    AudioSource _source;
+    [SerializeField]
+    AudioSource _menuSource;
+    [SerializeField]
+    AudioSource _gameSource;
 
-    private void Awake()
+    public AudioSource GameSource { get { return _gameSource; } }
+
+    private Coroutine lerp;
+    private float volume;
+
+    private void Start()
     {
-        _source = GetComponent<AudioSource>();
-
-        // fix sale ayy
-        Options.Init();
+        volume = _menuSource.volume;
     }
 
-    void Update ()
+    private void SetMuteMusic(bool mute)
     {
-        _source.mute = Options.GetMuteMusic();
-	}
+        _menuSource.mute = mute;
+        _gameSource.mute = mute;
+    }
+
+    public void GoToMenuMusic()
+    {
+        if (lerp != null)
+            StopCoroutine(lerp);
+
+        lerp = StartCoroutine(CrossFade(_gameSource, _menuSource));
+    }
+
+    public void GoToGameMusic()
+    {
+        if (lerp != null)
+            StopCoroutine(lerp);
+
+        lerp = StartCoroutine(CrossFade(_menuSource, _gameSource));
+    }
+
+    private IEnumerator CrossFade(AudioSource toEnd, AudioSource toPlay)
+    {
+        toPlay.Play();
+
+        for (float f = 0.0f; f < 3.0f; f += Time.deltaTime)
+        {
+            if (toEnd.isPlaying)
+            toEnd.volume = (1.0f - (f / 3.0f)) * volume;
+            toPlay.volume = (f / 3.0f) * volume;
+            yield return new WaitForEndOfFrame();
+        }
+
+        toEnd.volume = 0;
+        toEnd.Stop();
+        toPlay.volume = volume;
+    }
 }

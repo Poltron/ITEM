@@ -784,7 +784,7 @@ public class OptimizedGrid
         {
             for (int j = 0; j < cells[i].Length; ++j)
             {
-                if (modelGrid.GetCellFromModel(i, j).ball.Score > 0)
+                if (modelGrid.GetCellFromModel(i, j).ball != null && modelGrid.GetCellFromModel(i, j).ball.Score > 0)
                     cells[i][j].isPoint = true;
                 else
                     cells[i][j].isPoint = false;

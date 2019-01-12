@@ -110,6 +110,7 @@ public class UIManager : MonoBehaviour
         if (showed)
         {
             menuUI.PopIn();
+            AudioManager.Instance.Music.GoToMenuMusic();
         }
         else
         {
@@ -126,6 +127,7 @@ public class UIManager : MonoBehaviour
             gameplayCanvas.alpha = 1;
             gameplayCanvas.interactable = true;
             gameplayCanvas.blocksRaycasts = true;
+            AudioManager.Instance.Music.GoToGameMusic();
         }
         else
         {
@@ -150,7 +152,6 @@ public class UIManager : MonoBehaviour
         player2.SetScoreCounter(0);
 
         optionsPanel.OnLanguageChange += LanguageChanged;
-
         tutoPanel.HideAll();
 
         backToMainMenuButton.enabled = false;
@@ -211,6 +212,8 @@ public class UIManager : MonoBehaviour
 
     IEnumerator PlayGodrayAnimation()
     {
+        AudioManager.Instance.PlayAudio(SoundID.WinGodray);
+
         toAnimate.SetFloat("_OverallOpacity", 0);
         yield return new WaitForSeconds(godrayTimeBeforeAnimation);
 
@@ -405,12 +408,13 @@ public class UIManager : MonoBehaviour
 
     public void OnNextRoundButton()
     {
-        AudioManager.Instance.PlayAudio(SoundID.ClickUI);
+        AudioManager.Instance.PlayAudio(SoundID.NextRound);
+
+        roundResultPanel.Display(false);
 
         if (NextRound != null)
         {
             NextRound();
-            roundResultPanel.Display(false);
         }
     }
 
@@ -425,7 +429,8 @@ public class UIManager : MonoBehaviour
 
     public void OnEndGameButton()
     {
-        AudioManager.Instance.PlayAudio(SoundID.ClickUI);
+        AudioManager.Instance.PlayAudio(SoundID.NextRound);
+
         endGamePanel.Display(false);
 
         if (EndGame != null)

@@ -188,6 +188,7 @@ public class OptionsPanel : UIPanel
             AudioManager.Instance.PlayAudio(SoundID.CheckboxOff);
 
         Options.SetMuteSFX(muteSFXToggle.isOn);
+
     }
 
     public void SetLocalization(string language)
